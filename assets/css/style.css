@@ -5,30 +5,30 @@
    ========================================================= */
 
 :root {
-  /* 遊戲感配色（淺色 / 白天的冒險地圖） */
-  --bg-sky-1: #bfe3ff;   /* 天空上緣 */
-  --bg-sky-2: #dff1ff;
-  --bg-sky-3: #fff4e2;   /* 靠近地面的暖色 */
+  /* 遊戲感配色（淺色 / 白天的冒險地圖）— 以 #26418F 藍為主 */
+  --bg-sky-1: #c3d8f5;   /* 天空上緣 */
+  --bg-sky-2: #dde8f8;
+  --bg-sky-3: #eef3fb;   /* 靠近地面的淺藍 */
   --surface: #ffffff;
-  --surface-2: #f2f5fb;
-  --border: #e7ebf5;
-  --ink: #2a2c47;        /* 主要文字 */
-  --text: #2a2c47;
-  --muted: #6b7597;
+  --surface-2: #eef2fa;
+  --border: #dde4f2;
+  --ink: #1e2a4a;        /* 主要文字 */
+  --text: #1e2a4a;
+  --muted: #5f6d92;
 
-  --grape: #6c5ce7;      /* 主色 */
-  --grape-dark: #4d3fc4; /* 立體按鈕下緣 */
-  --grape-soft: #ecebff;
-  --primary: #6c5ce7;
+  --grape: #26418f;      /* 主色（深藍） */
+  --grape-dark: #1a2e66; /* 立體按鈕下緣 */
+  --grape-soft: #e4e9f6;
+  --primary: #26418f;
   --primary-ink: #ffffff;
-  --primary-soft: #ecebff;
+  --primary-soft: #e4e9f6;
 
-  --orange: #ff8a3d;
-  --orange-dark: #e06d1f;
-  --accent: #ff8a3d;
-  --accent-soft: #ffe9d6;
+  --orange: #3b7dd8;     /* 次要亮藍（highlight / 目前這關） */
+  --orange-dark: #2a5cab;
+  --accent: #3b7dd8;
+  --accent-soft: #dce9fb;
 
-  --mint: #2fce88;       /* 完成 / 進度 */
+  --mint: #2fce88;       /* 完成 / 進度（保留綠色語意） */
   --mint-dark: #1fa96a;
   --success: #1fa96a;
   --success-soft: #d9f7e7;
@@ -40,40 +40,41 @@
   --danger: #ff5a76;
   --danger-soft: #ffe2e8;
 
-  --track: #e3e8f2;      /* 路徑底色 */
+  --track: #dbe2f0;      /* 路徑底色 */
 
-  --shadow: 0 16px 34px -16px rgba(42, 44, 71, .35);
-  --shadow-sm: 0 8px 18px -12px rgba(42, 44, 71, .35);
+  --shadow: 0 16px 34px -16px rgba(30, 42, 74, .35);
+  --shadow-sm: 0 8px 18px -12px rgba(30, 42, 74, .35);
   --radius: 22px;
   --radius-sm: 14px;
 
   --font: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", -apple-system,
           BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --display: "Fredoka", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --display: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", -apple-system,
+          BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --mono: "SF Mono", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
 }
 
 :root[data-theme="dark"] {
-  --bg-sky-1: #10132a;   /* 夜晚的冒險地圖 */
-  --bg-sky-2: #141833;
-  --bg-sky-3: #1b1533;
-  --surface: #1b2038;
-  --surface-2: #232945;
-  --border: #313858;
-  --ink: #eef1fb;
-  --text: #eef1fb;
-  --muted: #9aa4c7;
+  --bg-sky-1: #0e1730;   /* 夜晚的冒險地圖（深藍） */
+  --bg-sky-2: #121b38;
+  --bg-sky-3: #16203f;
+  --surface: #18223f;
+  --surface-2: #202c4c;
+  --border: #2d3a5e;
+  --ink: #eef2fb;
+  --text: #eef2fb;
+  --muted: #9aa6c9;
 
-  --grape: #8b7cff;
-  --grape-dark: #5f51d6;
-  --grape-soft: #2a2e57;
-  --primary: #8b7cff;
-  --primary-soft: #2a2e57;
+  --grape: #6b90e6;
+  --grape-dark: #3f5ca8;
+  --grape-soft: #24304f;
+  --primary: #6b90e6;
+  --primary-soft: #24304f;
 
-  --orange: #ff9a56;
-  --orange-dark: #cf6f2c;
-  --accent: #ff9a56;
-  --accent-soft: #3a2a1b;
+  --orange: #5b9bf0;
+  --orange-dark: #3f6fc0;
+  --accent: #5b9bf0;
+  --accent-soft: #1f2c47;
 
   --mint: #3fd992;
   --mint-dark: #26b877;
@@ -98,7 +99,7 @@ body {
   color: var(--text);
   background:
     radial-gradient(90% 60% at 15% 0%, var(--bg-sky-1), transparent 60%),
-    radial-gradient(80% 50% at 100% 10%, color-mix(in srgb, var(--pink) 22%, transparent), transparent 55%),
+    radial-gradient(80% 50% at 100% 10%, color-mix(in srgb, var(--sky-blue) 20%, transparent), transparent 55%),
     linear-gradient(180deg, var(--bg-sky-2) 0%, var(--bg-sky-3) 100%);
   background-attachment: fixed;
   display: flex;
@@ -127,7 +128,7 @@ a { color: var(--grape); font-weight: 600; }
 
 .progress { display: flex; align-items: center; gap: 8px; }
 .progress__track { width: clamp(70px, 22vw, 150px); height: 12px; border-radius: 99px; background: var(--surface-2); overflow: hidden; border: 2px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,.06); }
-.progress__fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, var(--mint), var(--sun)); transition: width .6s cubic-bezier(.2,.8,.2,1); }
+.progress__fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--grape)); transition: width .6s cubic-bezier(.2,.8,.2,1); }
 .progress__label { font-size: 13px; font-weight: 800; color: var(--muted); min-width: 34px; text-align: right; font-family: var(--display); }
 
 .icon-btn {
