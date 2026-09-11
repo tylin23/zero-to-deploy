@@ -1,18 +1,4 @@
-// =========================================================
-// 關卡註冊表：地圖上顯示的所有關卡
-// 目前可玩：intro、github-pages
-// 其餘為「即將推出」，對應備課大綱，讓地圖看起來完整、也預留擴充位
-// =========================================================
-import intro from "./intro.js";
-import githubPages from "./githubPages.js";
-
-// 可玩的關卡（有 render 函式）
-export const playable = {
-  intro,
-  "github-pages": githubPages,
-};
-
-// 地圖顯示順序（含尚未開放的關）
+// 地圖上的所有關卡（含尚未開放的），對應備課大綱
 export const mapOrder = [
   { id: "intro", emoji: "🌐", title: "網站是怎麼被看到的？", tagline: "部署的核心概念", status: "ready" },
   { id: "github-pages", emoji: "📄", title: "GitHub Pages", tagline: "免費、純滑鼠，把靜態網站上線", status: "ready" },
@@ -25,3 +11,8 @@ export const mapOrder = [
 ];
 
 export const totalReady = mapOrder.filter((l) => l.status === "ready").length;
+
+export const BADGES = {
+  concept: { id: "concept", icon: "🧭", name: "概念啟航", desc: "看懂前端、伺服器與部署" },
+  firstDeploy: { id: "first-deploy", icon: "🚀", name: "首次部署", desc: "把第一個網站放上 GitHub Pages" },
+};

@@ -9,37 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" />
-  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <!-- 頂部列 -->
-  <header class="topbar">
-    <a class="brand" href="#/" aria-label="回首頁">
-      <span class="brand__logo">🚀</span>
-      <span class="brand__name">Zero to Deploy</span>
-    </a>
-
-    <div class="topbar__right">
-      <div class="progress" id="global-progress" title="學習進度">
-        <div class="progress__track"><div class="progress__fill" id="progress-fill"></div></div>
-        <span class="progress__label" id="progress-label">0%</span>
-      </div>
-      <button class="icon-btn" id="theme-toggle" type="button" aria-label="切換深淺色">🌙</button>
-      <button class="icon-btn" id="reset-btn" type="button" aria-label="重設進度" title="重設進度">↺</button>
-    </div>
-  </header>
-
-  <!-- 主要內容由 JS 依路由渲染 -->
-  <main id="app" class="app" tabindex="-1"></main>
-
-  <footer class="footer">
-    <span>Zero to Deploy · 一個用來教「網頁部署」的互動教材</span>
-    <span class="footer__hint">這個網站本身，就是用 GitHub Pages 部署的 ✨</span>
-  </footer>
-
-  <!-- 過關慶祝／提示的浮層掛載點 -->
-  <div id="fx-layer" class="fx-layer" aria-hidden="true"></div>
-
-  <script type="module" src="assets/js/app.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
