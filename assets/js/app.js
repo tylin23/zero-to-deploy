@@ -88,48 +88,78 @@ function viewHome() {
   app.replaceChildren(wrap);
 }
 
+// SVG 元素建立器
+function svgEl(tag, attrs = {}) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+}
+
 function viewMap() {
-  const wrap = el("div");
+  const wrap = el("div", { class: "mapview" });
   wrap.append(
     el("div", { class: "map-head" }, [
       el("span", { class: "eyebrow" }, "部署地圖"),
-      el("h1", {}, "選一關開始"),
-      el("p", { class: "hint" }, "跟著順序走最順。打勾的是已完成的關卡。"),
+      el("h1", {}, "沿著路徑闖關 🗺️"),
+      el("p", { class: "hint" }, "從起點一路往下走，每一站學會一種部署方式。"),
     ])
   );
 
-  const grid = el("div", { class: "map-grid" });
+  // 找出「目前這關」＝第一個尚未完成、且已開放的關
+  const currentId = (mapOrder.find((l) => l.status === "ready" && !isComplete(l.id)) || {}).id;
+
+  const trail = el("div", { class: "trail" });
+  const svg = svgEl("svg", { class: "trail__svg", preserveAspectRatio: "none" });
+  const pathBase = svgEl("path", { class: "trail__path" });
+  const pathDone = svgEl("path", { class: "trail__path--done" });
+  const pathDash = svgEl("path", { class: "trail__path--dash" });
+  svg.append(pathBase, pathDone, pathDash);
+  trail.append(svg);
+
   mapOrder.forEach((lv, i) => {
     const done = isComplete(lv.id);
     const locked = lv.status !== "ready";
-    const card = el("button", {
-      class: "level-card" + (locked ? " is-locked" : "") + (done ? " is-done" : ""),
+    const isCurrent = lv.id === currentId;
+    let cls = "trail-node ";
+    if (locked) cls += "is-locked";
+    else if (done) cls += "is-done";
+    else if (isCurrent) cls += "is-current";
+    else cls += "is-open";
+
+    const btn = el("button", {
+      class: "node-btn",
       type: "button",
       disabled: locked ? "true" : null,
+      "aria-label": lv.title + (locked ? "（即將推出）" : ""),
       onClick: () => { if (!locked) navigate("#/level/" + lv.id); },
     }, [
-      el("div", { class: "level-card__top" }, [
-        el("span", { class: "level-card__emoji" }, lv.emoji),
-        el("span", { class: "level-card__num" }, "第 " + (i + 1) + " 關"),
-      ]),
-      el("h3", { class: "level-card__title" }, lv.title),
-      el("p", { class: "level-card__tag" }, lv.tagline),
-      el("div", { class: "level-card__foot" },
-        locked
-          ? [el("span", { class: "pill pill--muted" }, "🔒 即將推出")]
-          : done
-            ? [el("span", { class: "pill pill--success" }, "✓ 已完成")]
-            : [el("span", { class: "pill pill--primary" }, "開始 →")]
-      ),
+      el("span", { class: "node-emoji" }, lv.emoji),
+      locked ? el("span", { class: "node-lock" }, "🔒") : null,
+      done ? el("span", { class: "node-check" }, "✓") : null,
     ]);
-    grid.append(card);
+
+    const node = el("div", { class: cls, "data-i": i }, [
+      el("span", { class: "node-num" }, String(i + 1)),
+      done ? el("span", { class: "node-stars" }, "⭐⭐⭐") : null,
+      isCurrent ? el("span", { class: "node-flag" }, "從這開始") : null,
+      btn,
+      el("div", { class: "node-label" }, el("div", { class: "node-label__title" }, lv.title)),
+    ]);
+    trail.append(node);
   });
-  wrap.append(grid);
+
+  // 終點旗標
+  trail.append(el("div", { class: "trail-finish" }, [
+    el("div", { class: "trail-finish__icon" }, "🏆"),
+    el("div", { class: "trail-finish__text" }, "全部部署技能達成！"),
+  ]));
+
+  wrap.append(trail);
 
   // 徽章櫃
   const badges = Object.values(getState().badges);
   if (badges.length) {
-    const shelf = el("div", { class: "card stack", style: "margin-top:24px" });
+    const shelf = el("div", { class: "card stack shelf" });
     shelf.append(el("h3", {}, "🏅 我的徽章"));
     const row = el("div", { style: "display:flex;gap:14px;flex-wrap:wrap" });
     badges.forEach((b) =>
@@ -144,7 +174,76 @@ function viewMap() {
   }
 
   app.replaceChildren(wrap);
+  layoutTrail(); // 進 DOM 後才量得到尺寸
 }
+
+// 把節點沿蜿蜒路徑排好，並畫出連接的路徑線
+function layoutTrail() {
+  const trail = document.querySelector(".trail");
+  if (!trail) return;
+  const nodes = [...trail.querySelectorAll(".trail-node")];
+  if (!nodes.length) return;
+
+  const W = trail.clientWidth || trail.offsetWidth || 520;
+  const gap = W < 420 ? 118 : 134;
+  const padTop = 78;
+  const padBottom = 96;
+  const amp = Math.min(W * 0.3, 150);
+  const cx = W / 2;
+
+  const pts = nodes.map((n, i) => {
+    const y = padTop + i * gap;
+    const x = cx + amp * Math.sin(i * 0.95 + 0.4);
+    n.style.left = x + "px";
+    n.style.top = y + "px";
+    return { x, y };
+  });
+
+  const totalH = padTop + (nodes.length - 1) * gap + padBottom;
+  trail.style.height = totalH + "px";
+
+  // 終點旗標放在最後一顆節點下方
+  const finish = trail.querySelector(".trail-finish");
+  if (finish) {
+    finish.style.left = cx + "px";
+    finish.style.top = padTop + (nodes.length - 1) * gap + 60 + "px";
+  }
+
+  // 用平滑曲線把各節點中心連起來
+  const buildPath = (list) => {
+    if (list.length < 2) return "";
+    let d = `M ${list[0].x} ${list[0].y}`;
+    for (let i = 1; i < list.length; i++) {
+      const p0 = list[i - 1], p1 = list[i];
+      const my = (p0.y + p1.y) / 2;
+      d += ` C ${p0.x} ${my}, ${p1.x} ${my}, ${p1.x} ${p1.y}`;
+    }
+    return d;
+  };
+
+  const svg = trail.querySelector(".trail__svg");
+  svg.setAttribute("viewBox", `0 0 ${W} ${totalH}`);
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", totalH);
+
+  const fullD = buildPath(pts);
+  svg.querySelector(".trail__path").setAttribute("d", fullD);
+  svg.querySelector(".trail__path--dash").setAttribute("d", fullD);
+
+  // 進度線：從起點畫到「最後一顆已完成節點」
+  let lastDone = -1;
+  nodes.forEach((n, i) => { if (n.classList.contains("is-done")) lastDone = i; });
+  const donePath = svg.querySelector(".trail__path--done");
+  if (lastDone >= 1) donePath.setAttribute("d", buildPath(pts.slice(0, lastDone + 1)));
+  else donePath.setAttribute("d", "");
+}
+
+// 視窗改變大小時重新排列路徑（節流）
+let trailResizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(trailResizeTimer);
+  trailResizeTimer = setTimeout(layoutTrail, 120);
+});
 
 function viewLevel(id) {
   const level = playable[id];
