@@ -1,14 +1,4 @@
-// 第 4 關給學生下載的範本：一頁「YouBike 即時看板」。
-//
-// 設計重點：
-//  1. 單一 dashboard.html，零外部檔案（沒有圖、沒有 CDN，長條圖用 CSS 做），
-//     學生直接放進第 2 關那個 repo 就會動。
-//  2. 真的去打 YouBike 的即時 API —— 已實測那個端點允許跨來源讀取，
-//     所以學生的網頁 fetch 得到，按「重新抓一次」數字真的會變。
-//  3. 萬一哪天對方關掉跨來源、或沒網路，就退回內建範例並在畫面上說清楚，
-//     不會開天窗。
-//  4. 全市一千多站，表格只顯示前 30 名，不然會爆掉。
-export const DASHBOARD_HTML = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
@@ -133,7 +123,7 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
   }
 
   // 站名前面都有「YouBike2.0_」，顯示時拿掉比較好讀
-  function nice(name) { return String(name || "").replace(/^YouBike2\\.0_/, ""); }
+  function nice(name) { return String(name || "").replace(/^YouBike2\.0_/, ""); }
 
   function num(v) { return Number(v) || 0; }
 
@@ -220,4 +210,4 @@ export const DASHBOARD_HTML = `<!DOCTYPE html>
   load();
 </script>
 </body>
-</html>`;
+</html>

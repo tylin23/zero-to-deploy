@@ -22,121 +22,44 @@ function downloadDashboard() {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-// 站內模擬用的 API：打的是「臺北市陳情系統類別資料」這份真實開放資料。
-// 網址與欄位都照真的寫，回傳值是示範用的假資料（真實內容請看第 3 步的連結）。
-// 三個選項刻意只差在參數，用來教 limit / offset 這兩個最常見的查詢參數。
-const ROW = (id, no, main, sub, org, dept, recv, send, close) => ({
-  _id: id,
-  案件編號: no,
-  案件主類別: main,
-  案件次類別: sub,
-  受理機關: org,
-  受理科室: dept,
-  受理日期: recv,
-  送達日期: send,
-  結案日期: close,
+// 站內模擬用的 API：打的是 YouBike 即時資訊這份真實開放資料。
+// 網址與欄位都照真的寫，數值是示範用的（真實數字請按第 3 步的連結看）。
+// 三個選項示範的是「這個 API 一次把全部給你，篩選要自己做」。
+const ST = (sna, sarea, rent, ret, qty) => ({
+  sna,
+  sarea,
+  ar: "（地址）",
+  available_rent_bikes: rent,
+  available_return_bikes: ret,
+  Quantity: qty,
+  mday: "2026-09-13 03:03:03",
 });
 
-const ROWS = [
-  ROW(
-    1,
-    "202601-004512",
-    "交通運輸",
-    "停車問題",
-    "交通局",
-    "停車管理工程處",
-    "2026-01-05",
-    "2026-01-05",
-    "2026-01-12"
-  ),
-  ROW(
-    2,
-    "202601-004513",
-    "環境保護",
-    "垃圾清運",
-    "環境保護局",
-    "內湖區清潔隊",
-    "2026-01-05",
-    "2026-01-06",
-    "2026-01-09"
-  ),
-  ROW(
-    3,
-    "202601-004514",
-    "都市發展",
-    "建築管理",
-    "都市發展局",
-    "建築管理工程處",
-    "2026-01-06",
-    "2026-01-06",
-    "2026-01-20"
-  ),
-  ROW(
-    4,
-    "202601-004515",
-    "交通運輸",
-    "號誌標線",
-    "交通局",
-    "交通管制工程處",
-    "2026-01-06",
-    "2026-01-07",
-    "2026-01-15"
-  ),
-  ROW(
-    5,
-    "202601-004516",
-    "公園綠地",
-    "行道樹修剪",
-    "工務局",
-    "公園路燈工程管理處",
-    "2026-01-07",
-    "2026-01-07",
-    "2026-01-18"
-  ),
-  ROW(
-    6,
-    "202601-004517",
-    "環境保護",
-    "噪音",
-    "環境保護局",
-    "稽查大隊",
-    "2026-01-07",
-    "2026-01-08",
-    "2026-01-14"
-  ),
+const STATIONS = [
+  ST("YouBike2.0_捷運科技大樓站", "大安區", 13, 14, 28),
+  ST("YouBike2.0_臺北市政府", "信義區", 22, 8, 31),
+  ST("YouBike2.0_臺北車站(東三門)", "中正區", 0, 40, 41),
+  ST("YouBike2.0_大安森林公園站", "大安區", 17, 11, 29),
 ];
-
-// data.taipei 的回傳外層固定長這樣
-const envelope = (limit, offset) => ({
-  result: {
-    limit,
-    offset,
-    count: 48231,
-    sort: "",
-    results: ROWS.slice(offset, offset + limit),
-  },
-});
-
-const API = "/api/v1/dataset/7e5c4a52-…";
 
 const ENDPOINTS = [
   {
     method: "GET",
-    path: API + "?scope=resourceAquire&limit=1",
-    label: "先拿 1 筆看看長什麼樣",
-    data: envelope(1, 0),
+    path: "/dotapp/youbike/v2/youbike_immediate.json",
+    label: "拿全部站點（這個 API 一次給你全部）",
+    data: STATIONS,
   },
   {
     method: "GET",
-    path: API + "?scope=resourceAquire&limit=3",
-    label: "一次拿 3 筆",
-    data: envelope(3, 0),
+    path: "/dotapp/youbike/v2/youbike_immediate.json",
+    label: "只看大安區（自己篩）",
+    data: STATIONS.filter((x) => x.sarea === "大安區"),
   },
   {
     method: "GET",
-    path: API + "?scope=resourceAquire&limit=3&offset=3",
-    label: "跳過前 3 筆再拿 3 筆（分頁）",
-    data: envelope(3, 3),
+    path: "/dotapp/youbike/v2/youbike_immediate.json",
+    label: "只看還有車的站（自己篩）",
+    data: STATIONS.filter((x) => x.available_rent_bikes > 0),
   },
 ];
 
@@ -170,7 +93,7 @@ function ConceptStep({ onNext }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          ["🙋", "① 你發出請求 request", "照菜單點餐：「我要上個月的陳情案件分類」"],
+          ["🙋", "① 你發出請求 request", "照菜單點餐：「我要現在全市 YouBike 各站還剩幾台車」"],
           ["🧑‍🍳", "② 後端處理", "廚房照單做菜（查資料庫、運算）"],
           ["📦", "③ 回傳 response", "把資料打包成 JSON 端回來給你"],
         ].map(([i, t, d]) => (
@@ -189,9 +112,9 @@ function ConceptStep({ onNext }) {
         </code>
         ）、用什麼方法（<b className="text-ink">GET</b> 拿資料、<b className="text-ink">POST</b>{" "}
         送資料），回來的通常是 <b className="text-ink">JSON</b>。行政情境最常見的用法，就是
-        <b className="text-ink">串接市府開放資料</b>。這一關就用一份真的：研考會發布的
-        <b className="text-ink">「臺北市陳情系統類別資料」</b>
-        —— 每個月更新，記錄陳情案件的類別、受理機關與處理日期。
+        <b className="text-ink">串接市府開放資料</b>。這一關就用一份真的：
+        <b className="text-ink">YouBike2.0 即時資訊</b>
+        —— 每分鐘更新，全市每一站現在還剩幾台車、還有幾個空位。
       </div>
       <div
         className="callout"
@@ -204,7 +127,9 @@ function ConceptStep({ onNext }) {
         <div className="grid gap-2 sm:grid-cols-2 mt-2">
           <div>
             <div className="text-xs font-extrabold text-muted mb-1">✅ 有的欄位</div>
-            <div className="text-sm text-ink">{OPEN_DATA.fields.join("、")}</div>
+            <div className="text-sm text-ink">
+              {OPEN_DATA.fields.map(([k, zh]) => zh + "（" + k + "）").join("、")}
+            </div>
           </div>
           <div>
             <div className="text-xs font-extrabold text-muted mb-1">🚫 沒有的東西</div>
@@ -212,9 +137,9 @@ function ConceptStep({ onNext }) {
           </div>
         </div>
         <p className="text-sm text-ink mt-2.5 mb-0">
-          它敢公開，正是因為<b>個資的部分被拿掉了</b>
-          —— 只留下「哪一類、哪個機關、什麼時候」。這就是第 3 關講的界線：
-          <b>去識別化後的統計可以公開，含姓名電話的陳情原文不行。</b>
+          它敢公開，是因為它只到<b>「現況」這一層</b>
+          —— 哪一站現在剩幾台車，而不是誰借走了哪一台。這就是第 3 關講的界線：
+          <b>去識別化後的統計可以公開，帶得到個人的紀錄不行。</b>
         </p>
       </div>
 
@@ -331,8 +256,8 @@ function RealStep({ onFinish }) {
       <h2 className="text-2xl font-bold text-ink">打開一個真正的開放資料 API 🌍</h2>
       <div className="callout">
         很多 API 用 <b className="text-ink">GET</b> 的時候，其實在瀏覽器貼上網址就能直接看到回傳的
-        JSON。下面第一條就是<b className="text-ink">臺北市政府開放資料的真實 API</b>
-        ，點下去會在新分頁看到一整包 JSON（公開資料，不需登入、沒有個資）：
+        JSON。下面第一條就是<b className="text-ink">臺北市政府 YouBike 的真實即時 API</b>
+        ，點下去會在新分頁看到全市一千多站的資料（公開資料，不需登入、沒有個資）：
       </div>
 
       <div className="grid gap-2.5">
@@ -343,17 +268,7 @@ function RealStep({ onFinish }) {
           onClick={() => setOpened(true)}
           className="gh-btn gh-btn-row"
         >
-          <span>🔗 GET 臺北市開放資料 API（會直接看到 JSON）</span>
-          <span>↗</span>
-        </a>
-        <a
-          href={OPEN_DATA.datasetUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => setOpened(true)}
-          className="gh-btn gh-btn-row"
-        >
-          <span>🔗 這份資料的說明頁（欄位、更新頻率、授權）</span>
+          <span>🔗 GET YouBike 即時資訊（會直接看到一整包 JSON）</span>
           <span>↗</span>
         </a>
         <a
@@ -383,7 +298,7 @@ function RealStep({ onFinish }) {
       </div>
 
       <button type="button" className="btn btn-accent" onClick={downloadDashboard}>
-        ⬇ 下載 dashboard.html（陳情案件儀表板）
+        ⬇ 下載 dashboard.html（YouBike 即時看板）
       </button>
 
       <ol className="list-decimal pl-5 m-0 grid gap-2 text-sm">
