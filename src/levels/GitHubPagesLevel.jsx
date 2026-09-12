@@ -4,6 +4,7 @@ import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const REPO = "my-first-site";
 
@@ -49,9 +50,7 @@ export default function GitHubPagesLevel({ ctx }) {
       ctx={ctx}
       badge={BADGES.firstDeploy}
       done={(url) => ({
-        icon: "🚀",
-        title: "你把網站部署上線了！",
-        text: "這正是這個教學網站本身的做法。你已經完成整條主線：概念 → 模擬 → 真的部署。",
+        ...DONE.githubPages,
         secondary: { label: "打開我的網站 ↗", onClick: () => window.open(url, "_blank", "noopener") },
         primary: { label: "回地圖看看下一關 →", onClick: () => ctx.goMap() },
       })}

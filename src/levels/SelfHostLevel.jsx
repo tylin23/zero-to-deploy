@@ -3,6 +3,7 @@ import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const CMD = "python -m http.server 8000";
 
@@ -11,13 +12,7 @@ export default function SelfHostLevel({ ctx }) {
     <Level
       ctx={ctx}
       badge={BADGES.selfHost}
-      done={{
-        icon: "🖥️",
-        title: "自架：內網與對外的差別",
-        text: "關鍵不是技術有多難，而是：只給機關內部用，設定好就能跑；要讓民眾連得到，就必須先通過資安評估與核准，並交由資訊單位在受管控的環境提供。",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
-        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
-      }}
+      done={{ ...DONE.selfhost }}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,
         ({ next }) => <ChallengeStep onNext={next} />,

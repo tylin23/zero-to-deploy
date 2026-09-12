@@ -3,6 +3,7 @@ import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -27,13 +28,7 @@ export default function GasLevel({ ctx }) {
     <Level
       ctx={ctx}
       badge={BADGES.gasPush}
-      done={{
-        icon: "📬",
-        title: "自動推播達成！",
-        text: "你已經懂了自動化的骨架：一個觸發（定時或事件）→ 在雲端跑一段程式（GAS）→ 呼叫別人的 API 把訊息推出去。這就是很多「自動通知」背後的原理。",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
-        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
-      }}
+      done={{ ...DONE.gas }}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,
         ({ next }) => <SimStep onNext={next} />,

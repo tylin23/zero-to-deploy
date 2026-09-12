@@ -3,6 +3,7 @@ import Level, { Eyebrow } from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -12,10 +13,7 @@ export default function IntroLevel({ ctx }) {
       ctx={ctx}
       badge={BADGES.concept}
       done={{
-        icon: "🧭",
-        title: "第一關完成！",
-        text: "你已經懂了核心概念：部署 = 把檔案放到別人連得到的電腦上。接下來，我們用真正的服務「GitHub Pages」把它做出來。",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        ...DONE.intro,
         primary: { label: "前往 GitHub Pages 關 →", onClick: () => ctx.navigate("#/level/github-pages") },
       }}
       steps={[

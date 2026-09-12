@@ -4,6 +4,7 @@ import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -34,13 +35,7 @@ export default function ApiLevel({ ctx }) {
     <Level
       ctx={ctx}
       badge={BADGES.apiBasics}
-      done={{
-        icon: "🔌",
-        title: "API 入門達成！",
-        text: "你已經懂了 API 的核心：照著網址（endpoint）＋方法（GET/POST）發出 request，對方回你一包結構化的 JSON。之後很多部署（例如 AI 服務）都是靠 API 串起來的。",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
-        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
-      }}
+      done={{ ...DONE.api }}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,
         ({ next }) => <TesterStep onNext={next} />,

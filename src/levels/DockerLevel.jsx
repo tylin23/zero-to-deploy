@@ -3,6 +3,7 @@ import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -23,10 +24,7 @@ export default function DockerLevel({ ctx }) {
       ctx={ctx}
       badge={BADGES.docker}
       done={{
-        icon: "🐳",
-        title: "打包貨櫃達成！",
-        text: "你懂了 Docker 的核心：把 App 和它需要的環境一起打包成 image，任何裝了 Docker 的機器都能跑出一樣的結果，徹底解決「在我電腦可以跑」的問題。",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        ...DONE.docker,
         primary: { label: "看看最後一關 →", onClick: () => ctx.goMap() },
       }}
       steps={[

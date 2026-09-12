@@ -3,6 +3,7 @@ import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const PROCESS_MS = 900;
 
@@ -12,10 +13,8 @@ export default function ExeQueueLevel({ ctx }) {
       ctx={ctx}
       badge={BADGES.exeQueue}
       done={{
-        icon: "🏆",
-        title: "最後一關完成，全線通關！",
-        text: "你走完了整張部署地圖：從「網站怎麼被看到」到 GitHub Pages、API、自動推播、AI、自架、Docker，最後是 EXE 與工作佇列。恭喜你把部署的全貌都摸過一遍了！🎉",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        ...DONE.exeQueue,
+        secondary: { label: "回地圖看成果", onClick: () => ctx.goMap() },
         primary: { label: "回地圖 🏆", onClick: () => ctx.goMap() },
       }}
       steps={[

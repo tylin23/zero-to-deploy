@@ -84,6 +84,7 @@ src/
   data/levels.js         # 關卡地圖資料與徽章定義
   lib/confetti.js        # 過關彩帶
   content/quizzes.js     # 所有測驗題（集中管理，方便整批調整）
+  content/levelCopy.js   # 各關過關畫面的文案
   data/terms.js          # 名詞小教室的概念卡
   components/
     Level.jsx            # 關卡共用骨架（步驟、進度條、回上一步、過關畫面）
@@ -129,7 +130,9 @@ src/
    - `mapOrder` 加一筆（含 `phase: "pre" | "post"`、可選 `short` 地圖短標題）
    - `BADGES` 加徽章、`RISKS` 加該關的風險備注
    - 若是部署方式，`EVAL` 再加上難易度等評估維度
-4. 測驗題請寫在 `src/content/quizzes.js`，關卡內用 `<Quiz {...QUIZZES.yourKey} onCorrect={...} />`。
+4. 測驗題寫在 `src/content/quizzes.js`（用 `<Quiz {...QUIZZES.yourKey} onCorrect={...} />`）；
+   過關文案寫在 `src/content/levelCopy.js`（用 `done={{ ...DONE.yourKey }}`，
+   按鈕若與預設的「回地圖／看看下一關」相同可省略）。
 
 關卡就會自動出現在地圖上、可以點、也會算進進度。
 

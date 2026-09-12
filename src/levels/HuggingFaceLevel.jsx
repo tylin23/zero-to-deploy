@@ -4,6 +4,7 @@ import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -61,13 +62,7 @@ export default function HuggingFaceLevel({ ctx }) {
     <Level
       ctx={ctx}
       badge={BADGES.hfSpace}
-      done={{
-        icon: "🤗",
-        title: "AI 應用上線達成！",
-        text: "你已經看懂 AI 原生的部署方式：把模型或 App 交給 Hugging Face Spaces，它幫你 host 和跑，你只要一個網址就能分享互動式 AI。",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
-        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
-      }}
+      done={{ ...DONE.huggingface }}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,
         ({ next }) => <SimStep onNext={next} />,

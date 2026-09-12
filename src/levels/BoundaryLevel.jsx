@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Level from "../components/Level.jsx";
 import { BADGES } from "../data/levels.js";
+import { DONE } from "../content/levelCopy.js";
 
 // 三種判斷
 const CHOICES = [
@@ -49,10 +50,7 @@ export default function BoundaryLevel({ ctx }) {
       ctx={ctx}
       badge={BADGES.boundary}
       done={{
-        icon: "🚦",
-        title: "界線意識達成！",
-        text: "記住那句口訣：碰到「個資／機敏／對外正式服務／跨單位或全機關／帳號權限」，就停下來找資訊單位。接下來每一關，都在這條界線之內動手。",
-        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        ...DONE.boundary,
         primary: { label: "開始第一關 →", onClick: () => ctx.navigate("#/level/intro") },
       }}
       steps={[({ next }) => <RedLines onNext={next} />, ({ finish }) => <CaseGame onFinish={finish} />]}
