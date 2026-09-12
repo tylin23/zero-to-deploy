@@ -1,5 +1,6 @@
 import pkg from "playwright";
 import fs from "node:fs";
+import { STARTER_HTML } from "../src/content/starterCard.js";
 const { chromium } = pkg;
 const base = process.env.BASE_URL || "http://localhost:4173";
 const errs = [];
@@ -138,6 +139,39 @@ await st(
     await p.waitForSelector("text=權限一定要由後端把關");
   }
 );
+
+// 下載給學生的名片範本：學生會把它原封不動丟上 GitHub Pages，
+// 所以它自己必須守住這一關教的規則（單檔、無外部資源、無絕對路徑）
+await st("名片範本：自己就能跑，不依賴任何外部檔案", async () => {
+  const page = await ctx.newPage();
+  const errs2 = [];
+  page.on("pageerror", (e) => errs2.push("PAGEERR " + e.message));
+  await page.setContent(STARTER_HTML, { waitUntil: "networkidle" });
+  const r = await page.evaluate(() => ({
+    imgs: document.querySelectorAll("img").length,
+    links: document.querySelectorAll("a").length,
+    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    // 不能有只有自己電腦才有的路徑。只看真正會被載入的 src/href ——
+    // 註解裡那句「不要寫 C:\\Users\\…」是教學文字，不算。
+    abs: [...document.querySelectorAll("[src],[href]")]
+      .map((e) => e.getAttribute("src") || e.getAttribute("href") || "")
+      .some((u) => /^(file:\/\/\/|[A-Za-z]:\\)/.test(u)),
+    title: document.title,
+  }));
+  if (r.imgs !== 0) throw new Error("範本引用了外部圖片 " + r.imgs + " 張");
+  if (r.links < 8) throw new Error("連結按鈕只有 " + r.links + " 個");
+  if (r.abs) throw new Error("範本裡有本機絕對路徑");
+  if (!r.title.includes("電子名片")) throw new Error("標題是 " + r.title);
+  // 手機寬度不能橫向捲動
+  await page.setViewportSize({ width: 360, height: 800 });
+  await page.waitForTimeout(200);
+  const ovf = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+  );
+  if (ovf > 1) throw new Error("360px 橫向溢出 " + ovf + "px");
+  if (errs2.length) throw new Error(errs2.join(" | "));
+  await page.close();
+});
 
 await st("第二關：自己做的檔案有 5 個雷的提醒", async () => {
   await go("github-pages");
@@ -318,10 +352,19 @@ await st("導覽：桌機分頁列四個入口都會切換", async () => {
   // 目前分頁要標記 aria-current
   await p.locator("header nav button", { hasText: "選型指南" }).click();
   await p.waitForFunction(() => location.hash === "#/guide", null, { timeout: 2500 });
-  await p.waitForSelector("header nav button[aria-current=page]");
-  const cur = await p.$$eval("header nav button[aria-current=page]", (els) => els.map((e) => e.textContent));
+  // 等到 aria-current 真的落在「選型指南」再斷言：hash 是同步改的，
+  // 但 React 重繪是非同步的，直接讀會抓到上一個分頁的舊值
+  await p.waitForFunction(
+    () => {
+      const el = document.querySelector("header nav button[aria-current=page]");
+      return el && el.innerText.includes("選型指南");
+    },
+    null,
+    { timeout: 2500 }
+  );
+  // innerText 只取看得見的標籤（窄螢幕短標籤、寬螢幕全名，兩個都在 DOM 裡）
+  const cur = await p.$$eval("header nav button[aria-current=page]", (els) => els.map((e) => e.innerText));
   if (cur.length !== 1) throw new Error("aria-current 有 " + cur.length + " 個：" + cur.join(","));
-  if (!cur[0].includes("選型指南")) throw new Error("aria-current 在 " + cur[0]);
 });
 
 await st("導覽：手機底部分頁列可見且可切換", async () => {

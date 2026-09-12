@@ -5,33 +5,9 @@ import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
 import { BADGES } from "../data/levels.js";
 import { DONE } from "../content/levelCopy.js";
+import { STARTER_HTML } from "../content/starterCard.js";
 
 const REPO = "my-first-site";
-
-// 範本：一頁「可公開」的市府活動公告（不含任何個資）
-const STARTER_HTML = `<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>市民健康講座</title>
-  <style>
-    body { font-family: system-ui, sans-serif; display: grid; place-items: center;
-           min-height: 100vh; margin: 0; background: linear-gradient(120deg,#26418f,#3b7dd8); color:#fff; text-align:center; }
-    h1 { font-size: 2.4rem; }
-    p { font-size: 1.1rem; }
-  </style>
-</head>
-<body>
-  <div>
-    <h1>📢 市民健康講座</h1>
-    <p>時間：6/15（六）上午 9:00</p>
-    <p>地點：市立圖書館 3 樓演講廳　自由入座</p>
-    <p>主辦：市政府衛生局　洽詢：1999 市民熱線</p>
-    <!-- 注意：這頁會完全公開，只放可對外的公告資訊，勿放個資 -->
-  </div>
-</body>
-</html>`;
 
 function downloadStarter() {
   const blob = new Blob([STARTER_HTML], { type: "text/html" });
@@ -76,7 +52,7 @@ function ConceptStep({ onNext }) {
         GitHub Pages 是 GitHub 提供的<b className="text-ink">免費網站託管服務</b>
         。你把網頁檔案（HTML/CSS/JS）放進一個
         repository，打開開關，它就給你一個網址、幫你放上網。全程可以在網站上用滑鼠點完。很適合放
-        <b className="text-ink">可公開的公告、活動頁、開放資料儀表板</b>。
+        <b className="text-ink">電子名片、可公開的公告、活動頁、開放資料儀表板</b>。
       </div>
       <div
         className="callout"
@@ -333,11 +309,13 @@ function RealStep({ onFinish }) {
       <h2 className="text-2xl font-bold text-ink">換你在真的 GitHub 上部署 🚀</h2>
       <div className="callout">
         跟著清單一步步做。每做完一項就打勾。需要一個檔案的話，先
-        <b className="text-ink">下載我們準備好的 index.html</b> 去上傳就好。
+        <b className="text-ink">下載我們準備好的 index.html</b> 去上傳就好 —— 那是一頁
+        <b className="text-ink">電子名片</b>（頭像、聯絡方式、連結按鈕都有，手機也好看）。 做完別把 repo
+        刪掉，之後把內容改成你自己或科室的，它就一直是你的名片頁。
       </div>
 
       <button type="button" className="btn btn-accent" onClick={downloadStarter}>
-        ⬇ 下載範本 index.html
+        ⬇ 下載範本 index.html（電子名片）
       </button>
 
       <OwnFileChecklist />
