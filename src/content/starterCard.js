@@ -1,4 +1,4 @@
-// 第 2 關給學生下載的範本：一頁 Portaly 風格的「電子名片」。
+// 第 2 關給學生下載的範本：一頁 Portaly 風格的「電子名片」，主角是臺北市吉祥物熊讚。
 //
 // 為什麼是名片而不是活動公告：公告過期就沒用了，學生容易把 repo 砍掉；
 // 名片頁可以一直留著改成自己的（或科室的），這個 repo 就變成他的作品。
@@ -8,18 +8,21 @@
 //      所以不會有「圖片路徑只有我電腦有」的問題。
 //   2. 檔名 index.html、全小寫。
 //   3. RWD：手機一欄、桌機置中的窄卡片（Portaly 就是這個版型）。
+//
+// 頭像是照著熊讚的特徵（黑熊、白眼圈、白口鼻、藍綠色鼻子、白眉、開口笑）
+// 自己畫的「簡化示意圖」，不是官方圖檔。要換成官方圖請看檔案裡的註解。
 export const STARTER_HTML = `<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>臺北市政府｜電子名片</title>
+<title>熊讚 Bravo｜臺北市吉祥物電子名片</title>
 
 <style>
   /* ===== 想換顏色，只要改這兩行 ===== */
   :root{
-    --brand:#0f6b4f;
-    --brand-2:#17a67c;
+    --brand:#0f7c8a;
+    --brand-2:#1aa6b7;
 
     --ink:#1f2733; --muted:#6b7480; --line:#e6e8ec; --card:#fff; --bg:#f3f4f6;
   }
@@ -82,7 +85,7 @@ export const STARTER_HTML = `<!DOCTYPE html>
   }
   .links .ico{
     width:38px; height:38px; flex:0 0 auto; border-radius:11px;
-    background:color-mix(in srgb, var(--brand) 10%, #fff);
+    background:color-mix(in srgb, var(--brand) 12%, #fff);
     display:grid; place-items:center; color:var(--brand);
   }
   .links .ico svg{width:19px; height:19px}
@@ -114,79 +117,70 @@ export const STARTER_HTML = `<!DOCTYPE html>
   <div class="head">
 
     <!-- ===== 頭像 =====
-         現在放的是「市政大樓」示意圖。要換成真正的標誌或你的照片：
-         把下面整個 <svg>…</svg> 換成這一行，並且把 avatar.jpg
-         跟 index.html 放在同一個資料夾、一起上傳：
-             <img class="avatar" src="avatar.jpg" alt="頭像">
+         這是照著熊讚的特徵自己畫的「簡化示意圖」，不是官方圖檔。
+         要換成官方圖或你自己的照片，把下面整個 <svg>…</svg> 換成這一行，
+         並把 avatar.png 跟 index.html 放在同一個資料夾、一起上傳：
+             <img class="avatar" src="avatar.png" alt="頭像">
          注意：不要寫 C:\\Users\\... 這種路徑，那只有你的電腦找得到。 -->
-    <svg class="avatar" viewBox="0 0 106 106" role="img" aria-label="市政大樓示意圖">
+    <svg class="avatar" viewBox="0 0 106 106" role="img" aria-label="台灣黑熊示意圖">
       <defs>
-        <linearGradient id="av" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#0f6b4f"/><stop offset="1" stop-color="#17a67c"/>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#bfe4f7"/><stop offset="1" stop-color="#e4f3fc"/>
         </linearGradient>
+        <clipPath id="round"><circle cx="53" cy="53" r="53"/></clipPath>
       </defs>
-      <circle cx="53" cy="53" r="53" fill="url(#av)"/>
-      <g fill="#fff">
-        <rect x="49.5" y="17" width="7" height="11" rx="1.5"/>
-        <path d="M53 27 84 46H22z"/>
-        <rect x="28" y="50" width="7" height="24" rx="1"/>
-        <rect x="42" y="50" width="7" height="24" rx="1"/>
-        <rect x="57" y="50" width="7" height="24" rx="1"/>
-        <rect x="71" y="50" width="7" height="24" rx="1"/>
-        <rect x="22" y="77" width="62" height="7" rx="2"/>
+      <circle cx="53" cy="53" r="53" fill="url(#sky)"/>
+      <g clip-path="url(#round)">
+        <path d="M0 93q53-9 106 0v13H0z" fill="#bcdd77"/>
+        <circle cx="23" cy="24" r="13" fill="#1a1a1a"/>
+        <circle cx="83" cy="24" r="13" fill="#1a1a1a"/>
+        <circle cx="53" cy="50" r="34" fill="#1a1a1a"/>
+        <path d="M35 32q5.5-4.5 11 0" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <path d="M60 32q5.5-4.5 11 0" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <ellipse cx="40" cy="43" rx="8" ry="9" fill="#fff"/>
+        <ellipse cx="66" cy="43" rx="8" ry="9" fill="#fff"/>
+        <circle cx="40" cy="44" r="4.3" fill="#1a1a1a"/>
+        <circle cx="66" cy="44" r="4.3" fill="#1a1a1a"/>
+        <ellipse cx="53" cy="63" rx="20.5" ry="15" fill="#fff"/>
+        <ellipse cx="53" cy="57" rx="6.8" ry="4.4" fill="#1a94a8"/>
+        <path d="M41 65a12 11 0 0 0 24 0z" fill="#1a1a1a"/>
       </g>
     </svg>
 
     <!-- ===== 改這裡：名字、頭銜、簡介 ===== -->
     <h1 class="name">
-      臺北市政府
+      熊讚 Bravo
       <svg viewBox="0 0 24 24" fill="currentColor" aria-label="已認證"><path d="M12 2 9.6 4.4 6.3 4l-.5 3.3L2.8 8.9 4.4 12l-1.6 3.1 3 1.6.5 3.3 3.3-.4L12 22l2.4-2.4 3.3.4.5-3.3 3-1.6L19.6 12l1.6-3.1-3-1.6-.5-3.3-3.3.4z"/><path d="m10.7 15.3-3-3 1.4-1.4 1.6 1.6 4.2-4.2 1.4 1.4z" fill="#fff"/></svg>
     </h1>
-    <p class="role">市民服務 ・ 施政資訊 ・ 活動公告</p>
-    <p class="bio">歡迎市民多加利用各項線上服務。洽公前請先確認服務時間與所需文件。</p>
+    <p class="role">臺北市吉祥物 ・ 城市代言人</p>
+    <p class="bio">我是台灣黑熊，也是臺北的吉祥物！<br>帶大家一起認識臺北的活動、景點和市政服務。</p>
 
     <!-- ===== 改這裡：常見聯絡方式 icon 區 ===== -->
     <nav class="icons" aria-label="聯絡方式">
-      <a href="tel:+886227208889" aria-label="打電話">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
-      </a>
-      <a href="https://www.google.com/maps/search/?api=1&amp;query=臺北市信義區市府路1號" target="_blank" rel="noopener" aria-label="看地圖">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <a href="https://www.facebook.com/bravotaipei/" target="_blank" rel="noopener" aria-label="Facebook 粉絲團">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.44 18.63.07 12 .07S0 5.44 0 12.07c0 5.99 4.39 10.95 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.01 1.79-4.67 4.53-4.67 1.31 0 2.69.24 2.69.24v2.95h-1.51c-1.49 0-1.96.93-1.96 1.87v2.25h3.33l-.53 3.47h-2.8v8.38C19.61 23.02 24 18.06 24 12.07z"/></svg>
       </a>
       <a href="https://www.gov.taipei" target="_blank" rel="noopener" aria-label="官方網站">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       </a>
-      <a href="mailto:someone@example.gov.tw" aria-label="寄電子郵件">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=臺北市信義區市府路1號" target="_blank" rel="noopener" aria-label="看地圖">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </a>
+      <a href="tel:+886227208889" aria-label="打電話">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
       </a>
     </nav>
   </div>
 
-  <!-- ===== 改這裡：聯絡資訊 ===== -->
-  <div class="section">📇 聯絡資訊</div>
+  <!-- ===== 改這裡：熊讚的社群與連結 ===== -->
+  <div class="section">🐻 熊讚的社群與連結</div>
   <div class="links">
-    <a href="tel:+886227208889">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span>
-      <span class="txt">02-2720-8889<span class="sub">總機服務電話</span></span>
+    <a href="https://www.facebook.com/bravotaipei/" target="_blank" rel="noopener">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.44 18.63.07 12 .07S0 5.44 0 12.07c0 5.99 4.39 10.95 10.13 11.85v-8.38H7.08v-3.47h3.05V9.43c0-3.01 1.79-4.67 4.53-4.67 1.31 0 2.69.24 2.69.24v2.95h-1.51c-1.49 0-1.96.93-1.96 1.87v2.25h3.33l-.53 3.47h-2.8v8.38C19.61 23.02 24 18.06 24 12.07z"/></svg></span>
+      <span class="txt">熊讚 Bravo Taipei<span class="sub">Facebook 粉絲團</span></span>
       <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
     </a>
 
-    <a href="tel:1999">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 21 6v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
-      <span class="txt">1999 市民熱線<span class="sub">陳情、詢問、服務申請</span></span>
-      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-    </a>
-
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=臺北市信義區市府路1號" target="_blank" rel="noopener">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-      <span class="txt">臺北市信義區市府路1號<span class="sub">110204　點我開地圖</span></span>
-      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-    </a>
-  </div>
-
-  <!-- ===== 改這裡：想放幾顆按鈕就複製幾次 ===== -->
-  <div class="section">🔗 常用連結</div>
-  <div class="links">
     <a href="https://www.gov.taipei" target="_blank" rel="noopener">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
       <span class="txt">臺北市政府全球資訊網<span class="sub">施政資訊與各局處入口</span></span>
@@ -194,14 +188,30 @@ export const STARTER_HTML = `<!DOCTYPE html>
     </a>
 
     <a href="#">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg></span>
-      <span class="txt">線上申辦服務<span class="sub">把 href 換成你要連的網址</span></span>
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+      <span class="txt">最新活動行程<span class="sub">把 href 換成你要連的網址</span></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+    </a>
+  </div>
+
+  <!-- ===== 改這裡：聯絡資訊 ===== -->
+  <div class="section">📇 聯絡資訊</div>
+  <div class="links">
+    <a href="tel:1999">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 21 6v12L3 14z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
+      <span class="txt">1999 市民熱線<span class="sub">陳情、詢問、服務申請</span></span>
       <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
     </a>
 
-    <a href="#">
-      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
-      <span class="txt">最新活動公告<span class="sub">把 href 換成你要連的網址</span></span>
+    <a href="tel:+886227208889">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span>
+      <span class="txt">02-2720-8889<span class="sub">臺北市政府總機</span></span>
+      <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+    </a>
+
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=臺北市信義區市府路1號" target="_blank" rel="noopener">
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+      <span class="txt">臺北市信義區市府路1號<span class="sub">110204　點我開地圖</span></span>
       <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
     </a>
   </div>
