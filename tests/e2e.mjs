@@ -53,7 +53,14 @@ await st("3 界線判斷", async () => {
 
 await st("1 網站怎麼被看到（含前端／後端）", async () => {
   await go("intro");
-  // 第一步：request/response 動畫
+  // 第一步：本機 HTML vs 部署後的網址 —— 四個做法都要點過
+  await p.waitForSelector("text=在我電腦上跑得好好的");
+  for (const id of ["send", "share", "come", "deploy"]) {
+    await p.click(`[data-try=${id}] button`);
+  }
+  await B("懂了，那網址是怎麼運作的？").click();
+
+  // 第二步：request/response 動畫
   await p.waitForSelector("text=按「播放」看看資料怎麼跑");
   await B("▶ 播放").click();
   await p.waitForSelector("text=瀏覽器送出請求", { timeout: 4000 });
@@ -79,8 +86,35 @@ await st("1 網站怎麼被看到（含前端／後端）", async () => {
   await p.waitForSelector("text=第一關完成", { timeout: 4000 });
 });
 
+await st("第一關：本機 file:// 與上線 https:// 的對照", async () => {
+  await go("intro");
+  // 只點一個時不該放行
+  await p.click("[data-try=send] button");
+  if (await p.$("text=懂了，那網址是怎麼運作的？")) throw new Error("只點一個就出現下一步了");
+  for (const id of ["share", "come", "deploy"]) {
+    await p.click(`[data-try=${id}] button`);
+  }
+  // 兩條網址要同時出現，對照才成立
+  await p.waitForSelector("text=file:///C:/Users/你的帳號/Desktop/公告/index.html");
+  await p.waitForSelector("text=https://你的帳號.github.io/announce/");
+});
+
+await st("第二關：自己做的檔案有 5 個雷的提醒", async () => {
+  await go("github-pages");
+  await p.click("text=靜態網站：HTML");
+  await B("先在模擬介面練一次").click();
+  await B("我真的做一次").click();
+  await p.waitForSelector("text=要傳自己做的檔案？先看這 5 個雷");
+  await p.click("text=要傳自己做的檔案？先看這 5 個雷");
+  await p.waitForSelector("text=首頁檔名一定要是 index.html");
+});
+
 await st("第一關動畫：三個階段可以自己點、方向箭頭會跟著換", async () => {
   await go("intro");
+  for (const id of ["send", "share", "come", "deploy"]) {
+    await p.click(`[data-try=${id}] button`);
+  }
+  await B("懂了，那網址是怎麼運作的？").click();
   await p.click("text=② 回傳檔案");
   await p.waitForSelector("text=伺服器 → 瀏覽器");
   await p.click("text=① 送出請求");
