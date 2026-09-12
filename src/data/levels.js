@@ -1,14 +1,21 @@
 // 地圖上的所有關卡（含尚未開放的），對應備課大綱
 export const mapOrder = [
-  { id: "intro", emoji: "🌐", title: "網站是怎麼被看到的？", tagline: "部署的核心概念", status: "ready" },
-  { id: "github-pages", emoji: "📄", title: "GitHub Pages", tagline: "免費、純滑鼠，把靜態網站上線", status: "ready" },
-  { id: "api", emoji: "🔌", title: "API 基礎", tagline: "前後端怎麼對話", status: "ready" },
-  { id: "gas", emoji: "📬", title: "GAS + API 推送", tagline: "用 Google Apps Script 自動推播", status: "ready" },
-  { id: "huggingface", emoji: "🤗", title: "AI 原生 + Hugging Face", tagline: "把 AI 應用一鍵部署", status: "ready" },
-  { id: "selfhost", emoji: "🖥️", title: "Windows / Linux 自架", tagline: "用自己的電腦當伺服器", status: "ready" },
-  { id: "docker", emoji: "🐳", title: "Docker", tagline: "把 App 和環境一起打包", status: "ready" },
-  { id: "exe-queue", emoji: "📦", title: "EXE / Queue", tagline: "打包成程式、排隊處理任務", status: "ready" },
+  { id: "boundary", emoji: "🚦", title: "這個我可以自己做嗎？", short: "可以自己做嗎？", tagline: "先分清楚界線，再動手", status: "ready", phase: "pre" },
+  { id: "intro", emoji: "🌐", title: "網站是怎麼被看到的？", short: "網站怎麼被看到", tagline: "部署的核心概念", status: "ready", phase: "pre" },
+  { id: "github-pages", emoji: "📄", title: "GitHub Pages", tagline: "免費、純滑鼠，把靜態網站上線", status: "ready", phase: "pre" },
+  { id: "api", emoji: "🔌", title: "API 基礎", tagline: "前後端怎麼對話", status: "ready", phase: "pre" },
+  { id: "gas", emoji: "📬", title: "GAS + API 推送", short: "GAS 自動推送", tagline: "用 Google Apps Script 自動推播", status: "ready", phase: "pre" },
+  { id: "huggingface", emoji: "🤗", title: "AI 原生 + Hugging Face", short: "Hugging Face", tagline: "把 AI 應用一鍵部署", status: "ready", phase: "pre" },
+  { id: "selfhost", emoji: "🖥️", title: "Windows / Linux 自架", short: "自架伺服器", tagline: "內網自用與對外的差別", status: "ready", phase: "post" },
+  { id: "docker", emoji: "🐳", title: "Docker", tagline: "把 App 和環境一起打包", status: "ready", phase: "post" },
+  { id: "exe-queue", emoji: "📦", title: "EXE / Queue", tagline: "打包成程式、排隊處理任務", status: "ready", phase: "post" },
 ];
+
+// 兩階段：納管前（自己動手）→ 交給資訊單位納管 → 納管後（交接與正式環境）
+export const PHASES = {
+  pre: { label: "納管前：你可以自己做的", icon: "🙋" },
+  post: { label: "納管後：交接與正式環境", icon: "🏛️" },
+};
 
 export const totalReady = mapOrder.filter((l) => l.status === "ready").length;
 
@@ -77,6 +84,13 @@ export const diyText = { green: "🟢 可自己做", yellow: "🟡 要留意", r
 
 // 各部署方式的風險備注（公務／行政情境）。每一關頂部都會顯示。
 export const RISKS = {
+  boundary: {
+    level: "必讀",
+    points: [
+      "這一關不會上傳任何東西，但它決定了後面每一關你能做到哪裡。",
+      "口訣：碰到「個資／機敏／對外正式服務／跨單位或全機關／帳號權限」→ 停，先找資訊單位。",
+    ],
+  },
   intro: {
     level: "觀念",
     points: ["這關只教觀念，不會上傳任何東西。", "但請記得：只要「部署到網路上」，就等於把資料交到你電腦以外的地方，之後每一關都要想清楚『這份資料可以外流嗎？』"],
@@ -116,7 +130,7 @@ export const RISKS = {
     level: "中（自行負責）",
     points: [
       "只在機關內網／localhost 執行時，資料不出機關、相對可控，適合「不可公開」的內部工具。",
-      "一旦對外開放（public IP／port forwarding），就要自行負責更新修補、HTTPS 憑證、存取控制，並先經機關資安評估與核准。",
+      "一旦要「對外」提供服務，就必須先經機關資安評估與核准，並由資訊單位在受管控環境（機房／DMZ）提供、負責更新修補與監控 —— 這是機關層級的決定，不是個人可以自行開放的。",
     ],
   },
   docker: {
@@ -136,12 +150,13 @@ export const RISKS = {
 };
 
 export const BADGES = {
+  boundary: { id: "boundary", icon: "🚦", name: "界線意識", desc: "分得清自己做與該找資訊單位" },
   concept: { id: "concept", icon: "🧭", name: "概念啟航", desc: "看懂前端、伺服器與部署" },
   firstDeploy: { id: "first-deploy", icon: "🚀", name: "首次部署", desc: "把第一個網站放上 GitHub Pages" },
   apiBasics: { id: "api-basics", icon: "🔌", name: "API 入門", desc: "看懂 request / response 與 JSON" },
   gasPush: { id: "gas-push", icon: "📬", name: "自動推播", desc: "用 GAS 呼叫 API 自動送通知" },
   hfSpace: { id: "hf-space", icon: "🤗", name: "AI 上線", desc: "用 Hugging Face Spaces 部署 AI 應用" },
-  selfHost: { id: "self-host", icon: "🖥️", name: "自架伺服器", desc: "理解 port、防火牆與對外連線" },
+  selfHost: { id: "self-host", icon: "🖥️", name: "自架伺服器", desc: "分得清內網自用與對外服務" },
   docker: { id: "docker", icon: "🐳", name: "打包貨櫃", desc: "用 Docker 把 App 和環境一起帶著走" },
   exeQueue: { id: "exe-queue", icon: "📦", name: "打包與佇列", desc: "認識 EXE 執行檔與工作佇列" },
 };

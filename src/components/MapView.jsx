@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useProgress } from "../state/progress.jsx";
-import { mapOrder } from "../data/levels.js";
+import { mapOrder, PHASES } from "../data/levels.js";
 
 // 沿曲線把各節點中心連起來
 function buildPath(list) {
@@ -45,19 +45,31 @@ export default function MapView({ navigate }) {
   const layout = useMemo(() => {
     const W = w || 520;
     const n = mapOrder.length;
-    const gap = W < 420 ? 158 : 134;
+    const gap = 158; // 需容納「上一關標籤」與「目前關卡標記」不打架
     const padTop = 78, padBottom = 96;
     const amp = Math.min(W * 0.3, 150);
     const cx = W / 2;
-    const pts = mapOrder.map((_, i) => ({ x: cx + amp * Math.sin(i * 0.95 + 0.4), y: padTop + i * gap }));
-    const height = padTop + (n - 1) * gap + padBottom;
+    const DIV_GAP = 104; // 「交給資訊單位納管」分界關口的額外空間
+
+    let extra = 0, dividerY = null;
+    const pts = [];
+    mapOrder.forEach((l, i) => {
+      if (i > 0 && mapOrder[i - 1].phase === "pre" && l.phase === "post") {
+        const yPrev = padTop + (i - 1) * gap + extra;
+        extra += DIV_GAP;
+        dividerY = (yPrev + padTop + i * gap + extra) / 2;
+      }
+      pts.push({ x: cx + amp * Math.sin(i * 0.95 + 0.4), y: padTop + i * gap + extra });
+    });
+
+    const height = padTop + (n - 1) * gap + extra + padBottom;
     let lastDone = -1;
     mapOrder.forEach((l, i) => { if (isComplete(l.id)) lastDone = i; });
     return {
-      W, height, pts,
+      W, height, pts, dividerY,
       base: buildPath(pts),
       done: lastDone >= 1 ? buildPath(pts.slice(0, lastDone + 1)) : "",
-      finish: { x: cx, y: padTop + (n - 1) * gap + 60 },
+      finish: { x: cx, y: padTop + (n - 1) * gap + extra + 60 },
     };
     // completed 變動時要重畫進度線
   }, [w, completed]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -69,11 +81,17 @@ export default function MapView({ navigate }) {
       <div className="text-center mb-2">
         <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">部署地圖</span>
         <h1 className="text-[clamp(26px,5vw,38px)] font-bold text-ink">沿著路徑闖關 🗺️</h1>
-        <p className="text-muted text-sm">從起點一路往下走，每一站學會一種部署方式。</p>
+        <p className="text-muted text-sm">從「自己動手」一路走到「交接納管」。<b className="text-ink">前段你能自己做</b>，後段是交給資訊單位時要聽得懂的事。</p>
         <div className="flex flex-wrap gap-2 justify-center mt-2">
           <button type="button" onClick={() => navigate("#/guide")} className="btn btn-ghost !py-2 !px-4 !text-sm">🧭 選型指南</button>
           <button type="button" onClick={() => navigate("#/terms")} className="btn btn-ghost !py-2 !px-4 !text-sm">📇 名詞小教室</button>
         </div>
+      </div>
+
+      <div className="text-center mb-1">
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold border-2 border-line bg-surface text-ink">
+          {PHASES.pre.icon} {PHASES.pre.label}
+        </span>
       </div>
 
       <div ref={trailRef} data-testid="trail" className="relative mx-auto max-w-[560px]" style={{ height: layout.height }}>
@@ -83,6 +101,20 @@ export default function MapView({ navigate }) {
           {layout.done && <path d={layout.done} fill="none" stroke="var(--mint)" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />}
           <path d={layout.base} fill="none" stroke="color-mix(in srgb, var(--surface) 70%, transparent)" strokeWidth="4" strokeDasharray="2 16" strokeLinecap="round" />
         </svg>
+
+        {layout.dividerY != null && (
+          <div data-testid="phase-divider" className="absolute left-0 right-0 -translate-y-1/2 pointer-events-none px-1" style={{ top: layout.dividerY }}>
+            <div className="flex items-center gap-2">
+              <span className="flex-1 border-t-2 border-dashed" style={{ borderColor: "var(--border)" }} />
+              <span className="px-3.5 py-1.5 rounded-full text-xs font-extrabold border-2 whitespace-nowrap"
+                style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--ink)", boxShadow: "var(--shadow-sm)" }}>
+                {PHASES.post.icon} 交給資訊單位納管
+              </span>
+              <span className="flex-1 border-t-2 border-dashed" style={{ borderColor: "var(--border)" }} />
+            </div>
+            <div className="text-center text-[11px] text-muted mt-1.5">↓ 以下偏正式系統，多由資訊單位處理，了解即可</div>
+          </div>
+        )}
 
         {mapOrder.map((lv, i) => (
           <TrailNode key={lv.id} lv={lv} index={i} pos={layout.pts[i]}
@@ -136,7 +168,7 @@ function TrailNode({ lv, index, pos, done, current, navigate }) {
       {done && <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[15px] tracking-[-2px] whitespace-nowrap" style={{ textShadow: "0 2px 2px rgba(0,0,0,.15)" }}>⭐⭐⭐</span>}
 
       {current && (
-        <span className="absolute -top-[34px] left-1/2 -translate-x-1/2 text-[12px] font-bold py-[3px] px-3 rounded-full whitespace-nowrap animate-bob"
+        <span className="absolute -top-[26px] left-1/2 -translate-x-1/2 text-[12px] font-bold py-[3px] px-3 rounded-full whitespace-nowrap animate-bob"
           style={{ background: "var(--ink)", color: "var(--surface)", boxShadow: "var(--shadow-sm)" }}>從這開始</span>
       )}
 
@@ -153,9 +185,9 @@ function TrailNode({ lv, index, pos, done, current, navigate }) {
         {done && <span className="absolute text-[34px] text-white">✓</span>}
       </button>
 
-      <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-max max-w-[124px] sm:max-w-[150px] text-center">
-        <div className={`font-bold text-[12px] sm:text-sm leading-tight px-2.5 py-0.5 rounded-full ${locked ? "text-muted" : "text-ink"}`}
-          style={{ background: "color-mix(in srgb, var(--surface) 80%, transparent)" }}>{lv.title}</div>
+      <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-max text-center">
+        <div className={`font-bold text-[12px] sm:text-sm leading-tight px-2.5 py-0.5 rounded-full whitespace-nowrap ${locked ? "text-muted" : "text-ink"}`}
+          style={{ background: "color-mix(in srgb, var(--surface) 80%, transparent)" }}>{lv.short || lv.title}</div>
       </div>
     </div>
   );

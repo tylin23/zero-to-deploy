@@ -11,6 +11,7 @@ import EvalBar from "./components/EvalBar.jsx";
 import Guide from "./components/Guide.jsx";
 import TermsPage from "./components/TermsPage.jsx";
 import { LEVEL_TERMS, termById } from "./data/terms.js";
+import BoundaryLevel from "./levels/BoundaryLevel.jsx";
 import IntroLevel from "./levels/IntroLevel.jsx";
 import GitHubPagesLevel from "./levels/GitHubPagesLevel.jsx";
 import ApiLevel from "./levels/ApiLevel.jsx";
@@ -21,6 +22,7 @@ import DockerLevel from "./levels/DockerLevel.jsx";
 import ExeQueueLevel from "./levels/ExeQueueLevel.jsx";
 
 const LEVELS = {
+  boundary: BoundaryLevel,
   intro: IntroLevel,
   "github-pages": GitHubPagesLevel,
   api: ApiLevel,
