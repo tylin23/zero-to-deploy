@@ -100,18 +100,10 @@ export default function MapView({ navigate }) {
           ，後段是交給資訊單位時要聽得懂的事。
         </p>
         <div className="flex flex-wrap gap-2 justify-center mt-2">
-          <button
-            type="button"
-            onClick={() => navigate("#/guide")}
-            className="btn btn-ghost !py-2 !px-4 !text-sm"
-          >
+          <button type="button" onClick={() => navigate("#/guide")} className="btn btn-ghost btn-sm">
             🧭 選型指南
           </button>
-          <button
-            type="button"
-            onClick={() => navigate("#/terms")}
-            className="btn btn-ghost !py-2 !px-4 !text-sm"
-          >
+          <button type="button" onClick={() => navigate("#/terms")} className="btn btn-ghost btn-sm">
             📇 名詞小教室
           </button>
         </div>

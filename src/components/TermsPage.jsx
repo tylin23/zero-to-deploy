@@ -72,7 +72,7 @@ export default function TermsPage({ navigate, focusId }) {
 function TermCard({ t, isOpen, onToggle, navigate, innerRef }) {
   const cat = CAT[t.cat];
   return (
-    <div ref={innerRef} className="card !p-0 overflow-hidden scroll-mt-24">
+    <div ref={innerRef} className="card card-flush overflow-hidden scroll-mt-24">
       <button type="button" onClick={onToggle} className="w-full text-left p-4 sm:p-5 flex gap-3 items-start">
         <span className="text-3xl leading-none">{t.emoji}</span>
         <div className="flex-1">
@@ -111,21 +111,12 @@ function TermCard({ t, isOpen, onToggle, navigate, innerRef }) {
           {(t.goLevel || t.related) && (
             <div className="flex flex-wrap gap-2 pt-1">
               {t.goLevel && (
-                <button
-                  type="button"
-                  className="gh-btn !py-2"
-                  onClick={() => navigate("#/level/" + t.goLevel)}
-                >
+                <button type="button" className="gh-btn" onClick={() => navigate("#/level/" + t.goLevel)}>
                   🎮 去玩「{levelMeta(t.goLevel).title}」互動關 →
                 </button>
               )}
               {(t.related || []).map((lid) => (
-                <button
-                  key={lid}
-                  type="button"
-                  className="gh-btn !py-2"
-                  onClick={() => navigate("#/level/" + lid)}
-                >
+                <button key={lid} type="button" className="gh-btn" onClick={() => navigate("#/level/" + lid)}>
                   🔗 相關關卡：{levelMeta(lid).emoji} {levelMeta(lid).title}
                 </button>
               ))}
@@ -173,13 +164,13 @@ function CacheDemo() {
       <div className="flex flex-wrap gap-2 items-center">
         <button
           type="button"
-          className="btn btn-accent !py-2 !px-4 !text-sm"
+          className="btn btn-accent btn-sm"
           onClick={query}
           disabled={status === "loading"}
         >
           🔍 查詢空氣品質
         </button>
-        <button type="button" className="gh-btn !py-2" onClick={invalidate}>
+        <button type="button" className="gh-btn" onClick={invalidate}>
           🔄 資料更新了（清快取）
         </button>
         <span
@@ -240,7 +231,7 @@ function IdemDemo() {
         />
         開啟冪等（用「申請編號」判斷是不是同一筆）
       </label>
-      <button type="button" className="btn btn-accent !py-2 !px-4 !text-sm" onClick={submit}>
+      <button type="button" className="btn btn-accent btn-sm" onClick={submit}>
         📨 民眾送出申請
       </button>
 

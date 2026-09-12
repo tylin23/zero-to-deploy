@@ -44,7 +44,7 @@ export default function Guide({ navigate }) {
             <div className="mt-2">
               <button
                 type="button"
-                className="btn btn-primary !py-2 !px-4 !text-sm"
+                className="btn btn-primary btn-sm"
                 onClick={() => navigate("#/level/" + pick.to)}
               >
                 前往這一關 →

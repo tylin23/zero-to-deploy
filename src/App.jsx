@@ -170,7 +170,7 @@ function RelatedTerms({ ids, navigate }) {
             key={tid}
             type="button"
             onClick={() => navigate("#/terms/" + tid)}
-            className="gh-btn !py-1.5"
+            className="gh-btn gh-btn-sm"
           >
             {t.emoji} {t.name}
           </button>

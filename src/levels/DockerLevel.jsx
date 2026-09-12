@@ -172,7 +172,7 @@ function BuildStep({ onNext }) {
               ["🖥️", "同事的乾淨電腦"],
               ["☁️", "雲端伺服器"],
             ].map(([i, t]) => (
-              <div key={t} className="card text-center !p-4">
+              <div key={t} className="card card-sm text-center">
                 <div className="text-3xl">{i}</div>
                 <div className="text-sm font-bold text-ink mt-1">{t}</div>
                 <div className="text-xs text-muted">裝了 Docker</div>
@@ -244,7 +244,7 @@ function RealStep({ onFinish }) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-[13px] font-bold">Dockerfile</span>
-          <button type="button" className="gh-btn !py-1.5" onClick={copy}>
+          <button type="button" className="gh-btn gh-btn-sm" onClick={copy}>
             {copied ? "✓ 已複製" : "📋 複製"}
           </button>
         </div>

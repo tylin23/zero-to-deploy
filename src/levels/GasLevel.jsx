@@ -117,7 +117,7 @@ function SimStep({ onNext }) {
       <div>
         <label className="text-[13px] font-bold block mb-1.5">① 要推播的訊息（用案號，勿放民眾個資）</label>
         <input
-          className="gh-input !font-sans"
+          className="gh-input gh-input-sans"
           value={msg}
           onChange={(e) => setMsg(e.target.value)}
           placeholder="輸入要自動送出的通知內容"
@@ -132,7 +132,7 @@ function SimStep({ onNext }) {
               key={t.id}
               type="button"
               onClick={() => setTrigger(t.id)}
-              className={`gh-btn !py-2.5 ${trigger === t.id ? "!border-primary !bg-primarySoft text-primary" : ""}`}
+              className={`gh-btn.5 ${trigger === t.id ? "!border-primary !bg-primarySoft text-primary" : ""}`}
             >
               {t.icon} {t.label}
               <span className="text-muted font-normal ml-1">· {t.sub}</span>
@@ -287,7 +287,7 @@ function RealStep({ onFinish }) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-[13px] font-bold">GAS 程式碼（可直接複製）</span>
-          <button type="button" className="gh-btn !py-1.5" onClick={copy}>
+          <button type="button" className="gh-btn gh-btn-sm" onClick={copy}>
             {copied ? "✓ 已複製" : "📋 複製"}
           </button>
         </div>

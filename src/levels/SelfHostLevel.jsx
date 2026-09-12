@@ -190,10 +190,10 @@ function ChallengeStep({ onNext }) {
       </div>
 
       <div className="flex flex-wrap gap-2.5 justify-center">
-        <button type="button" className="btn btn-accent !py-2.5 !px-5 !text-sm" onClick={tryInternal}>
+        <button type="button" className="btn btn-accent btn-md" onClick={tryInternal}>
           👩‍💼 同仁從內網連線
         </button>
-        <button type="button" className="btn btn-ghost !py-2.5 !px-5 !text-sm" onClick={tryExternal}>
+        <button type="button" className="btn btn-ghost btn-md" onClick={tryExternal}>
           🧑‍💻 民眾從外網連線
         </button>
       </div>
@@ -247,7 +247,7 @@ function RealStep({ onFinish }) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-[13px] font-bold">終端機指令</span>
-          <button type="button" className="gh-btn !py-1.5" onClick={copy}>
+          <button type="button" className="gh-btn gh-btn-sm" onClick={copy}>
             {copied ? "✓ 已複製" : "📋 複製"}
           </button>
         </div>

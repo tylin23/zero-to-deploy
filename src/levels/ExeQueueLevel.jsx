@@ -116,7 +116,7 @@ function QueueStep({ onNext }) {
           ["處理中", processing, "var(--primary)"],
           ["已完成", done, "var(--success)"],
         ].map(([label, n, c]) => (
-          <div key={label} className="card !p-3">
+          <div key={label} className="card card-sm">
             <div className="text-2xl font-extrabold" style={{ color: c }}>
               {n}
             </div>
@@ -170,14 +170,14 @@ function ExeStep({ onFinish }) {
       </p>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <div className="card text-center !p-4">
+        <div className="card card-sm text-center">
           <div className="text-3xl">📄</div>
           <div className="text-sm font-bold text-ink mt-1">你的程式</div>
           <div className="text-xs text-muted">＋ 執行環境</div>
         </div>
         <div className="text-2xl text-muted">→</div>
         <div
-          className="card text-center !p-4"
+          className="card card-sm text-center"
           style={{ borderColor: packed ? "var(--mint)" : "var(--border)" }}
         >
           <div className="text-3xl">{packed ? "📦" : "❔"}</div>

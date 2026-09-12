@@ -144,7 +144,7 @@ function TesterStep({ onNext }) {
           </code>
           <button
             type="button"
-            className="btn btn-primary !py-2 !px-4 !text-sm"
+            className="btn btn-primary btn-sm"
             onClick={send}
             disabled={status === "loading"}
           >
@@ -209,7 +209,7 @@ function RealStep({ onFinish }) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setOpened(true)}
-          className="gh-btn justify-between !py-3 !text-[15px]"
+          className="gh-btn gh-btn-row"
         >
           <span>🔗 GET 台北即時天氣（開放資料 JSON）</span>
           <span>↗</span>
@@ -219,7 +219,7 @@ function RealStep({ onFinish }) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setOpened(true)}
-          className="gh-btn justify-between !py-3 !text-[15px]"
+          className="gh-btn gh-btn-row"
         >
           <span>🔗 逛逛「政府資料開放平臺」data.gov.tw</span>
           <span>↗</span>

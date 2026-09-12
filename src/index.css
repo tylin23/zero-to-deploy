@@ -183,6 +183,36 @@
     border-left-color: var(--primary);
     background: var(--primary-soft);
   }
+
+  /* ---- 尺寸與狀態變體（取代散落各處的 ! 覆寫；宣告在基底之後以取得優先權） ---- */
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+  .btn-md {
+    @apply px-5 py-2.5 text-sm;
+  }
+  .gh-btn-sm {
+    @apply py-1.5;
+  }
+  /* 整列式的連結按鈕（例如「去逛開放資料平臺 ↗」） */
+  .gh-btn-row {
+    @apply justify-between py-3 text-[15px];
+  }
+  /* 被選取的 gh-btn（例如 SDK 選項） */
+  .gh-btn-selected {
+    @apply border-primary bg-primarySoft text-primary;
+  }
+  /* 需要用一般字體（非等寬）的輸入框 */
+  .gh-input-sans {
+    @apply font-sans;
+  }
+  /* 卡片尺寸變體 */
+  .card-sm {
+    @apply p-4;
+  }
+  .card-flush {
+    @apply p-0;
+  }
 }
 
 /* 慶祝彩帶 */

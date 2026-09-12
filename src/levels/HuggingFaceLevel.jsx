@@ -153,7 +153,7 @@ function SimStep({ onNext }) {
           <div className="mb-3.5">
             <label className="text-[13px] font-bold block mb-1.5">Select the SDK</label>
             <div className="flex flex-wrap gap-2">
-              <span className="gh-btn !border-primary !bg-primarySoft text-primary">🎛️ Gradio</span>
+              <span className="gh-btn gh-btn-selected">🎛️ Gradio</span>
               <span className="gh-btn opacity-60">Streamlit</span>
               <span className="gh-btn opacity-60">Static</span>
             </div>
@@ -234,17 +234,12 @@ function SentimentDemo({ onAnalyzed }) {
         輸入一則民眾回饋（示範用去識別化文字），AI 幫你判斷情緒
       </label>
       <textarea
-        className="gh-input !font-sans resize-none"
+        className="gh-input gh-input-sans resize-none"
         rows={2}
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <button
-        type="button"
-        className="btn btn-accent !py-2 !px-5 !text-sm mt-2.5"
-        onClick={run}
-        disabled={loading}
-      >
+      <button type="button" className="btn btn-accent btn-md mt-2.5" onClick={run} disabled={loading}>
         {loading ? "分析中…" : "分析 Analyze"}
       </button>
 
@@ -296,7 +291,7 @@ function RealStep({ onFinish }) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setOpened(true)}
-          className="gh-btn justify-between !py-3 !text-[15px]"
+          className="gh-btn gh-btn-row"
         >
           <span>🔗 逛逛 Hugging Face Spaces</span>
           <span>↗</span>
@@ -306,7 +301,7 @@ function RealStep({ onFinish }) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setOpened(true)}
-          className="gh-btn justify-between !py-3 !text-[15px]"
+          className="gh-btn gh-btn-row"
         >
           <span>🔗 建立我的第一個 Space</span>
           <span>↗</span>
