@@ -8,12 +8,14 @@ import IntroLevel from "./levels/IntroLevel.jsx";
 import GitHubPagesLevel from "./levels/GitHubPagesLevel.jsx";
 import ApiLevel from "./levels/ApiLevel.jsx";
 import GasLevel from "./levels/GasLevel.jsx";
+import HuggingFaceLevel from "./levels/HuggingFaceLevel.jsx";
 
 const LEVELS = {
   intro: IntroLevel,
   "github-pages": GitHubPagesLevel,
   api: ApiLevel,
   gas: GasLevel,
+  huggingface: HuggingFaceLevel,
 };
 
 export default function App() {
