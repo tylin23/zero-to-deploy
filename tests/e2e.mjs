@@ -1,4 +1,5 @@
 import pkg from "playwright";
+import fs from "node:fs";
 const { chromium } = pkg;
 const base = process.env.BASE_URL || "http://localhost:4173";
 const errs = [];
@@ -98,6 +99,43 @@ await st("第一關：本機 file:// 與上線 https:// 的對照", async () => 
   await p.waitForSelector("text=file:///C:/Users/你的帳號/Desktop/公告/index.html");
   await p.waitForSelector("text=https://你的帳號.github.io/announce/");
 });
+
+// 場景圖是老師另外放進 public/images 的，沒有檔案時整塊不顯示（不會開天窗）
+const hasScene = fs.existsSync("public/images/service-center.jpg");
+
+await st(
+  `前端/後端場景圖${hasScene ? "：6 個標記都能叫出說明" : "（public/images 還沒放圖，略過）"}`,
+  async () => {
+    if (!hasScene) return;
+    await go("intro");
+    for (const id of ["send", "share", "come", "deploy"]) await p.click(`[data-try=${id}] button`);
+    await B("懂了，那網址是怎麼運作的？").click();
+    await B("我懂了，下一步").click();
+    await p.waitForSelector("figure img");
+
+    const ms = await p.$$("figure button[aria-expanded]");
+    if (ms.length !== 6) throw new Error("標記數量 " + ms.length);
+
+    for (let i = 0; i < ms.length; i++) {
+      await ms[i].hover();
+      await p.waitForTimeout(200);
+      // 說明框必須完整落在圖片範圍內，不能被切掉
+      const out = await p.evaluate(() => {
+        const fig = document.querySelector("figure > div").getBoundingClientRect();
+        const tip = document.querySelector("figure [role=status]");
+        if (!tip) return "沒有說明框";
+        const t = tip.getBoundingClientRect();
+        if (t.width < 120) return "說明框被擠成 " + Math.round(t.width) + "px";
+        const over = Math.max(fig.left - t.left, t.right - fig.right, fig.top - t.top, t.bottom - fig.bottom);
+        return over > 1 ? "超出圖片 " + Math.round(over) + "px" : null;
+      });
+      if (out) throw new Error(`標記 ${i + 1}：${out}`);
+    }
+    // 抽號碼牌要講到佇列
+    await ms[1].hover();
+    await p.waitForSelector("text=佇列（Queue）");
+  }
+);
 
 await st("第二關：自己做的檔案有 5 個雷的提醒", async () => {
   await go("github-pages");
