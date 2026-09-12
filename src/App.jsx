@@ -7,11 +7,13 @@ import MapView from "./components/MapView.jsx";
 import IntroLevel from "./levels/IntroLevel.jsx";
 import GitHubPagesLevel from "./levels/GitHubPagesLevel.jsx";
 import ApiLevel from "./levels/ApiLevel.jsx";
+import GasLevel from "./levels/GasLevel.jsx";
 
 const LEVELS = {
   intro: IntroLevel,
   "github-pages": GitHubPagesLevel,
   api: ApiLevel,
+  gas: GasLevel,
 };
 
 export default function App() {
