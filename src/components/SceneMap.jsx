@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 /**
  * 市民服務中心場景圖：圖上有幾個往下指的標記，滑鼠移上去／點一下／用鍵盤 Tab 到，
@@ -29,28 +29,7 @@ const SPOTS = [
     side: "back",
     name: "抽號碼機",
     real: "抽一張號碼牌，系統記下你的順序，再照順序一個一個叫號。",
-    tech: "這就是「佇列（Queue）」。要一次寄幾千封市民通知、或產一大批月報表時，也是把任務排成一列，背景一個一個處理，才不會一次塞爆。",
-    term: "queue",
-  },
-  {
-    id: "phone",
-    x: 30,
-    y: 75,
-    icon: "📱",
-    side: "front",
-    name: "民眾手上的手機",
-    real: "同一件事，有人到現場辦，也有人直接用手機辦。",
-    tech: "所以同一個網站，電腦和手機都要能看。版面怎麼排，是在市民自己的裝置上算出來的 —— 那是前端的工作。",
-  },
-  {
-    id: "seats",
-    x: 42,
-    y: 86,
-    icon: "🪑",
-    side: null,
-    name: "等候區座椅",
-    real: "抽完號碼就可以去坐著，不必站在櫃台前等到好。",
-    tech: "這叫「非同步」。系統先回你一句「收到了，案號 ○○○」，真正的處理在背景做完再通知你 —— 使用者才不會覺得整個卡住。",
+    tech: "這就是「佇列（Queue）」。要一次寄幾千封市民通知、或產一大批月報表時，也是把任務排成一列，背景一個一個處理。好處是：你抽完號碼就能去坐著等，系統先回你一句「收到了」，不必站在櫃台前等到好。",
     term: "queue",
   },
   {
@@ -59,9 +38,20 @@ const SPOTS = [
     y: 38,
     icon: "🙋",
     side: "front",
-    name: "櫃台",
+    name: "一般櫃台",
     real: "民眾唯一看得到、摸得到的一面：承辦人員、申請表、指示牌。",
     tech: "這就是「前端」。畫面、文字、按鈕、表單長什麼樣，都在這一層。",
+  },
+  {
+    id: "priority",
+    x: 80,
+    y: 52,
+    icon: "👵",
+    side: "back",
+    name: "敬老／愛心櫃台",
+    real: "不是每個人都能走這一條。要先確認身分（例如敬老卡、年齡），符合的人才用得到這個專門通道。",
+    tech: "這其實是兩件事：先確認「你是誰」（登入），再決定「你能用什麼」（權限）。系統裡最常見的是「承辦看得到名冊、其他科室看不到」。⚠️ 權限一定要由後端把關 —— 前端只把按鈕藏起來等於門沒鎖。",
+    term: "authz",
   },
   {
     id: "archive",
@@ -131,7 +121,7 @@ export default function SceneMap({ navigate }) {
       </div>
 
       <figcaption className="text-muted text-[13px] mt-2 text-center">
-        把滑鼠移到圖上的 <b className="text-ink">6 個標記</b> 上（手機直接點），
+        把滑鼠移到圖上的 <b className="text-ink">5 個標記</b> 上（手機直接點），
         看看現場的每個東西對應到網站的什麼。
       </figcaption>
 
@@ -197,12 +187,37 @@ function Marker({ s, n, active, onEnter, onLeave, onPin }) {
 
 function Tip({ spot, navigate, floating = false }) {
   const side = spot.side ? SIDE_LABEL[spot.side] : null;
-  // 浮動版：圖上方三分之一的標記，說明框改放到下面，才不會超出圖外
-  const below = spot.y < 40;
+  const ref = useRef(null);
+  const [top, setTop] = useState(null);
+
+  // 說明框的高度會隨文字長短改變，純用 CSS 的上／下錨定一定會有某個標記爆版
+  //（實測敬老櫃台那個就超出圖的上緣 41px）。改成量完實際高度再決定放哪：
+  // 先試標記上方，放不下就翻到下方，兩邊都不夠就貼齊邊界。
+  useLayoutEffect(() => {
+    if (!floating) return;
+    const place = () => {
+      const el = ref.current;
+      const box = el?.offsetParent;
+      if (!el || !box) return;
+      const H = el.offsetHeight;
+      const CH = box.clientHeight;
+      const py = (spot.y / 100) * CH;
+      let t = py - 26 - H; // 放上方
+      if (t < 8) t = py + 14; // 放不下 → 翻到下方
+      if (t + H > CH - 8) t = Math.max(8, CH - 8 - H); // 還是超出 → 貼齊
+      setTop(t);
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [spot.id, spot.y, floating]);
+
   const pos = floating
     ? {
         left: `clamp(8px, ${spot.x}%, calc(100% - 8px))`,
-        [below ? "top" : "bottom"]: below ? `calc(${spot.y}% + 14px)` : `calc(${100 - spot.y}% + 26px)`,
+        top: top == null ? 0 : top,
+        // 量好之前先不要露出來，免得閃一下
+        opacity: top == null ? 0 : 1,
         transform: `translateX(${spot.x < 28 ? "-10%" : spot.x > 72 ? "-90%" : "-50%"})`,
         // 一定要給明確寬度：只設 left 的絕對定位元素會被右邊界擠成細長條，
         // transform 只是視覺位移，救不回已經算好的寬度。
@@ -212,6 +227,7 @@ function Tip({ spot, navigate, floating = false }) {
 
   return (
     <div
+      ref={ref}
       role="status"
       className={
         floating

@@ -104,7 +104,7 @@ await st("第一關：本機 file:// 與上線 https:// 的對照", async () => 
 const hasScene = fs.existsSync("public/images/service-center.jpg");
 
 await st(
-  `前端/後端場景圖${hasScene ? "：6 個標記都能叫出說明" : "（public/images 還沒放圖，略過）"}`,
+  `前端/後端場景圖${hasScene ? "：5 個標記都能叫出說明" : "（public/images 還沒放圖，略過）"}`,
   async () => {
     if (!hasScene) return;
     await go("intro");
@@ -114,7 +114,7 @@ await st(
     await p.waitForSelector("figure img");
 
     const ms = await p.$$("figure button[aria-expanded]");
-    if (ms.length !== 6) throw new Error("標記數量 " + ms.length);
+    if (ms.length !== 5) throw new Error("標記數量 " + ms.length);
 
     for (let i = 0; i < ms.length; i++) {
       await ms[i].hover();
@@ -131,9 +131,11 @@ await st(
       });
       if (out) throw new Error(`標記 ${i + 1}：${out}`);
     }
-    // 抽號碼牌要講到佇列
+    // 抽號碼牌要講到佇列、敬老櫃台要講到權限由後端把關
     await ms[1].hover();
     await p.waitForSelector("text=佇列（Queue）");
+    await ms[3].hover();
+    await p.waitForSelector("text=權限一定要由後端把關");
   }
 );
 
