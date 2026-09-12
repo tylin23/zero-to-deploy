@@ -61,7 +61,7 @@ await st("1 網站怎麼被看到（含前端／後端）", async () => {
   await B("我懂了，下一步").click();
 
   // 第二步：前端／後端分類，六題都要答對
-  await p.waitForSelector("text=公所的前台和後台");
+  await p.waitForSelector("text=市府的前台和後台");
   const rows = await p.$$("[data-fb-row]");
   if (rows.length !== 6) throw new Error("分類題數 " + rows.length);
   for (const r of rows) {
@@ -131,7 +131,7 @@ await st("5 GAS 推送", async () => {
   await p.click("text=讓它跑一次給你看");
   await p.click("text=定時觸發");
   await B("執行 GAS").click();
-  await p.waitForSelector("text=申辦通知機器人", { timeout: 3000 });
+  await p.waitForSelector("text=市政信箱通知機器人", { timeout: 3000 });
   await B("看看真的怎麼設").click();
   await B("把訊息 POST 出去").click();
   await B("完成這一關").click();
@@ -142,7 +142,7 @@ await st("6 Hugging Face", async () => {
   await go("huggingface");
   await p.click("text=部署一個 AI Demo 來玩");
   await p.click(".gh-btn-green");
-  await p.waitForSelector("text=民意情緒分析 Demo", { timeout: 4000 });
+  await p.waitForSelector("text=市政信箱意見情緒分析 Demo", { timeout: 4000 });
   await B("分析 Analyze").click();
   await p.waitForSelector("text=信心", { timeout: 3000 });
   await B("看看真的怎麼做").click();
@@ -157,7 +157,7 @@ await st("7 自架（內網/對外）", async () => {
   const sw = await p.$$("[role=switch]");
   await sw[0].click();
   await sw[1].click();
-  await p.click("text=同仁從內網連線");
+  await p.click("text=同仁從市府內網連線");
   await p.waitForSelector("text=資料完全沒有離開機關", { timeout: 3000 });
   await B("在自己電腦實際跑一個").click();
   await B("對外提供服務要先經資安評估與核准").click();

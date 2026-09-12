@@ -73,7 +73,7 @@ export default function Guide({ navigate }) {
         }}
       >
         <b className="text-ink">不論用哪一種：</b>
-        只要碰到「個資／機敏／對外正式服務／跨單位或全機關」，就停下來找資訊單位。詳見{" "}
+        只要碰到「個資／機敏／對外正式服務／跨局處或全市府」，就停下來找資訊單位。詳見{" "}
         <button
           type="button"
           onClick={() => navigate("#/risk")}

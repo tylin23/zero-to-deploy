@@ -36,11 +36,12 @@ function ConceptStep({ onNext }) {
       <div className="callout callout-info">
         <b className="text-ink">📦 EXE（執行檔）</b>：把程式和它需要的環境打包成一個可以
         <b className="text-ink">直接雙擊執行</b>的檔案，交給不懂技術的同仁，也不用他們安裝一堆東西。例如把「
-        <b className="text-ink">批次公文改檔名、報表轉檔</b>」的小工具打包發給大家用。
+        <b className="text-ink">批次公文改檔名、局處月報表轉檔</b>」的小工具打包發給大家用。
       </div>
       <div className="callout">
         <b className="text-ink">🎢 Queue（工作佇列）</b>：當任務很多、或很耗時（例如
-        <b className="text-ink">大量寄送活動／繳費通知</b>、產月報表），不要讓使用者站著等。把任務丟進
+        <b className="text-ink">大量寄送市民講座通知、地價稅繳費通知</b>
+        、產局處月報表），不要讓使用者站著等。把任務丟進
         <b className="text-ink">佇列排隊</b>，由背景的 worker
         一個一個慢慢處理。好處是：使用者馬上得到回應、系統不會被瞬間塞爆、失敗還能重試。
       </div>
@@ -97,8 +98,8 @@ function QueueStep({ onNext }) {
       </span>
       <h2 className="text-2xl font-bold text-ink">送出一堆通知任務，看佇列怎麼消化 🎢</h2>
       <p className="text-muted text-sm">
-        想像要一次寄大量通知：狂按「送出任務」，任務會先排隊，背景 worker 再一個一個處理 ——
-        民眾／承辦不用站著等。
+        想像要一次寄出幾千封市民通知：狂按「送出任務」，任務會先排隊，背景 worker 再一個一個處理 ——
+        市民／承辦不用站著等。
       </p>
 
       <div className="text-center">

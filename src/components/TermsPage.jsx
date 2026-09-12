@@ -232,7 +232,7 @@ function IdemDemo() {
         開啟冪等（用「申請編號」判斷是不是同一筆）
       </label>
       <button type="button" className="btn btn-accent btn-sm" onClick={submit}>
-        📨 民眾送出申請
+        📨 市民送出申請
       </button>
 
       <div className="mt-2.5 grid gap-1.5">

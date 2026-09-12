@@ -8,13 +8,13 @@ import { DONE } from "../content/levelCopy.js";
 
 const REPO = "my-first-site";
 
-// 範本：一頁「可公開」的里民活動公告（不含任何個資）
+// 範本：一頁「可公開」的市府活動公告（不含任何個資）
 const STARTER_HTML = `<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>里民活動公告</title>
+  <title>市民健康講座</title>
   <style>
     body { font-family: system-ui, sans-serif; display: grid; place-items: center;
            min-height: 100vh; margin: 0; background: linear-gradient(120deg,#26418f,#3b7dd8); color:#fff; text-align:center; }
@@ -24,9 +24,10 @@ const STARTER_HTML = `<!DOCTYPE html>
 </head>
 <body>
   <div>
-    <h1>📢 里民健康講座</h1>
+    <h1>📢 市民健康講座</h1>
     <p>時間：6/15（六）上午 9:00</p>
-    <p>地點：本里活動中心　自由入座</p>
+    <p>地點：市立圖書館 3 樓演講廳　自由入座</p>
+    <p>主辦：市政府衛生局　洽詢：1999 市民熱線</p>
     <!-- 注意：這頁會完全公開，只放可對外的公告資訊，勿放個資 -->
   </div>
 </body>
@@ -85,7 +86,7 @@ function ConceptStep({ onNext }) {
         }}
       >
         <b className="text-ink">⚠️ 公務提醒：</b>放上 Pages 的內容會<b className="text-ink">完全公開</b>
-        並被搜尋引擎索引。只放可對外公開的資訊，絕不放民眾個資或內部檔案。
+        並被搜尋引擎索引。只放可對外公開的資訊，絕不放市民個資或內部檔案。
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[

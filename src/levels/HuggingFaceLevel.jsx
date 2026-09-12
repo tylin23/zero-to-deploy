@@ -101,7 +101,8 @@ function ConceptStep({ onNext }) {
       <div className="callout">
         和第 2 關的 GitHub Pages 很像 —— 都是「把東西推上去，平台給你網址」。差別是 Spaces 還會幫你
         <b className="text-ink">跑後端運算（跑 AI 模型）</b>，這是純靜態的 GitHub Pages
-        做不到的。行政上可用來做<b className="text-ink">民意/陳情文字的情緒分析、常見問答小幫手</b>等。
+        做不到的。市政上可用來做
+        <b className="text-ink">1999 與市政信箱陳情文字的情緒分析、市民常見問答小幫手</b>等。
       </div>
       <div
         className="callout"
@@ -111,7 +112,7 @@ function ConceptStep({ onNext }) {
         }}
       >
         <b className="text-ink">⚠️ 公務提醒：</b>Spaces 屬<b className="text-ink">境外第三方平台</b>
-        ，上傳的文字/資料會交給它處理。示範一律用去識別化或假資料，切勿上傳真實民眾個資或機敏公務資料。
+        ，上傳的文字/資料會交給它處理。示範一律用去識別化或假資料，切勿上傳真實市民個資或機敏公務資料。
       </div>
       <button type="button" className="btn btn-primary" onClick={onNext}>
         下一步：部署一個 AI Demo 來玩 →
@@ -136,7 +137,7 @@ function SimStep({ onNext }) {
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 部署來玩
       </span>
-      <h2 className="text-2xl font-bold text-ink">建一個 Space，部署一個「民意情緒分析」AI</h2>
+      <h2 className="text-2xl font-bold text-ink">建一個 Space，部署一個「市政信箱意見情緒分析」AI</h2>
 
       {phase === "create" && (
         <Browser url="huggingface.co/new-space">
@@ -204,7 +205,7 @@ function SimStep({ onNext }) {
 }
 
 function SentimentDemo({ onAnalyzed }) {
-  const [text, setText] = useState("承辦人員態度親切，處理很快，謝謝！");
+  const [text, setText] = useState("市民服務中心的承辦人員態度親切，處理很快，謝謝！");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -222,11 +223,11 @@ function SentimentDemo({ onAnalyzed }) {
     <div className="border-2 border-line rounded-[18px] bg-surface2 p-4">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-xl">🤗</span>
-        <b className="text-ink">民意情緒分析 Demo</b>
+        <b className="text-ink">市政信箱意見情緒分析 Demo</b>
         <span className="pill bg-primarySoft text-primary">Gradio</span>
       </div>
       <label className="text-[13px] font-bold block mb-1.5">
-        輸入一則民眾回饋（示範用去識別化文字），AI 幫你判斷情緒
+        輸入一則市民回饋（示範用去識別化文字），AI 幫你判斷情緒
       </label>
       <textarea
         className="gh-input gh-input-sans resize-none"

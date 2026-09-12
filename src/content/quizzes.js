@@ -16,7 +16,7 @@ export const QUIZZES = {
   githubPages: {
     question: "GitHub Pages 最適合放哪一種網站？",
     options: [
-      { text: "靜態網站：HTML / CSS / JS（例如作品集、活動頁）", correct: true },
+      { text: "靜態網站：HTML / CSS / JS（例如市府活動公告頁、單頁看板）", correct: true },
       { text: "需要資料庫、後端運算的大型系統", correct: false },
       { text: "只有存在自己電腦裡的 Word 檔", correct: false },
     ],
@@ -62,7 +62,7 @@ export const QUIZZES = {
   },
 
   selfhost: {
-    question: "你的內部小工具在內網跑得好好的，長官說「乾脆開放給民眾用」。你該怎麼回應？",
+    question: "你的內部小工具在市府內網跑得好好的，長官說「乾脆開放給市民用」。你該怎麼回應？",
     options: [
       { text: "對外提供服務要先經資安評估與核准，並交由資訊單位在受管控環境提供", correct: true },
       { text: "直接把機關防火牆全部打開就好", correct: false },
