@@ -6,10 +6,12 @@ import Home from "./components/Home.jsx";
 import MapView from "./components/MapView.jsx";
 import IntroLevel from "./levels/IntroLevel.jsx";
 import GitHubPagesLevel from "./levels/GitHubPagesLevel.jsx";
+import ApiLevel from "./levels/ApiLevel.jsx";
 
 const LEVELS = {
   intro: IntroLevel,
   "github-pages": GitHubPagesLevel,
+  api: ApiLevel,
 };
 
 export default function App() {
