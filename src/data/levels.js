@@ -7,7 +7,7 @@ export const mapOrder = [
   { id: "huggingface", emoji: "🤗", title: "AI 原生 + Hugging Face", tagline: "把 AI 應用一鍵部署", status: "ready" },
   { id: "selfhost", emoji: "🖥️", title: "Windows / Linux 自架", tagline: "用自己的電腦當伺服器", status: "ready" },
   { id: "docker", emoji: "🐳", title: "Docker", tagline: "把 App 和環境一起打包", status: "ready" },
-  { id: "exe-queue", emoji: "📦", title: "EXE / Queue", tagline: "打包成程式、排隊處理任務", status: "soon" },
+  { id: "exe-queue", emoji: "📦", title: "EXE / Queue", tagline: "打包成程式、排隊處理任務", status: "ready" },
 ];
 
 export const totalReady = mapOrder.filter((l) => l.status === "ready").length;
@@ -20,4 +20,5 @@ export const BADGES = {
   hfSpace: { id: "hf-space", icon: "🤗", name: "AI 上線", desc: "用 Hugging Face Spaces 部署 AI 應用" },
   selfHost: { id: "self-host", icon: "🖥️", name: "自架伺服器", desc: "理解 port、防火牆與對外連線" },
   docker: { id: "docker", icon: "🐳", name: "打包貨櫃", desc: "用 Docker 把 App 和環境一起帶著走" },
+  exeQueue: { id: "exe-queue", icon: "📦", name: "打包與佇列", desc: "認識 EXE 執行檔與工作佇列" },
 };
