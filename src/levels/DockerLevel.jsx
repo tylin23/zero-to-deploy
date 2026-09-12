@@ -48,7 +48,7 @@ function ConceptStep({ onNext }) {
         <b className="text-ink">環境不一樣</b>（版本、套件、設定）。<b className="text-ink">Docker</b> 把 App
         和它需要的整套環境一起裝進一個<b className="text-ink">容器（container）</b>
         ，就像貨櫃：不管搬到哪艘船，裡面都一模一樣。行政上很適合把一個
-        <b className="text-ink">內部小系統（例如報表產生器）</b>
+        <b className="text-ink">局處內部小系統（例如月報表產生器、陳情案件統計）</b>
         打包，讓不同同仁的電腦或機關伺服器都跑出一致結果。
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -166,7 +166,7 @@ function BuildStep({ onNext }) {
 
           <div className="grid grid-cols-2 gap-3">
             {[
-              ["🖥️", "同事的乾淨電腦"],
+              ["🖥️", "接手同仁的乾淨電腦"],
               ["☁️", "雲端伺服器"],
             ].map(([i, t]) => (
               <div key={t} className="card card-sm text-center">

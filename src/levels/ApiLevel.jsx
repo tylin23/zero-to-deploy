@@ -8,24 +8,24 @@ import { DONE } from "../content/levelCopy.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// 站內模擬用的假 API：都用「政府開放資料」情境（不含任何個資）
+// 站內模擬用的假 API：都用「市府開放資料」情境（不含任何個資）
 const ENDPOINTS = [
   {
     method: "GET",
     path: "/aqi?site=Banqiao",
-    label: "查空氣品質",
+    label: "查空氣品質（環保局）",
     data: { site: "板橋", aqi: 42, status: "良好", pm25: 12, time: "10:00" },
   },
   {
     method: "GET",
     path: "/garbage-truck?route=A",
-    label: "查垃圾車位置",
+    label: "查垃圾車位置（清潔隊）",
     data: { route: "A", next_stop: "中山路一段", eta_min: 8 },
   },
   {
     method: "GET",
     path: "/venue/library",
-    label: "查場館開放時間",
+    label: "查場館即時狀況（市圖）",
     data: { name: "市立圖書館", open: true, hours: "09:00–21:00", crowd: "適中" },
   },
 ];
@@ -60,7 +60,7 @@ function ConceptStep({ onNext }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          ["🙋", "① 你發出請求 request", "照菜單點餐：「我要台北的天氣」"],
+          ["🙋", "① 你發出請求 request", "照菜單點餐：「我要本市今天的空氣品質」"],
           ["🧑‍🍳", "② 後端處理", "廚房照單做菜（查資料庫、運算）"],
           ["📦", "③ 回傳 response", "把資料打包成 JSON 端回來給你"],
         ].map(([i, t, d]) => (
@@ -79,7 +79,7 @@ function ConceptStep({ onNext }) {
         </code>
         ）、用什麼方法（<b className="text-ink">GET</b> 拿資料、<b className="text-ink">POST</b>{" "}
         送資料），回來的通常是 <b className="text-ink">JSON</b>。行政情境最常見的用法，就是
-        <b className="text-ink">串接政府開放資料</b>（空氣品質、垃圾車、場館資訊）——
+        <b className="text-ink">串接市府開放資料</b>（空氣品質、垃圾車、場館資訊）——
         這類公開資料沒有個資疑慮，最安全。
       </div>
       <button type="button" className="btn btn-primary" onClick={onNext}>
@@ -206,7 +206,7 @@ function RealStep({ onFinish }) {
           onClick={() => setOpened(true)}
           className="gh-btn gh-btn-row"
         >
-          <span>🔗 GET 台北即時天氣（開放資料 JSON）</span>
+          <span>🔗 GET 本市即時天氣（開放資料 JSON）</span>
           <span>↗</span>
         </a>
         <a

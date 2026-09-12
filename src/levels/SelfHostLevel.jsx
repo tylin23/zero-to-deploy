@@ -33,7 +33,8 @@ function ConceptStep({ onNext }) {
       <div className="callout callout-info">
         前面都用別人的平台（GitHub、HF）幫你 host。<b className="text-ink">自架（Self-host）</b>則是：在
         <b className="text-ink">機關自己的電腦</b>上跑一個 server。 它最大的價值是 ——{" "}
-        <b className="text-ink">資料不出機關</b>，適合放不能公開的內部資料。
+        <b className="text-ink">資料不出機關</b>，適合放不能公開的內部資料 —— 例如科室自己用的
+        <b className="text-ink">預算控管表、工程進度追蹤、標案文件查詢</b>這類小工具。
       </div>
       <div
         className="callout"
@@ -42,7 +43,7 @@ function ConceptStep({ onNext }) {
           background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
         }}
       >
-        <b className="text-ink">🏢 這一關的重點：</b>「只給同仁在內網用」和「讓民眾從外面連」是
+        <b className="text-ink">🏢 這一關的重點：</b>「只給同仁在內網用」和「讓市民從外面連」是
         <b className="text-ink">完全不同的兩件事</b>。 前者設定好就能跑；後者是
         <b className="text-ink">機關層級的決定</b>，要走資安評估與核准，通常由資訊單位處理。
       </div>
@@ -50,7 +51,7 @@ function ConceptStep({ onNext }) {
         {[
           ["🔌", "Port（連接埠）", "server 會「監聽」一個號碼，例如 8000，像電腦裡的門牌號"],
           ["🧱", "防火牆", "預設擋掉外來連線，要開放這個 port 才連得進來"],
-          ["🏢", "內網 vs 對外", "內網＝只有機關內連得到；對外＝民眾也連得到"],
+          ["🏢", "內網 vs 對外", "內網＝只有市府內部連得到；對外＝市民也連得到"],
           ["📋", "資安評估與核准", "對外提供服務要先經機關同意 —— 這不是技術問題，是程序"],
         ].map(([i, t, d]) => (
           <div key={t} className="card">
@@ -121,7 +122,7 @@ function ChallengeStep({ onNext }) {
     setInnerWin(true);
     setResult({
       kind: "ok",
-      text: "✅ 同仁從機關內網連上了！資料完全沒有離開機關 —— 這正是內部小工具最合適的做法。",
+      text: "✅ 同仁從市府內網連上了！資料完全沒有離開機關 —— 這正是局處內部小工具最合適的做法。",
     });
   };
 
@@ -148,7 +149,7 @@ function ChallengeStep({ onNext }) {
       </span>
       <h2 className="text-2xl font-bold text-ink">誰連得上你的內部工具？ 🎯</h2>
       <p className="text-muted text-sm">
-        先把下面幾項打開，再分別試試「同仁從內網連」和「民眾從外網連」，看差別在哪。
+        先把下面幾項打開，再分別試試「同仁從市府內網連」和「市民從外網連」，看差別在哪。
       </p>
 
       <div className="grid gap-2.5">
@@ -159,7 +160,7 @@ function ChallengeStep({ onNext }) {
             clear();
           }}
           icon="🖥️"
-          title="在機關電腦上啟動 server，監聽 port 8000"
+          title="在市府配發的電腦上啟動 server，監聽 port 8000"
           desc="你的電腦開始『接電話』"
         />
         <Toggle
@@ -186,10 +187,10 @@ function ChallengeStep({ onNext }) {
 
       <div className="flex flex-wrap gap-2.5 justify-center">
         <button type="button" className="btn btn-accent btn-md" onClick={tryInternal}>
-          👩‍💼 同仁從內網連線
+          👩‍💼 同仁從市府內網連線
         </button>
         <button type="button" className="btn btn-ghost btn-md" onClick={tryExternal}>
-          🧑‍💻 民眾從外網連線
+          🧑‍💻 市民從外網連線
         </button>
       </div>
 

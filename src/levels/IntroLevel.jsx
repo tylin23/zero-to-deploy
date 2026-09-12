@@ -43,7 +43,7 @@ const STAGES = [
     color: "var(--accent-dark)",
     packet: { icon: "📨", label: "請求" },
     dirLabel: "瀏覽器 → 伺服器",
-    caption: "① 民眾的瀏覽器送出請求：「我要看『里民活動公告』這一頁」",
+    caption: "① 市民的瀏覽器送出請求：「我要看『市民健康講座』這一頁」",
   },
   {
     n: "②",
@@ -64,7 +64,7 @@ const STAGES = [
     to: 0,
     color: "var(--primary)",
     packet: null,
-    caption: "③ 瀏覽器把收到的檔案「畫」成畫面 → 民眾就看到你的活動公告了 🎉",
+    caption: "③ 瀏覽器把收到的檔案「畫」成畫面 → 市民就看到你的講座公告了 🎉",
   },
 ];
 
@@ -118,9 +118,9 @@ function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
       <Eyebrow>第一步 · 概念</Eyebrow>
-      <h2 className="text-2xl font-bold text-ink">民眾打開你做的「活動公告頁」時，發生了什麼事？</h2>
+      <h2 className="text-2xl font-bold text-ink">市民打開你做的「講座公告頁」時，發生了什麼事？</h2>
       <p className="text-muted text-sm">
-        情境：你想把一頁「里民活動公告」放上網，讓民眾查得到。按「播放」看一次「瀏覽器 ↔ 伺服器」的對話，
+        情境：你想把一頁「市民健康講座公告」放上網，讓市民查得到。按「播放」看一次「瀏覽器 ↔ 伺服器」的對話，
         也可以點上面的 ①②③ 自己一格一格看。
       </p>
 
@@ -154,13 +154,13 @@ function ConceptStep({ onNext }) {
       <div className="rounded-[18px] border-2 border-line bg-surface2 p-3 sm:p-4">
         {/* 桌機：左右並排 */}
         <div className="hidden sm:grid grid-cols-[1fr_minmax(180px,1.1fr)_1fr] items-center gap-2">
-          <Node emoji="💻" label="你的瀏覽器" sub="民眾的手機或電腦" tag="前端在這裡跑" />
+          <Node emoji="💻" label="市民的瀏覽器" sub="市民的手機或電腦" tag="前端在這裡跑" />
           <Lane st={st} pos={pos} dur={dur} />
           <Node emoji="🖥️" label="伺服器" sub="一直開著的電腦" tag="後端在這裡跑" />
         </div>
         {/* 手機：上下堆疊，通道也轉成直的 */}
         <div className="sm:hidden grid gap-1">
-          <Node emoji="💻" label="你的瀏覽器" sub="民眾的手機或電腦" tag="前端在這裡跑" />
+          <Node emoji="💻" label="市民的瀏覽器" sub="市民的手機或電腦" tag="前端在這裡跑" />
           <Lane st={st} pos={pos} dur={dur} vertical />
           <Node emoji="🖥️" label="伺服器" sub="一直開著的電腦" tag="後端在這裡跑" />
         </div>
@@ -182,7 +182,7 @@ function ConceptStep({ onNext }) {
 
       <div className="callout">
         所以「<b className="text-ink">部署（Deploy）</b>
-        」就是：把你做好的網頁檔案（例如那頁活動公告），放到一台「一直開著、大家都連得到」的電腦（伺服器）上，民眾才看得到。也因為是放到別人連得到的地方，
+        」就是：把你做好的網頁檔案（例如那頁活動公告），放到一台「一直開著、大家都連得到」的電腦（伺服器）上，市民才看得到。也因為是放到別人連得到的地方，
         <b className="text-ink">上傳前要先確認這份內容可以對外公開</b>。
       </div>
       <button type="button" className="btn btn-primary" onClick={onNext}>
@@ -295,18 +295,18 @@ function Node({ emoji, label, sub, tag }) {
    ========================================================= */
 
 const SIDES = {
-  front: { icon: "👀", name: "前端", sub: "民眾看得到的", color: "var(--frontend-text)" },
+  front: { icon: "👀", name: "前端", sub: "市民看得到的", color: "var(--frontend-text)" },
   back: { icon: "🗄️", name: "後端", sub: "在伺服器裡做的", color: "var(--backend-text)" },
 };
 
 const PARTS = [
   {
-    t: "活動公告的版面、文字和照片",
+    t: "講座公告的版面、文字和照片",
     a: "front",
-    why: "民眾眼睛看得到的畫面，都是前端。",
+    why: "市民眼睛看得到的畫面，都是前端。",
   },
   {
-    t: "把民眾填好的報名資料存起來",
+    t: "把市民填好的報名資料存起來",
     a: "back",
     why: "資料要留在伺服器上、之後還查得到，這是後端的工作。",
   },
@@ -316,19 +316,19 @@ const PARTS = [
     why: "改變畫面長相是前端。（但「還剩幾個名額」得先跟後端要）",
   },
   {
-    t: "報名成功後，自動寄一封確認信給民眾",
+    t: "報名成功後，自動寄一封確認信給市民",
     a: "back",
-    why: "寄信要有一台一直開著的電腦去執行，民眾看不到這個過程。",
+    why: "寄信要有一台一直開著的電腦去執行，市民看不到這個過程。",
   },
   {
-    t: "決定哪些同仁才能看到報名名冊",
+    t: "決定哪些承辦同仁才能看到報名名冊",
     a: "back",
     why: "權限控管一定要在後端。放在前端等於門沒鎖，打開原始碼就破解了。",
   },
   {
     t: "手機打開時，版面自動變成一欄",
     a: "front",
-    why: "版面怎麼排是在民眾自己的手機上算出來的，屬於前端。",
+    why: "版面怎麼排是在市民自己的手機上算出來的，屬於前端。",
   },
 ];
 
@@ -344,11 +344,11 @@ function FrontBackStep({ onNext }) {
   return (
     <div className="space-y-4">
       <Eyebrow>第二步 · 前端與後端</Eyebrow>
-      <h2 className="text-2xl font-bold text-ink">「前端」和「後端」，其實就是公所的前台和後台</h2>
+      <h2 className="text-2xl font-bold text-ink">「前端」和「後端」，其實就是市府的前台和後台</h2>
 
       <div className="callout callout-info">
         剛剛那張圖的兩台電腦，各自負責不同的事。用你最熟的場景來想 ——
-        <b className="text-ink">民眾走進區公所辦事</b>：
+        <b className="text-ink">市民走進市民服務中心洽公</b>：
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -356,11 +356,11 @@ function FrontBackStep({ onNext }) {
           side="front"
           real="櫃台、指示牌、抽號碼機、申請表"
           web="畫面、文字、按鈕、表單長什麼樣"
-          where="跑在「民眾自己的手機或電腦」上"
+          where="跑在「市民自己的手機或電腦」上"
         />
         <SideCard
           side="back"
-          real="後面的辦公室：檔案庫、承辦人、公文流程"
+          real="後面的辦公室：檔案庫、承辦科員、公文流程"
           web="存資料、算結果、寄通知、決定誰能看"
           where="跑在「一直開著的伺服器」上"
         />
@@ -369,7 +369,7 @@ function FrontBackStep({ onNext }) {
       <div>
         <h3 className="text-ink font-bold mb-1">換你分分看</h3>
         <p className="text-muted text-sm mb-3">
-          假設你要做一個「里民活動線上報名」。下面每件事，是前端還是後端負責？（六題都答對才能繼續）
+          假設你要做一個「市民健康講座線上報名」。下面每件事，是前端還是後端負責？（六題都答對才能繼續）
         </p>
 
         <div className="grid gap-2.5">
@@ -429,7 +429,7 @@ function FrontBackStep({ onNext }) {
                 {ok && <div className="text-sm text-ink mt-2">{p.why}</div>}
                 {wrong && (
                   <div className="text-sm text-danger font-bold mt-2">
-                    再想想：這件事民眾「看得到」，還是在後面「做掉」的？
+                    再想想：這件事市民「看得到」，還是在後面「做掉」的？
                   </div>
                 )}
               </div>
@@ -488,7 +488,7 @@ function SideCard({ side, real, web, where }) {
       </div>
       <dl className="mt-2.5 grid gap-2 text-sm">
         <div>
-          <dt className="text-xs font-extrabold text-muted">在區公所</dt>
+          <dt className="text-xs font-extrabold text-muted">在市民服務中心</dt>
           <dd className="text-ink m-0">{real}</dd>
         </div>
         <div>

@@ -12,8 +12,8 @@ const GAS_CODE = `function pushMessage() {
   // 提醒：Webhook 網址等同密鑰，勿寫進公開的 repo 或截圖外流
   const webhook = "https://你的-webhook-網址";
 
-  // 通知內容用案號代替民眾個資（勿放姓名、電話）
-  const payload = { content: "新申辦案 A-1130512，請承辦同仁查看" };
+  // 通知內容用案號代替市民個資（勿放姓名、電話）
+  const payload = { content: "市政信箱新案 1130512-007，請承辦同仁查看" };
 
   // 用 GAS 內建的 UrlFetchApp 呼叫別人的 API
   UrlFetchApp.fetch(webhook, {
@@ -49,7 +49,9 @@ function ConceptStep({ onNext }) {
       <div className="callout callout-info">
         <b className="text-ink">GAS（Google Apps Script）</b>是 Google 提供的
         <b className="text-ink">免費雲端小程式</b>。行政上很常這樣用：
-        <b className="text-ink">民眾用 Google 表單線上申辦 → GAS 自動把「有新案件」通知承辦同仁的群組</b>
+        <b className="text-ink">
+          市民用 Google 表單向市政信箱陳情 → GAS 自動把「有新案件」通知承辦科室的群組
+        </b>
         。它可以「定時」或「有事發生時」自動執行，執行時再去呼叫別人的 API（上一關學的！）把訊息推到
         Slack/Teams/LINE 等地方。
       </div>
@@ -80,7 +82,7 @@ function ConceptStep({ onNext }) {
 /* ---------- 步驟 2：站內模擬推播流程 ---------- */
 const TRIGGERS = [
   { id: "time", icon: "⏰", label: "定時觸發", sub: "每天 9:00 彙整昨日案件" },
-  { id: "event", icon: "⚡", label: "事件觸發", sub: "民眾送出申辦表單時" },
+  { id: "event", icon: "⚡", label: "事件觸發", sub: "市民送出陳情表單時" },
 ];
 
 function SimStep({ onNext }) {
@@ -107,10 +109,10 @@ function SimStep({ onNext }) {
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 讓它跑一次
       </span>
-      <h2 className="text-2xl font-bold text-ink">組一條「民眾申辦 → 自動通知承辦」流程 ⚙️</h2>
+      <h2 className="text-2xl font-bold text-ink">組一條「市民陳情 → 自動通知承辦」流程 ⚙️</h2>
 
       <div>
-        <label className="text-[13px] font-bold block mb-1.5">① 要推播的訊息（用案號，勿放民眾個資）</label>
+        <label className="text-[13px] font-bold block mb-1.5">① 要推播的訊息（用案號，勿放市民個資）</label>
         <input
           className="gh-input gh-input-sans"
           value={msg}
@@ -151,7 +153,7 @@ function SimStep({ onNext }) {
             📤
           </div>
         </div>
-        <FlowNode icon="💬" label="承辦群組" sub="收到通知的地方" active={status === "done"} />
+        <FlowNode icon="💬" label="承辦科室群組" sub="收到通知的地方" active={status === "done"} />
       </div>
 
       <div className="text-center">
@@ -168,7 +170,7 @@ function SimStep({ onNext }) {
 
       {/* 模擬聊天室 */}
       <div className="border-2 border-line rounded-[18px] bg-surface2 p-3.5 min-h-[90px]">
-        <div className="text-xs font-extrabold text-muted mb-2">💬 #承辦通知 頻道</div>
+        <div className="text-xs font-extrabold text-muted mb-2">💬 #市政信箱-承辦通知 頻道</div>
         {chat.length === 0 ? (
           <div className="text-muted text-sm text-center py-3">還沒有訊息 —— 執行一次看看</div>
         ) : (
@@ -178,7 +180,7 @@ function SimStep({ onNext }) {
                 <span className="text-xl">🤖</span>
                 <div>
                   <div className="text-xs font-bold text-ink">
-                    申辦通知機器人 <span className="text-muted font-normal">· 剛剛</span>
+                    市政信箱通知機器人 <span className="text-muted font-normal">· 剛剛</span>
                   </div>
                   <div className="text-sm bg-surface border border-line rounded-lg px-3 py-1.5 inline-block mt-0.5">
                     {m.text}

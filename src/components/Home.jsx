@@ -14,7 +14,7 @@ export default function Home({ navigate }) {
       icon: "🗺️",
       title: "闖關地圖",
       sub: `${totalReady} 關 · 動手做`,
-      desc: "從「網站怎麼被看到」一路做到把公告頁真的上線。每關都先在站內模擬，再帶你去平台實作。",
+      desc: "從「網站怎麼被看到」一路做到把市府活動公告頁真的上線。每關都先在站內模擬，再帶你去平台實作。",
       to: startTarget,
       primary: true,
     },
@@ -29,7 +29,7 @@ export default function Home({ navigate }) {
       icon: "📇",
       title: "名詞小教室",
       sub: `${TERMS.length} 張概念卡`,
-      desc: "快取、佇列、環境、權限…看懂這些詞，做事更順，也更能跟資訊單位溝通。",
+      desc: "快取、佇列、環境、權限…看懂這些詞，做事更順，也更能跟資訊局溝通。",
       to: "#/terms",
     },
   ];
@@ -57,7 +57,8 @@ export default function Home({ navigate }) {
 
         <p className="text-muted mx-auto mb-6 max-w-[640px] text-[clamp(15px,2.4vw,18px)]">
           不用寫程式、不用打指令。用闖關的方式搞懂「部署」到底在做什麼， 並且
-          <b className="text-ink">真的把一頁公告上線</b>—— 同時清楚知道哪些事可以自己做、哪裡該找資訊單位。
+          <b className="text-ink">真的把一頁市府公告上線</b>——
+          同時清楚知道哪些事可以自己做、哪裡該找資訊單位。
         </p>
 
         <div className="flex gap-3 justify-center flex-wrap mb-4">
@@ -106,9 +107,9 @@ export default function Home({ navigate }) {
         <h2 className="text-ink text-lg font-bold mb-3">學完你會…</h2>
         <div className="grid gap-2.5 sm:grid-cols-2">
           {[
-            ["📢", "自己把一頁可公開的活動公告放上網，不用等排程"],
-            ["📊", "把政府開放資料變成一張看板給同仁看"],
-            ["📬", "讓民眾線上申辦後，自動通知承辦同仁"],
+            ["📢", "自己把一頁可公開的市府活動公告放上網，不用等排程"],
+            ["📊", "把空品、垃圾車等市府開放資料變成一張看板"],
+            ["📬", "讓市民線上陳情後，自動通知承辦科室"],
             ["🚧", "分辨哪些能自己做、哪些要先找資訊單位"],
           ].map(([i, t]) => (
             <div key={t} className="flex gap-2.5 items-start">
