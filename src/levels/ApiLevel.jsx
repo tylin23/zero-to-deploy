@@ -9,25 +9,121 @@ import { OPEN_DATA } from "../content/openData.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// 站內模擬用的假 API：都用「市府開放資料」情境（不含任何個資）
+// 站內模擬用的 API：打的是「臺北市陳情系統類別資料」這份真實開放資料。
+// 網址與欄位都照真的寫，回傳值是示範用的假資料（真實內容請看第 3 步的連結）。
+// 三個選項刻意只差在參數，用來教 limit / offset 這兩個最常見的查詢參數。
+const ROW = (id, no, main, sub, org, dept, recv, send, close) => ({
+  _id: id,
+  案件編號: no,
+  案件主類別: main,
+  案件次類別: sub,
+  受理機關: org,
+  受理科室: dept,
+  受理日期: recv,
+  送達日期: send,
+  結案日期: close,
+});
+
+const ROWS = [
+  ROW(
+    1,
+    "202601-004512",
+    "交通運輸",
+    "停車問題",
+    "交通局",
+    "停車管理工程處",
+    "2026-01-05",
+    "2026-01-05",
+    "2026-01-12"
+  ),
+  ROW(
+    2,
+    "202601-004513",
+    "環境保護",
+    "垃圾清運",
+    "環境保護局",
+    "內湖區清潔隊",
+    "2026-01-05",
+    "2026-01-06",
+    "2026-01-09"
+  ),
+  ROW(
+    3,
+    "202601-004514",
+    "都市發展",
+    "建築管理",
+    "都市發展局",
+    "建築管理工程處",
+    "2026-01-06",
+    "2026-01-06",
+    "2026-01-20"
+  ),
+  ROW(
+    4,
+    "202601-004515",
+    "交通運輸",
+    "號誌標線",
+    "交通局",
+    "交通管制工程處",
+    "2026-01-06",
+    "2026-01-07",
+    "2026-01-15"
+  ),
+  ROW(
+    5,
+    "202601-004516",
+    "公園綠地",
+    "行道樹修剪",
+    "工務局",
+    "公園路燈工程管理處",
+    "2026-01-07",
+    "2026-01-07",
+    "2026-01-18"
+  ),
+  ROW(
+    6,
+    "202601-004517",
+    "環境保護",
+    "噪音",
+    "環境保護局",
+    "稽查大隊",
+    "2026-01-07",
+    "2026-01-08",
+    "2026-01-14"
+  ),
+];
+
+// data.taipei 的回傳外層固定長這樣
+const envelope = (limit, offset) => ({
+  result: {
+    limit,
+    offset,
+    count: 48231,
+    sort: "",
+    results: ROWS.slice(offset, offset + limit),
+  },
+});
+
+const API = "/api/v1/dataset/7e5c4a52-…";
+
 const ENDPOINTS = [
   {
     method: "GET",
-    path: "/aqi?site=Banqiao",
-    label: "查空氣品質（環保局）",
-    data: { site: "板橋", aqi: 42, status: "良好", pm25: 12, time: "10:00" },
+    path: API + "?scope=resourceAquire&limit=1",
+    label: "先拿 1 筆看看長什麼樣",
+    data: envelope(1, 0),
   },
   {
     method: "GET",
-    path: "/garbage-truck?route=A",
-    label: "查垃圾車位置（清潔隊）",
-    data: { route: "A", next_stop: "中山路一段", eta_min: 8 },
+    path: API + "?scope=resourceAquire&limit=3",
+    label: "一次拿 3 筆",
+    data: envelope(3, 0),
   },
   {
     method: "GET",
-    path: "/venue/library",
-    label: "查場館即時狀況（市圖）",
-    data: { name: "市立圖書館", open: true, hours: "09:00–21:00", crowd: "適中" },
+    path: API + "?scope=resourceAquire&limit=3&offset=3",
+    label: "跳過前 3 筆再拿 3 筆（分頁）",
+    data: envelope(3, 3),
   },
 ];
 
@@ -61,7 +157,7 @@ function ConceptStep({ onNext }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
-          ["🙋", "① 你發出請求 request", "照菜單點餐：「我要本市今天的空氣品質」"],
+          ["🙋", "① 你發出請求 request", "照菜單點餐：「我要上個月的陳情案件分類」"],
           ["🧑‍🍳", "② 後端處理", "廚房照單做菜（查資料庫、運算）"],
           ["📦", "③ 回傳 response", "把資料打包成 JSON 端回來給你"],
         ].map(([i, t, d]) => (
@@ -80,9 +176,35 @@ function ConceptStep({ onNext }) {
         </code>
         ）、用什麼方法（<b className="text-ink">GET</b> 拿資料、<b className="text-ink">POST</b>{" "}
         送資料），回來的通常是 <b className="text-ink">JSON</b>。行政情境最常見的用法，就是
-        <b className="text-ink">串接市府開放資料</b>（空氣品質、垃圾車、場館資訊）——
-        這類公開資料沒有個資疑慮，最安全。
+        <b className="text-ink">串接市府開放資料</b>。這一關就用一份真的：研考會發布的
+        <b className="text-ink">「臺北市陳情系統類別資料」</b>
+        —— 每個月更新，記錄陳情案件的類別、受理機關與處理日期。
       </div>
+      <div
+        className="callout"
+        style={{
+          borderLeftColor: "var(--sun)",
+          background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
+        }}
+      >
+        <b className="text-ink">先看清楚這份資料「有什麼、沒有什麼」：</b>
+        <div className="grid gap-2 sm:grid-cols-2 mt-2">
+          <div>
+            <div className="text-xs font-extrabold text-muted mb-1">✅ 有的欄位</div>
+            <div className="text-sm text-ink">{OPEN_DATA.fields.join("、")}</div>
+          </div>
+          <div>
+            <div className="text-xs font-extrabold text-muted mb-1">🚫 沒有的東西</div>
+            <div className="text-sm text-ink">{OPEN_DATA.hasNot.join("、")}</div>
+          </div>
+        </div>
+        <p className="text-sm text-ink mt-2.5 mb-0">
+          它敢公開，正是因為<b>個資的部分被拿掉了</b>
+          —— 只留下「哪一類、哪個機關、什麼時候」。這就是第 3 關講的界線：
+          <b>去識別化後的統計可以公開，含姓名電話的陳情原文不行。</b>
+        </p>
+      </div>
+
       <button type="button" className="btn btn-primary" onClick={onNext}>
         下一步：自己送一個 request →
       </button>
