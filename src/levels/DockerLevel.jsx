@@ -25,7 +25,6 @@ export default function DockerLevel({ ctx }) {
       badge={BADGES.docker}
       done={{
         ...DONE.docker,
-        primary: { label: "看看最後一關 →", onClick: () => ctx.goMap() },
       }}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,

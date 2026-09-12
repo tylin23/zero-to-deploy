@@ -61,6 +61,38 @@ export default function RiskNotice({ navigate, next }) {
           </ul>
         </section>
 
+        <section>
+          <h3 className="text-ink font-bold flex items-center gap-2">🚦 碰到這五件事，先停下來</h3>
+          <p className="text-muted text-sm mt-1 mb-2">
+            這是全站的判斷準則。現在先有印象就好，第 3 關會帶你用實際情境練一遍。
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {[
+              ["🧑", "個資", "姓名、電話、身分證號、案件內容"],
+              ["🔒", "機敏資料", "未公開公文、內部檔案"],
+              ["🌐", "對外的正式服務", "民眾會當成官方系統在用的"],
+              ["🏢", "跨單位 / 全機關", "不只你科室自己用"],
+              ["🔑", "帳號與權限", "需要登入、要分誰能看"],
+            ].map(([i, t, d]) => (
+              <div
+                key={t}
+                className="flex gap-2.5 items-start py-2.5 px-3 border-2 border-line rounded-[14px] bg-surface"
+              >
+                <span className="text-xl shrink-0" aria-hidden="true">
+                  {i}
+                </span>
+                <div>
+                  <div className="font-bold text-ink text-sm">{t}</div>
+                  <div className="text-xs text-muted">{d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-ink mt-2.5 mb-0">
+            <b>停下來 ≠ 不能做</b>，只是代表該先找資訊單位評估 —— 對你也是保護。
+          </p>
+        </section>
+
         <div className="callout callout-info">
           每一關的最上方，都會附上<b className="text-ink">該部署方式的具體風險備注</b>
           ，記得先看過再動手。本教材僅供學習，實際導入請依所屬機關的資安與個資規範辦理。

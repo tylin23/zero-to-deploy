@@ -1,8 +1,9 @@
 import { lazy, Suspense, useEffect, useRef } from "react";
 import { ProgressProvider, useProgress } from "./state/progress.jsx";
 import { useHashRoute } from "./hooks/useHashRoute.js";
-import { mapOrder, RISKS, EVAL } from "./data/levels.js";
+import { mapOrder, PHASES, RISKS, EVAL, totalReady } from "./data/levels.js";
 import TopBar from "./components/TopBar.jsx";
+import { BottomNav } from "./components/Nav.jsx";
 import Home from "./components/Home.jsx";
 import MapView from "./components/MapView.jsx";
 import RiskNotice from "./components/RiskNotice.jsx";
@@ -14,9 +15,9 @@ import { LEVEL_TERMS, termById } from "./data/terms.js";
 
 // 關卡採 lazy 載入：首頁與地圖不必先下載 9 關的程式碼
 const LEVELS = {
-  boundary: lazy(() => import("./levels/BoundaryLevel.jsx")),
   intro: lazy(() => import("./levels/IntroLevel.jsx")),
   "github-pages": lazy(() => import("./levels/GitHubPagesLevel.jsx")),
+  boundary: lazy(() => import("./levels/BoundaryLevel.jsx")),
   api: lazy(() => import("./levels/ApiLevel.jsx")),
   gas: lazy(() => import("./levels/GasLevel.jsx")),
   huggingface: lazy(() => import("./levels/HuggingFaceLevel.jsx")),
@@ -72,51 +73,67 @@ function Shell() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <TopBar navigate={navigate} />
+      <TopBar hash={hash} navigate={navigate} />
       <main
         ref={mainRef}
         tabIndex={-1}
-        className="flex-1 w-full max-w-[940px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-16 outline-none"
+        className="flex-1 w-full max-w-[940px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-10 outline-none"
       >
         {view}
       </main>
-      <footer className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center py-5 px-4 text-muted text-[13px] text-center">
-        <span>Zero to Deploy · 一個用來教「網頁部署」的互動教材</span>
-        <button
-          type="button"
-          onClick={() => navigate("#/guide")}
-          className="text-ink font-bold underline underline-offset-2"
-        >
-          🧭 選型指南
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("#/terms")}
-          className="text-ink font-bold underline underline-offset-2"
-        >
-          📇 名詞小教室
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("#/risk")}
-          className="text-ink font-bold underline underline-offset-2"
-        >
-          ⚠️ 風險預告書
-        </button>
-        <span className="text-accentText font-bold">這個網站本身，就是用 GitHub Pages 部署的 ✨</span>
-      </footer>
+      <SiteFooter navigate={navigate} />
+      {/* 手機底部分頁列會蓋住內容，留出等高的空間 */}
+      <div className="md:hidden h-[64px]" aria-hidden="true" />
+      <BottomNav hash={hash} navigate={navigate} />
     </div>
   );
 }
 
+function SiteFooter({ navigate }) {
+  const { reset } = useProgress();
+  return (
+    <footer className="border-t border-line mt-4">
+      <div className="max-w-[940px] mx-auto px-4 sm:px-6 py-5 text-[13px] text-muted space-y-2.5 text-center">
+        <div className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center">
+          <button
+            type="button"
+            onClick={() => navigate("#/risk")}
+            className="text-ink font-bold underline underline-offset-2"
+          >
+            ⚠️ 風險預告書
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (confirm("要清除所有學習進度與徽章嗎？（給老師重新開課用）")) {
+                reset();
+                navigate("#/");
+              }
+            }}
+            className="underline underline-offset-2 hover:text-ink"
+          >
+            ↺ 重設學習進度
+          </button>
+        </div>
+        <div>Zero to Deploy · 一個用來教「網頁部署」的互動教材</div>
+        <div className="text-accentText font-bold">這個網站本身，就是用 GitHub Pages 部署的 ✨</div>
+      </div>
+    </footer>
+  );
+}
+
 function LevelPage({ id, navigate }) {
-  const { markComplete, awardBadge } = useProgress();
-  const meta = mapOrder.find((l) => l.id === id);
+  const { markComplete, awardBadge, isComplete } = useProgress();
+  const idx = mapOrder.findIndex((l) => l.id === id);
+  const meta = mapOrder[idx];
   const LevelComp = LEVELS[id];
   if (!meta || !LevelComp) {
     navigate("#/map");
     return null;
   }
+
+  const prev = idx > 0 ? mapOrder[idx - 1] : null;
+  const next = idx < mapOrder.length - 1 ? mapOrder[idx + 1] : null;
 
   const ctx = {
     complete: (badge) => {
@@ -124,19 +141,40 @@ function LevelPage({ id, navigate }) {
       if (badge) awardBadge(badge);
     },
     goMap: () => navigate("#/map"),
+    goNext: () => navigate(next ? "#/level/" + next.id : "#/map"),
+    next,
     navigate,
   };
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => navigate("#/map")}
-        className="inline-flex items-center gap-1.5 bg-surface border-2 border-line text-muted font-bold text-sm py-2 px-4 rounded-full mb-4 active:translate-y-1 transition-transform"
-        style={{ boxShadow: "0 4px 0 var(--border)" }}
-      >
-        ← 回地圖
-      </button>
+      {/* 麵包屑：我在整張地圖的哪裡 */}
+      <div className="flex items-center gap-2 flex-wrap mb-3 text-[13px]">
+        <button
+          type="button"
+          onClick={() => navigate("#/map")}
+          className="inline-flex items-center gap-1.5 bg-surface border-2 border-line text-muted font-bold py-1.5 px-3.5 rounded-full active:translate-y-1 transition-transform"
+          style={{ boxShadow: "0 4px 0 var(--border)" }}
+        >
+          ← 回地圖
+        </button>
+        <span className="font-extrabold text-muted">
+          第 {idx + 1} / {totalReady} 關
+        </span>
+        <span className="text-muted" aria-hidden="true">
+          ·
+        </span>
+        <span className="font-bold text-muted whitespace-nowrap">
+          {PHASES[meta.phase].icon} <span className="sm:hidden">{PHASES[meta.phase].short}</span>
+          <span className="hidden sm:inline">{PHASES[meta.phase].label}</span>
+        </span>
+        {isComplete(id) && (
+          <span className="pill" style={{ background: "var(--success-soft)", color: "var(--success)" }}>
+            ✓ 已完成
+          </span>
+        )}
+      </div>
+
       <div className="flex items-center gap-3.5 mb-2">
         <span className="text-[44px]" style={{ filter: "drop-shadow(0 3px 3px rgba(0,0,0,.12))" }}>
           {meta.emoji}
@@ -152,7 +190,35 @@ function LevelPage({ id, navigate }) {
         <LevelComp ctx={ctx} />
       </Suspense>
       <RelatedTerms ids={LEVEL_TERMS[id]} navigate={navigate} />
+      <LevelPager prev={prev} next={next} navigate={navigate} />
     </div>
+  );
+}
+
+// 關卡底部的上／下一關，不必每次回地圖再點
+function LevelPager({ prev, next, navigate }) {
+  if (!prev && !next) return null;
+  const box =
+    "flex-1 min-w-[150px] text-left bg-surface border-2 border-line rounded-[18px] p-3.5 transition-transform active:translate-y-1 hover:border-primary";
+  return (
+    <nav aria-label="關卡導覽" className="flex flex-wrap gap-3 mt-5">
+      {prev && (
+        <button type="button" className={box} onClick={() => navigate("#/level/" + prev.id)}>
+          <div className="text-xs font-bold text-muted">← 上一關</div>
+          <div className="font-extrabold text-ink text-sm mt-0.5">
+            {prev.emoji} {prev.short || prev.title}
+          </div>
+        </button>
+      )}
+      {next && (
+        <button type="button" className={box + " text-right"} onClick={() => navigate("#/level/" + next.id)}>
+          <div className="text-xs font-bold text-muted">下一關 →</div>
+          <div className="font-extrabold text-ink text-sm mt-0.5">
+            {next.emoji} {next.short || next.title}
+          </div>
+        </button>
+      )}
+    </nav>
   );
 }
 

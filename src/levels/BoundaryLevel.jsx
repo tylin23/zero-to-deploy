@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Level from "../components/Level.jsx";
+import Level, { Eyebrow } from "../components/Level.jsx";
 import { BADGES } from "../data/levels.js";
 import { DONE } from "../content/levelCopy.js";
 
@@ -10,37 +10,39 @@ const CHOICES = [
   { id: "no", label: "⛔ 不該這樣做", color: "var(--danger)" },
 ];
 
-// 情境題（貼近公務日常）
+// 情境題（貼近公務日常）。
+// 排在 GitHub Pages 之後，所以可以回頭指「你剛剛做的那件事」；
+// 還沒教到的東西一律用白話描述，並在解析裡標出之後哪一關會做到。
 const CASES = [
   {
-    text: "把已經核定、可對外公開的活動公告，做成一頁網站放上網。",
+    text: "把已經核定、可以對外公開的活動公告，做成一頁網站放上網。",
     answer: "self",
-    why: "內容已核定可公開、不含個資，做一頁靜態公告頁在你的權責內 —— 這正是後面 GitHub Pages 那關要教的。",
+    why: "這就是你上一關做的事：內容已核定可公開、也不含任何人的個資，做一頁公告頁在你的權責內。",
   },
   {
-    text: "做一個收集民眾姓名、電話的報名表單頁，放到 GitHub Pages 上。",
+    text: "做一個收集民眾姓名、電話的報名表單頁，用上一關同樣的方式放上網。",
     answer: "no",
-    why: "GitHub Pages 是「完全公開」的靜態託管，沒有權限控管。收個資等於把民眾資料放在公開網路上。要收個資，請用機關既有系統或先洽資訊單位。",
+    why: "你上一關親眼看到了：放上去的網址任何人都打得開，沒有「誰可以看」這種設定。把民眾的姓名電話放在那裡，等於攤在公開的網路上。要收個資，請用機關既有的系統，或先洽資訊單位。",
   },
   {
-    text: "把已經公開的統計數字，做成一張看板給同仁參考。",
+    text: "把已經公開的統計數字，做成一張看板給科室同仁參考。",
     answer: "self",
-    why: "用的是已公開資料、也不是對外的正式服務，屬於可以自己做的範圍。",
+    why: "用的是已公開的資料，也不是給民眾用的正式服務，屬於可以自己做的範圍。（第 4 關就會教你怎麼讓這張看板自動去抓最新數字）",
   },
   {
-    text: "用境外的 AI 服務，分析含民眾姓名的陳情內容。",
+    text: "把民眾陳情的原文（含姓名、電話）貼進網路上的 AI 服務，請它幫你分類。",
     answer: "no",
-    why: "「個資」加上「境外第三方」，兩條紅線都踩到了。真要做，必須先去識別化，並依機關個資與資安規範辦理、取得核准。",
+    why: "兩條紅線同時踩到：一是個資，二是交給機關以外的第三方公司 —— 這類 AI 服務多半在國外，貼進去的文字就離開機關了。真要做，必須先把姓名電話等資訊拿掉，並依機關個資與資安規範取得核准。（第 6 關會實際做一次，也會再提醒這件事）",
   },
   {
-    text: "想做一個給「全機關同仁」共用、要長期使用的查詢系統。",
+    text: "想做一個給「全機關同仁」共用、而且要用好幾年的查詢系統。",
     answer: "ask",
-    why: "跨單位、全機關、且要長期維運 —— 已超出個人自主開發的範圍，應該先找資訊單位評估與納管，否則你一異動就變成沒人維護的黑盒子。",
+    why: "跨單位、全機關、還要長期維運 —— 已經超出個人自主開發的範圍，應該先找資訊單位評估與納管。否則你一調職，它就變成沒人會修的黑盒子。",
   },
   {
-    text: "民眾線上申辦後，用「案號」把通知推到承辦同仁的群組。",
+    text: "民眾線上申辦後，自動在科室的群組聊天室貼一則「有新案件，案號 A123」。",
     answer: "self",
-    why: "通知只帶案號、不含個資，屬於科室內部流程自動化，可以自己做 —— 但要注意 Webhook 網址等同密鑰，別外流。",
+    why: "通知只帶案號、不帶姓名電話，屬於科室內部的流程自動化，可以自己做。（第 5 關會實際做一次；到時候要注意，那組「發通知用的網址」等同鑰匙，別外流）",
   },
 ];
 
@@ -49,10 +51,7 @@ export default function BoundaryLevel({ ctx }) {
     <Level
       ctx={ctx}
       badge={BADGES.boundary}
-      done={{
-        ...DONE.boundary,
-        primary: { label: "開始第一關 →", onClick: () => ctx.navigate("#/level/intro") },
-      }}
+      done={DONE.boundary}
       steps={[({ next }) => <RedLines onNext={next} />, ({ finish }) => <CaseGame onFinish={finish} />]}
     />
   );
@@ -62,13 +61,15 @@ export default function BoundaryLevel({ ctx }) {
 function RedLines({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
-        步驟 1 / 2 · 先認得紅線
-      </span>
-      <h2 className="text-2xl font-bold text-ink">動手之前，先問自己一句話</h2>
+      <Eyebrow>步驟 1 / 2 · 先認得紅線</Eyebrow>
+      <h2 className="text-2xl font-bold text-ink">你剛剛上線的那一頁，誰看得到？</h2>
 
       <div className="callout callout-info">
-        自己做小工具解決業務上的麻煩，是好事。但公務環境有它的界線 —— 動手前先問：
+        答案是：<b className="text-ink">任何人。</b>只要拿到網址就打得開，不用帳號密碼，搜尋引擎也找得到。
+        這不是 GitHub Pages 的缺點，而是它本來就是「給大家看」用的。
+        <br />
+        <br />
+        所以真正要練的不是技術，而是動手前先問一句：
         <b className="text-ink">「這件事，我可以自己做嗎？」</b>
       </div>
 
@@ -78,9 +79,9 @@ function RedLines({ onNext }) {
           {[
             ["🧑", "個資", "姓名、電話、身分證號、案件內容"],
             ["🔒", "機敏資料", "未公開公文、內部檔案"],
-            ["🌐", "對外正式服務", "民眾會當成官方系統在用的"],
+            ["🌐", "民眾會當成官方系統在用的", "對外的正式服務"],
             ["🏢", "跨單位 / 全機關", "不只你科室自己用"],
-            ["🔑", "帳號與權限", "需要登入、要控管誰能看誰能改"],
+            ["🔑", "需要登入、要分誰能看", "帳號與權限"],
           ].map(([i, t, d]) => (
             <div
               key={t}
@@ -103,7 +104,7 @@ function RedLines({ onNext }) {
           background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
         }}
       >
-        <b className="text-ink">停下來 ≠ 不能做。</b>只是代表這件事該由資訊單位評估、或由他們納管後再做 ——
+        <b className="text-ink">停下來 ≠ 不能做。</b>只是代表這件事該由資訊單位評估、或由他們接手管理後再做 ——
         對你也是保護。
       </div>
 
@@ -130,9 +131,7 @@ function CaseGame({ onFinish }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
-          步驟 2 / 2 · 情境判斷
-        </span>
+        <Eyebrow>步驟 2 / 2 · 情境判斷</Eyebrow>
         <span className="text-xs font-extrabold text-muted">
           第 {idx + 1} / {CASES.length} 題
         </span>

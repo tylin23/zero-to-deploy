@@ -37,6 +37,9 @@
 
   --mint: #2fce88;
   --mint-dark: #1fa96a;
+  /* 已完成節點上的白字／深色字要達 WCAG AA，另備兩個專用色 */
+  --mint-deep: #0c6b41; /* 底色：白字放上去 6.6:1 */
+  --on-mint: #04381f; /* 文字：放在亮綠色填色上 6.5:1 */
   --success: #1fa96a;
   --success-soft: #d9f7e7;
 
@@ -81,6 +84,8 @@
 
   --mint: #3fd992;
   --mint-dark: #26b877;
+  --mint-deep: #0f7a43; /* 深色模式下稍亮，才不會糊在深色底上 */
+  --on-mint: #04381f;
   --success: #3fd992;
   --success-soft: #17321f;
 
