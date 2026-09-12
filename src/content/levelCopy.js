@@ -19,7 +19,7 @@ export const DONE = {
   api: {
     icon: "🔌",
     title: "API 入門達成！",
-    text: "你已經懂了 API 的核心：照著網址（endpoint）＋方法（GET/POST）發出 request，對方回你一包結構化的 JSON。之後很多部署（例如 AI 服務）都是靠 API 串起來的。",
+    text: "你已經懂了 API 的核心：照著網址（endpoint）＋方法（GET/POST）發出 request，對方回你一包結構化的 JSON。而且你把它變成了一張看板 —— 網頁還是那幾個靜態檔案，資料每次打開才去拿最新的。之後很多部署（例如 AI 服務）都是靠 API 串起來的。",
   },
   gas: {
     icon: "📬",

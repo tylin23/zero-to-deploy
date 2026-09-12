@@ -26,14 +26,14 @@ export const QUIZZES = {
   },
 
   api: {
-    question: "你在瀏覽器打開那個「台北即時天氣」網址，看到一包 JSON。這代表什麼？",
+    question: "你在瀏覽器打開那個「陳情系統類別資料」的 API 網址，看到一包 JSON。這代表什麼？",
     options: [
       { text: "你送了一個 GET 請求，API 回傳了結構化資料（JSON）", correct: true },
       { text: "你把網站部署上線了", correct: false },
       { text: "你下載了一個網頁的完整 HTML 畫面", correct: false },
     ],
     explainOk:
-      "正是如此！GET 一個 endpoint → 拿回 JSON 資料。串接開放資料就是這樣運作，也是行政應用最安全的資料來源。",
+      "正是如此！GET 一個 endpoint → 拿回 JSON 資料。而且注意：這份資料只有類別、機關和日期，沒有陳情人的姓名電話 —— 去識別化之後才能公開，這是市府開放資料最安全的原因。",
     explainNo: "再想想：畫面上是純資料（key/value），不是排版好的網頁，也和「部署」是兩件事。",
   },
 

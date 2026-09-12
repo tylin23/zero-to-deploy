@@ -1,6 +1,7 @@
 import pkg from "playwright";
 import fs from "node:fs";
 import { STARTER_HTML } from "../src/content/starterCard.js";
+import { DASHBOARD_HTML } from "../src/content/dashboardPage.js";
 const { chromium } = pkg;
 const base = process.env.BASE_URL || "http://localhost:4173";
 const errs = [];
@@ -173,6 +174,71 @@ await st("名片範本：自己就能跑，不依賴任何外部檔案", async (
   await page.close();
 });
 
+// 儀表板範本：學生會直接上傳，所以它自己要單檔可跑；而且 data.taipei 打不通時
+// 必須退回內建資料而不是開天窗（這台機器連不到 data.taipei，兩條路都要驗）
+await st("儀表板範本：連不到 API 時退回內建資料，畫面不空白", async () => {
+  const page = await ctx.newPage();
+  const errs2 = [];
+  page.on("pageerror", (e) => errs2.push("PAGEERR " + e.message));
+  await page.setContent(DASHBOARD_HTML);
+  await page.waitForFunction(() => !document.getElementById("reload").disabled, null, { timeout: 8000 });
+  const r = await page.evaluate(() => ({
+    cls: document.getElementById("status").className,
+    bars: document.querySelectorAll("#bars .bar").length,
+    widths: [...document.querySelectorAll("#bars .fill")].map((e) =>
+      Math.round(e.getBoundingClientRect().width)
+    ),
+    rows: document.querySelectorAll("#rows tr").length,
+    imgs: document.querySelectorAll("img").length,
+    total: document.getElementById("kTotal").textContent,
+  }));
+  if (!r.cls.includes("fallback")) throw new Error("狀態列不是 fallback：" + r.cls);
+  if (r.bars < 3) throw new Error("長條只有 " + r.bars + " 條");
+  if (Math.min(...r.widths) < 2) throw new Error("有長條寬度是 0（span 沒有 display:block？）");
+  if (r.rows < 5) throw new Error("表格只有 " + r.rows + " 列");
+  if (r.imgs !== 0) throw new Error("引用了外部圖片");
+  if (r.total === "—") throw new Error("總案件數沒算出來");
+  if (errs2.length) throw new Error(errs2.join(" | "));
+  await page.close();
+});
+
+await st("儀表板範本：API 通的時候顯示真實資料", async () => {
+  const page = await ctx.newPage();
+  await page.route("**data.taipei/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        result: {
+          limit: 200,
+          offset: 0,
+          count: 51234,
+          results: [
+            { 案件編號: "A1", 案件主類別: "交通運輸", 受理機關: "交通局" },
+            { 案件編號: "A2", 案件主類別: "交通運輸", 受理機關: "交通局" },
+            { 案件編號: "A3", 案件主類別: "環境保護", 受理機關: "環境保護局" },
+          ],
+        },
+      }),
+    })
+  );
+  await page.setContent(DASHBOARD_HTML);
+  await page.waitForFunction(() => document.getElementById("status").className.includes("live"), null, {
+    timeout: 8000,
+  });
+  const r = await page.evaluate(() => ({
+    total: document.getElementById("kTotal").textContent,
+    rows: document.getElementById("kRows").textContent,
+    cats: document.getElementById("kCats").textContent,
+    top: document.querySelector("#bars .bar span").textContent,
+  }));
+  if (r.total !== "51,234") throw new Error("總案件數 " + r.total);
+  if (r.rows !== "3") throw new Error("抓回筆數 " + r.rows);
+  if (r.cats !== "2") throw new Error("類別數 " + r.cats);
+  if (r.top !== "交通運輸") throw new Error("最大類別 " + r.top);
+  await page.close();
+});
+
 await st("第二關：自己做的檔案有 5 個雷的提醒", async () => {
   await go("github-pages");
   await p.click("text=靜態網站：HTML");
@@ -225,9 +291,12 @@ await st("2 GitHub Pages", async () => {
 await st("4 API 基礎", async () => {
   await go("api");
   await p.click("text=自己送一個 request");
-  await p.click("text=查一個使用者").catch(() => p.click("text=查空氣品質"));
+  await p.click("text=先拿 1 筆看看長什麼樣");
   await B("送出 Send").click();
   await p.waitForSelector("text=200 OK", { timeout: 3000 });
+  // 回傳要是 data.taipei 的真實外層與欄位
+  await p.waitForSelector("text=resourceAquire");
+  await p.waitForSelector("text=案件主類別");
   await p.click("text=試試真的 API");
   await p.click("text=你送了一個 GET 請求");
   await B("完成這一關").click();
