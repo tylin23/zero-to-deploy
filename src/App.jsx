@@ -10,6 +10,7 @@ import ApiLevel from "./levels/ApiLevel.jsx";
 import GasLevel from "./levels/GasLevel.jsx";
 import HuggingFaceLevel from "./levels/HuggingFaceLevel.jsx";
 import SelfHostLevel from "./levels/SelfHostLevel.jsx";
+import DockerLevel from "./levels/DockerLevel.jsx";
 
 const LEVELS = {
   intro: IntroLevel,
@@ -18,6 +19,7 @@ const LEVELS = {
   gas: GasLevel,
   huggingface: HuggingFaceLevel,
   selfhost: SelfHostLevel,
+  docker: DockerLevel,
 };
 
 export default function App() {
