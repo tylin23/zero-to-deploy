@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import { ProgressProvider, useProgress } from "./state/progress.jsx";
 import { useHashRoute } from "./hooks/useHashRoute.js";
 import { mapOrder, RISKS, EVAL } from "./data/levels.js";
@@ -11,27 +11,29 @@ import EvalBar from "./components/EvalBar.jsx";
 import Guide from "./components/Guide.jsx";
 import TermsPage from "./components/TermsPage.jsx";
 import { LEVEL_TERMS, termById } from "./data/terms.js";
-import BoundaryLevel from "./levels/BoundaryLevel.jsx";
-import IntroLevel from "./levels/IntroLevel.jsx";
-import GitHubPagesLevel from "./levels/GitHubPagesLevel.jsx";
-import ApiLevel from "./levels/ApiLevel.jsx";
-import GasLevel from "./levels/GasLevel.jsx";
-import HuggingFaceLevel from "./levels/HuggingFaceLevel.jsx";
-import SelfHostLevel from "./levels/SelfHostLevel.jsx";
-import DockerLevel from "./levels/DockerLevel.jsx";
-import ExeQueueLevel from "./levels/ExeQueueLevel.jsx";
 
+// 關卡採 lazy 載入：首頁與地圖不必先下載 9 關的程式碼
 const LEVELS = {
-  boundary: BoundaryLevel,
-  intro: IntroLevel,
-  "github-pages": GitHubPagesLevel,
-  api: ApiLevel,
-  gas: GasLevel,
-  huggingface: HuggingFaceLevel,
-  selfhost: SelfHostLevel,
-  docker: DockerLevel,
-  "exe-queue": ExeQueueLevel,
+  boundary: lazy(() => import("./levels/BoundaryLevel.jsx")),
+  intro: lazy(() => import("./levels/IntroLevel.jsx")),
+  "github-pages": lazy(() => import("./levels/GitHubPagesLevel.jsx")),
+  api: lazy(() => import("./levels/ApiLevel.jsx")),
+  gas: lazy(() => import("./levels/GasLevel.jsx")),
+  huggingface: lazy(() => import("./levels/HuggingFaceLevel.jsx")),
+  selfhost: lazy(() => import("./levels/SelfHostLevel.jsx")),
+  docker: lazy(() => import("./levels/DockerLevel.jsx")),
+  "exe-queue": lazy(() => import("./levels/ExeQueueLevel.jsx")),
 };
+
+// 關卡載入中的暫時畫面
+function LevelLoading() {
+  return (
+    <div className="card text-center text-muted py-10" aria-busy="true">
+      <div className="text-3xl mb-2">⏳</div>
+      關卡載入中…
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -146,7 +148,9 @@ function LevelPage({ id, navigate }) {
       </div>
       <EvalBar ev={EVAL[id]} />
       <RiskNote risk={RISKS[id]} />
-      <LevelComp ctx={ctx} />
+      <Suspense fallback={<LevelLoading />}>
+        <LevelComp ctx={ctx} />
+      </Suspense>
       <RelatedTerms ids={LEVEL_TERMS[id]} navigate={navigate} />
     </div>
   );
