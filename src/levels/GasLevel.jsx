@@ -47,7 +47,7 @@ export default function GasLevel({ ctx }) {
 function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 3 · 這是什麼
       </span>
       <h2 className="text-2xl font-bold text-ink">GAS 是什麼？為什麼能「自動推播」？</h2>
@@ -109,7 +109,7 @@ function SimStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 讓它跑一次
       </span>
       <h2 className="text-2xl font-bold text-ink">組一條「民眾申辦 → 自動通知承辦」流程 ⚙️</h2>
@@ -232,7 +232,7 @@ function RealStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 3 / 3 · 真的做一次
       </span>
       <h2 className="text-2xl font-bold text-ink">在真的 GAS 上做一個推播 📮</h2>

@@ -93,7 +93,7 @@ export default function Home({ navigate }) {
               <div className="text-4xl mb-1">{p.icon}</div>
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="font-extrabold text-ink text-lg">{p.title}</span>
-                <span className="text-xs font-bold text-accent">{p.sub}</span>
+                <span className="text-xs font-bold text-accentText">{p.sub}</span>
               </div>
               <p className="text-muted text-sm mt-1 mb-0">{p.desc}</p>
             </button>

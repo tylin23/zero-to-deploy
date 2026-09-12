@@ -49,5 +49,7 @@ export default function Level({ ctx, badge, steps, done, total }) {
 
 // 每一步開頭的小標（取代各關重複的 uppercase tracking 字串）
 export function Eyebrow({ children }) {
-  return <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">{children}</span>;
+  return (
+    <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">{children}</span>
+  );
 }

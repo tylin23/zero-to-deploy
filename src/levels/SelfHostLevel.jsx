@@ -31,7 +31,7 @@ export default function SelfHostLevel({ ctx }) {
 function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 3 · 這是什麼
       </span>
       <h2 className="text-2xl font-bold text-ink">「自架」＝ 用機關自己的電腦當伺服器</h2>
@@ -148,7 +148,7 @@ function ChallengeStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 動手挑戰
       </span>
       <h2 className="text-2xl font-bold text-ink">誰連得上你的內部工具？ 🎯</h2>
@@ -235,7 +235,7 @@ function RealStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 3 / 3 · 真的跑一個
       </span>
       <h2 className="text-2xl font-bold text-ink">在你自己的電腦跑一個 server 🚀</h2>

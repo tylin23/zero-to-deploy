@@ -42,7 +42,7 @@ export default function DockerLevel({ ctx }) {
 function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 3 · 這是什麼
       </span>
       <h2 className="text-2xl font-bold text-ink">Docker：把 App 和「環境」一起打包</h2>
@@ -109,7 +109,7 @@ function BuildStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 動手打包
       </span>
       <h2 className="text-2xl font-bold text-ink">組一個 image，搬到別台機器跑 📦</h2>
@@ -220,7 +220,7 @@ function RealStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 3 / 3 · 真的做一次
       </span>
       <h2 className="text-2xl font-bold text-ink">真的寫一個 Dockerfile 🐳</h2>

@@ -103,7 +103,7 @@ function Shell() {
         >
           ⚠️ 風險預告書
         </button>
-        <span className="text-accent font-bold">這個網站本身，就是用 GitHub Pages 部署的 ✨</span>
+        <span className="text-accentText font-bold">這個網站本身，就是用 GitHub Pages 部署的 ✨</span>
       </footer>
     </div>
   );

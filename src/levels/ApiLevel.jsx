@@ -54,7 +54,7 @@ export default function ApiLevel({ ctx }) {
 function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 3 · 這是什麼
       </span>
       <h2 className="text-2xl font-bold text-ink">API 是什麼？用「餐廳點餐」來想</h2>
@@ -116,7 +116,7 @@ function TesterStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 自己試一次
       </span>
       <h2 className="text-2xl font-bold text-ink">送出一個 API 請求，看看回什麼</h2>
@@ -194,7 +194,7 @@ function RealStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 3 / 3 · 真的看一次
       </span>
       <h2 className="text-2xl font-bold text-ink">打開一個真正的開放資料 API 🌍</h2>

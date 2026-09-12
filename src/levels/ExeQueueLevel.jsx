@@ -31,7 +31,7 @@ export default function ExeQueueLevel({ ctx }) {
 function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 3 · 這是什麼
       </span>
       <h2 className="text-2xl font-bold text-ink">兩個常見的收尾：EXE 與工作佇列</h2>
@@ -95,7 +95,7 @@ function QueueStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 動手玩
       </span>
       <h2 className="text-2xl font-bold text-ink">送出一堆通知任務，看佇列怎麼消化 🎢</h2>
@@ -163,7 +163,9 @@ function ExeStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 3 / 3 · 收尾</span>
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
+        步驟 3 / 3 · 收尾
+      </span>
       <h2 className="text-2xl font-bold text-ink">把工具打包成一個 EXE 📦</h2>
       <p className="text-muted text-sm">
         把「你的程式」和「執行環境」打包成一個檔案，別人雙擊就能用，不必安裝任何東西。

@@ -64,7 +64,7 @@ export default function BoundaryLevel({ ctx }) {
 function RedLines({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 2 · 先認得紅線
       </span>
       <h2 className="text-2xl font-bold text-ink">動手之前，先問自己一句話</h2>
@@ -132,7 +132,7 @@ function CaseGame({ onFinish }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
           步驟 2 / 2 · 情境判斷
         </span>
         <span className="text-xs font-extrabold text-muted">

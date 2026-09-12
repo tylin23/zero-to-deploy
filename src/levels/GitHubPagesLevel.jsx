@@ -69,7 +69,7 @@ function ConceptStep({ onNext }) {
   const [passed, setPassed] = useState(false);
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 3 · 這是什麼
       </span>
       <h2 className="text-2xl font-bold text-ink">GitHub Pages 是什麼？</h2>
@@ -116,7 +116,7 @@ function SimStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 先練一次
       </span>
       <h2 className="text-2xl font-bold text-ink">在「模擬的 GitHub」點一遍</h2>
@@ -328,7 +328,7 @@ function RealStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 3 / 3 · 真的動手
       </span>
       <h2 className="text-2xl font-bold text-ink">換你在真的 GitHub 上部署 🚀</h2>

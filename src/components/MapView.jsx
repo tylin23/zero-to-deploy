@@ -93,7 +93,7 @@ export default function MapView({ navigate }) {
   return (
     <div>
       <div className="text-center mb-2">
-        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">部署地圖</span>
+        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">部署地圖</span>
         <h1 className="text-[clamp(26px,5vw,38px)] font-bold text-ink">沿著路徑闖關 🗺️</h1>
         <p className="text-muted text-sm">
           從「自己動手」一路走到「交接納管」。<b className="text-ink">前段你能自己做</b>

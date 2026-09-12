@@ -13,15 +13,27 @@
   --surface-2: #eef2fa;
   --border: #dde4f2;
   --ink: #1e2a4a;
-  --muted: #5f6d92;
+  --muted: #515e85; /* 加深以符合 WCAG AA（含漸層頁底） */
 
   --primary: #26418f;
   --primary-dark: #1a2e66;
   --primary-soft: #e4e9f6;
 
-  --accent: #3b7dd8;
+  --accent: #3b7dd8; /* 填色用（按鈕底、邊框、地圖目前關卡） */
   --accent-dark: #2a5cab;
   --accent-soft: #dce9fb;
+  --accent-text: #2a5cab; /* 文字用：淺底上需更深才達 AA */
+
+  /* 主要按鈕底色（白字需 ≥4.5） */
+  --btn-primary-bg: #26418f;
+  --btn-primary-edge: #1a2e66;
+  --btn-accent-bg: #2a5cab;
+  --btn-accent-edge: #1f4682;
+
+  /* 資料界線燈的「文字」色（淺底需加深） */
+  --diy-green-text: #0c6b41;
+  --diy-yellow-text: #7a5600;
+  --diy-red-text: #c22a45;
 
   --mint: #2fce88;
   --mint-dark: #1fa96a;
@@ -50,11 +62,22 @@
 
   --primary: #6b90e6;
   --primary-dark: #3f5ca8;
-  --primary-soft: #24304f;
+  --primary-soft: #1e2842; /* 加深，讓 text-primary 在其上達 AA */
 
   --accent: #5b9bf0;
   --accent-dark: #3f6fc0;
   --accent-soft: #1f2c47;
+  --accent-text: #7fb3f5; /* 深底上用亮色 */
+
+  /* 深色模式按鈕底需更深，白字才達 AA */
+  --btn-primary-bg: #3f5ca8;
+  --btn-primary-edge: #2a3f78;
+  --btn-accent-bg: #2f63b8;
+  --btn-accent-edge: #22488a;
+
+  --diy-green-text: #3fd992;
+  --diy-yellow-text: #ffd45e;
+  --diy-red-text: #ff9aab;
 
   --mint: #3fd992;
   --mint-dark: #26b877;
@@ -125,20 +148,20 @@
   }
   .btn-primary {
     @apply text-white;
-    background: var(--primary);
-    box-shadow: 0 6px 0 var(--primary-dark);
+    background: var(--btn-primary-bg);
+    box-shadow: 0 6px 0 var(--btn-primary-edge);
   }
   .btn-primary:active {
-    box-shadow: 0 0 0 var(--primary-dark);
+    box-shadow: 0 0 0 var(--btn-primary-edge);
     transform: translateY(6px);
   }
   .btn-accent {
     @apply text-white;
-    background: var(--accent);
-    box-shadow: 0 6px 0 var(--accent-dark);
+    background: var(--btn-accent-bg);
+    box-shadow: 0 6px 0 var(--btn-accent-edge);
   }
   .btn-accent:active {
-    box-shadow: 0 0 0 var(--accent-dark);
+    box-shadow: 0 0 0 var(--btn-accent-edge);
     transform: translateY(6px);
   }
   .btn-ghost {

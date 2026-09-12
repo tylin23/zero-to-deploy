@@ -60,7 +60,7 @@ function ConceptStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">第一步 · 概念</span>
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">第一步 · 概念</span>
       <h2 className="text-2xl font-bold text-ink">民眾打開你做的「活動公告頁」時，發生了什麼事？</h2>
       <p className="text-muted text-sm">
         情境：你想把一頁「里民活動公告」放上網，讓民眾查得到。點按鈕看「瀏覽器 ↔ 伺服器」的對話：
@@ -126,7 +126,9 @@ function DeployStep({ onDone }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">第三步 · 動手試試</span>
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
+        第三步 · 動手試試
+      </span>
       <h2 className="text-2xl font-bold text-ink">把你的網頁「放上」伺服器</h2>
       <p className="text-muted text-sm">把 index.html 拖到伺服器上（手機可以用點的：先點檔案，再點伺服器）</p>
 

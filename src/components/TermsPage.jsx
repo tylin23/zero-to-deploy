@@ -32,7 +32,7 @@ export default function TermsPage({ navigate, focusId }) {
   return (
     <div>
       <div className="text-center mb-5">
-        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">名詞小教室</span>
+        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">名詞小教室</span>
         <h1 className="text-[clamp(24px,5vw,34px)] font-bold text-ink">📇 看懂這些詞，就能跟系統對話</h1>
         <p className="text-muted text-sm">
           給剛接觸開發的你：不用會實作，但懂了這些「為什麼要這樣設計」，做事更順、也更能跟資訊單位溝通。

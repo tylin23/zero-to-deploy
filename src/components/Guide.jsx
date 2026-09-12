@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { mapOrder, EVAL, PICKER, diffText, diyColor, diyText } from "../data/levels.js";
+import { mapOrder, EVAL, PICKER, diffText, diyTextColor, diyText } from "../data/levels.js";
 
 const meta = (id) => mapOrder.find((l) => l.id === id) || {};
 
@@ -12,7 +12,7 @@ export default function Guide({ navigate }) {
   return (
     <div>
       <div className="text-center mb-5">
-        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">選型指南</span>
+        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">選型指南</span>
         <h1 className="text-[clamp(24px,5vw,34px)] font-bold text-ink">我該用哪一種部署方式？ 🧭</h1>
         <p className="text-muted text-sm">
           依難易度、靜/動、資料界線、費用、維護一次比較。先確認你要做的事，再挑最合適的。
@@ -89,7 +89,7 @@ export default function Guide({ navigate }) {
 
 function CompareTable({ rows, navigate }) {
   return (
-    <div className="overflow-x-auto rounded-[14px] border-2 border-line">
+    <div className="overflow-x-auto rounded-[14px] border-2 border-line bg-surface">
       <table className="w-full text-sm border-collapse min-w-[640px]">
         <thead>
           <tr className="bg-surface2 text-muted text-xs">
@@ -117,7 +117,7 @@ function CompareTable({ rows, navigate }) {
                 <td className="px-3 py-3 whitespace-nowrap">{diffText(ev.difficulty)}</td>
                 <td className="px-3 py-3 whitespace-nowrap">{ev.kind}</td>
                 <td className="px-3 py-3">
-                  <span className="font-bold" style={{ color: diyColor[ev.diy] }}>
+                  <span className="font-bold" style={{ color: diyTextColor[ev.diy] }}>
                     {diyText[ev.diy]}
                   </span>
                   <div className="text-muted text-xs mt-0.5">{ev.risk}</div>

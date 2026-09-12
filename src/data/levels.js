@@ -182,7 +182,14 @@ export const PICKER = [
 
 const DIFF_LABEL = { 1: "很簡單", 2: "簡單", 3: "中等", 4: "稍難", 5: "偏難" };
 export const diffText = (n) => "⭐".repeat(n) + "　" + (DIFF_LABEL[n] || "");
+// 填色用（邊框、背景底色）
 export const diyColor = { green: "var(--mint)", yellow: "var(--sun)", red: "var(--danger)" };
+// 文字用（淺底上需加深才達 WCAG AA）
+export const diyTextColor = {
+  green: "var(--diy-green-text)",
+  yellow: "var(--diy-yellow-text)",
+  red: "var(--diy-red-text)",
+};
 export const diyText = { green: "🟢 可自己做", yellow: "🟡 要留意", red: "🔴 接近紅線" };
 
 // 各部署方式的風險備注（公務／行政情境）。每一關頂部都會顯示。

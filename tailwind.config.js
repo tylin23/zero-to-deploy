@@ -16,6 +16,7 @@ export default {
         primarySoft: "var(--primary-soft)",
         accent: "var(--accent)",
         accentDark: "var(--accent-dark)",
+        accentText: "var(--accent-text)",
         accentSoft: "var(--accent-soft)",
         mint: "var(--mint)",
         mintDark: "var(--mint-dark)",
@@ -28,15 +29,24 @@ export default {
       },
       fontFamily: {
         sans: [
-          "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
-          "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif",
+          "Noto Sans TC",
+          "PingFang TC",
+          "Microsoft JhengHei",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif",
         ],
         mono: ["SF Mono", "JetBrains Mono", "Fira Code", "ui-monospace", "Menlo", "Consolas", "monospace"],
       },
       borderRadius: { xl2: "22px" },
       keyframes: {
         pop: { "0%": { transform: "scale(.2)", opacity: 0 }, "100%": { transform: "scale(1)", opacity: 1 } },
-        bob: { "0%,100%": { transform: "translateX(-50%) translateY(0)" }, "50%": { transform: "translateX(-50%) translateY(-4px)" } },
+        bob: {
+          "0%,100%": { transform: "translateX(-50%) translateY(0)" },
+          "50%": { transform: "translateX(-50%) translateY(-4px)" },
+        },
         pulseRing: {
           "0%": { boxShadow: "0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent)" },
           "70%": { boxShadow: "0 0 0 12px transparent" },

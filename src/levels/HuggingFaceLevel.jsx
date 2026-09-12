@@ -81,7 +81,7 @@ export default function HuggingFaceLevel({ ctx }) {
 function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 1 / 3 · 這是什麼
       </span>
       <h2 className="text-2xl font-bold text-ink">AI 原生 App 怎麼部署？認識 Hugging Face</h2>
@@ -138,7 +138,7 @@ function SimStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 部署來玩
       </span>
       <h2 className="text-2xl font-bold text-ink">建一個 Space，部署一個「民意情緒分析」AI</h2>
@@ -274,7 +274,7 @@ function RealStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 3 / 3 · 真的做一次
       </span>
       <h2 className="text-2xl font-bold text-ink">去真的 Hugging Face 逛一圈 🌍</h2>
