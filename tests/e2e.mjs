@@ -29,7 +29,7 @@ const st = async (n, f) => {
 };
 const B = (t) => p.locator("button", { hasText: t });
 
-await st("1 界線判斷", async () => {
+await st("3 界線判斷", async () => {
   await go("boundary");
   await p.click("text=來判斷幾個實際情境");
   const ans = [
@@ -48,7 +48,7 @@ await st("1 界線判斷", async () => {
   await p.waitForSelector("text=界線意識達成", { timeout: 3000 });
 });
 
-await st("2 網站怎麼被看到", async () => {
+await st("1 網站怎麼被看到", async () => {
   await go("intro");
   await p.click("text=我懂了，下一步");
   await p.click("text=因為筆電會關機");
@@ -58,7 +58,7 @@ await st("2 網站怎麼被看到", async () => {
   await p.waitForSelector("text=第一關完成", { timeout: 4000 });
 });
 
-await st("3 GitHub Pages", async () => {
+await st("2 GitHub Pages", async () => {
   await go("github-pages");
   await p.click("text=靜態網站：HTML");
   await B("先在模擬介面練一次").click();
@@ -183,13 +183,75 @@ await st("「回上一步」可用（新增功能）", async () => {
   await p.waitForSelector("text=API 是什麼", { timeout: 2500 });
 });
 
-await st("地圖：9 關全完成 → 100%", async () => {
+await st("地圖：9 關全完成", async () => {
   await p.goto(base + "/index.html#/map", { waitUntil: "networkidle" });
   await p.waitForSelector("text=我的徽章");
-  const pct = await p.$eval("header .text-right", (e) => e.textContent);
-  if (pct.trim() !== "100%") throw new Error("進度 " + pct);
+  const prog = (await p.$eval("[data-testid=progress]", (e) => e.textContent)).trim();
+  if (prog !== "9/9") throw new Error("進度 " + prog);
+  console.log("   進度：", prog);
+});
 
-  console.log("   進度：", pct);
+await st("關卡順序：第 1 關是觀念、第 3 關才是界線", async () => {
+  await go("intro");
+  await p.waitForSelector("text=第 1 / 9 關");
+  await go("boundary");
+  await p.waitForSelector("text=第 3 / 9 關");
+});
+
+await st("導覽：桌機分頁列四個入口都會切換", async () => {
+  await p.setViewportSize({ width: 1100, height: 900 });
+  await p.goto(base + "/index.html#/", { waitUntil: "networkidle" });
+  for (const [label, expect] of [
+    ["選型指南", "#/guide"],
+    ["名詞小教室", "#/terms"],
+    ["闖關地圖", "#/map"],
+    ["首頁", "#/"],
+  ]) {
+    await p.locator("header nav button", { hasText: label }).click();
+    await p.waitForFunction((h) => location.hash === h, expect, { timeout: 2500 });
+  }
+  // 目前分頁要標記 aria-current
+  await p.locator("header nav button", { hasText: "選型指南" }).click();
+  await p.waitForFunction(() => location.hash === "#/guide", null, { timeout: 2500 });
+  await p.waitForSelector("header nav button[aria-current=page]");
+  const cur = await p.$$eval("header nav button[aria-current=page]", (els) => els.map((e) => e.textContent));
+  if (cur.length !== 1) throw new Error("aria-current 有 " + cur.length + " 個：" + cur.join(","));
+  if (!cur[0].includes("選型指南")) throw new Error("aria-current 在 " + cur[0]);
+});
+
+await st("導覽：手機底部分頁列可見且可切換", async () => {
+  await p.setViewportSize({ width: 390, height: 780 });
+  await p.goto(base + "/index.html#/", { waitUntil: "networkidle" });
+  const bottom = p.locator("nav.fixed");
+  if (!(await bottom.isVisible())) throw new Error("底部分頁列沒出現");
+  await bottom.locator("button", { hasText: "名詞" }).click();
+  await p.waitForFunction(() => location.hash === "#/terms", null, { timeout: 2500 });
+  // 捲到頁面最底時，底部分頁列不可以蓋住頁尾內容。
+  // 內容還在排版時高度會變，所以捲到「捲不動為止」再量。
+  await p.evaluate(async () => {
+    for (let i = 0; i < 20; i++) {
+      const before = window.scrollY;
+      window.scrollTo(0, document.documentElement.scrollHeight);
+      await new Promise((r) => setTimeout(r, 100));
+      if (Math.abs(window.scrollY - before) < 1) break;
+    }
+  });
+  await p.waitForTimeout(200);
+  const gap = await p.evaluate(() => {
+    const nav = document.querySelector("nav.fixed").getBoundingClientRect();
+    const foot = document.querySelector("footer").getBoundingClientRect();
+    return Math.round(nav.top - foot.bottom);
+  });
+  if (gap < 0) throw new Error("底部分頁列蓋住頁尾 " + -gap + "px");
+  await p.setViewportSize({ width: 1100, height: 900 });
+});
+
+await st("關卡頁：上一關／下一關可用", async () => {
+  await go("github-pages");
+  await p.locator("nav[aria-label=關卡導覽] button", { hasText: "下一關" }).click();
+  await p.waitForFunction(() => location.hash === "#/level/boundary", null, { timeout: 2500 });
+  await p.locator("nav[aria-label=關卡導覽] button", { hasText: "上一關" }).click();
+  await p.waitForFunction(() => location.hash === "#/level/github-pages", null, { timeout: 2500 });
 });
 
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");

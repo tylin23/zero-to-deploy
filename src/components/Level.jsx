@@ -27,10 +27,13 @@ export default function Level({ ctx, badge, steps, done, total }) {
 
   if (result) {
     const d = typeof done === "function" ? done(result.payload) : done;
-    // 多數關卡的過關按鈕都一樣，這裡給預設值，關卡只在不同時才覆寫
+    // 多數關卡的過關按鈕都一樣，這裡給預設值，關卡只在不同時才覆寫。
+    // 主按鈕直接送去「真的下一關」，不用再繞回地圖找。
     const buttons = {
       secondary: { label: "回地圖", onClick: () => ctx.goMap() },
-      primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
+      primary: ctx.next
+        ? { label: `下一關：${ctx.next.short || ctx.next.title} →`, onClick: () => ctx.goNext() }
+        : { label: "回地圖看成果 🏆", onClick: () => ctx.goMap() },
     };
     return <DoneScreen badge={badge} {...buttons} {...d} />;
   }

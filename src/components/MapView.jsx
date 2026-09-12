@@ -31,7 +31,9 @@ export default function MapView({ navigate }) {
     return () => ro.disconnect();
   }, []);
 
-  const currentId = mapOrder.find((l) => l.status === "ready" && !isComplete(l.id))?.id;
+  const nextUp = mapOrder.find((l) => l.status === "ready" && !isComplete(l.id));
+  const currentId = nextUp?.id;
+  const doneCount = mapOrder.filter((l) => isComplete(l.id)).length;
 
   // 回訪者：載入後自動捲到「目前這關」，不用自己找
   const scrolled = useRef(false);
@@ -99,13 +101,19 @@ export default function MapView({ navigate }) {
           從「自己動手」一路走到「交接納管」。<b className="text-ink">前段你能自己做</b>
           ，後段是交給資訊單位時要聽得懂的事。
         </p>
-        <div className="flex flex-wrap gap-2 justify-center mt-2">
-          <button type="button" onClick={() => navigate("#/guide")} className="btn btn-ghost btn-sm">
-            🧭 選型指南
-          </button>
-          <button type="button" onClick={() => navigate("#/terms")} className="btn btn-ghost btn-sm">
-            📇 名詞小教室
-          </button>
+        <div className="flex flex-wrap gap-2 justify-center items-center mt-3 text-[13px]">
+          <span className="pill border-2 border-line bg-surface text-ink">
+            已完成 {doneCount} / {mapOrder.length} 關
+          </span>
+          {nextUp && (
+            <button
+              type="button"
+              onClick={() => navigate("#/level/" + nextUp.id)}
+              className="btn btn-accent btn-sm"
+            >
+              {doneCount ? "繼續" : "從第一關開始"}：{nextUp.emoji} {nextUp.short || nextUp.title} →
+            </button>
+          )}
         </div>
       </div>
 
@@ -258,7 +266,7 @@ function TrailNode({ lv, index, pos, done, current, navigate }) {
     };
 
   const num = done
-    ? { background: "var(--mint-dark)", color: "#fff", borderColor: "var(--mint-dark)" }
+    ? { background: "var(--mint-deep)", color: "#fff", borderColor: "var(--mint-deep)" }
     : current
       ? { background: "var(--accent-dark)", color: "#fff", borderColor: "var(--accent-dark)" }
       : { background: "var(--surface)", color: "var(--muted)", borderColor: "var(--border)" };
@@ -288,7 +296,7 @@ function TrailNode({ lv, index, pos, done, current, navigate }) {
 
       {current && (
         <span
-          className="absolute -top-[26px] left-1/2 -translate-x-1/2 text-[12px] font-bold py-[3px] px-3 rounded-full whitespace-nowrap animate-bob"
+          className="absolute -top-[38px] left-1/2 -translate-x-1/2 text-[12px] font-bold py-[3px] px-3 rounded-full whitespace-nowrap animate-bob"
           style={{ background: "var(--ink)", color: "var(--surface)", boxShadow: "var(--shadow-sm)" }}
         >
           從這開始
@@ -312,7 +320,11 @@ function TrailNode({ lv, index, pos, done, current, navigate }) {
           {lv.emoji}
         </span>
         {locked && <span className="absolute text-[26px]">🔒</span>}
-        {done && <span className="absolute text-[34px] text-white">✓</span>}
+        {done && (
+          <span className="absolute text-[34px]" style={{ color: "var(--on-mint)" }}>
+            ✓
+          </span>
+        )}
       </button>
 
       <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-max text-center">

@@ -14,7 +14,6 @@ export default function IntroLevel({ ctx }) {
       badge={BADGES.concept}
       done={{
         ...DONE.intro,
-        primary: { label: "前往 GitHub Pages 關 →", onClick: () => ctx.navigate("#/level/github-pages") },
       }}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,

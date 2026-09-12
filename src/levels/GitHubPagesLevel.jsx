@@ -52,7 +52,6 @@ export default function GitHubPagesLevel({ ctx }) {
       done={(url) => ({
         ...DONE.githubPages,
         secondary: { label: "打開我的網站 ↗", onClick: () => window.open(url, "_blank", "noopener") },
-        primary: { label: "回地圖看看下一關 →", onClick: () => ctx.goMap() },
       })}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,

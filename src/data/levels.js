@@ -1,14 +1,7 @@
 // 地圖上的所有關卡（含尚未開放的），對應備課大綱
+// 順序原則：先給零前提的觀念 → 親手做一次真的部署 → 才問「我可以做到哪裡」。
+// 「界線意識」需要學生已經體會過「公開到網路上」是什麼意思，所以排在 GitHub Pages 之後。
 export const mapOrder = [
-  {
-    id: "boundary",
-    emoji: "🚦",
-    title: "這個我可以自己做嗎？",
-    short: "可以自己做嗎？",
-    tagline: "先分清楚界線，再動手",
-    status: "ready",
-    phase: "pre",
-  },
   {
     id: "intro",
     emoji: "🌐",
@@ -23,6 +16,15 @@ export const mapOrder = [
     emoji: "📄",
     title: "GitHub Pages",
     tagline: "免費、純滑鼠，把靜態網站上線",
+    status: "ready",
+    phase: "pre",
+  },
+  {
+    id: "boundary",
+    emoji: "🚦",
+    title: "這個我可以自己做嗎？",
+    short: "可以自己做嗎？",
+    tagline: "剛剛上線的東西，全世界都看得到",
     status: "ready",
     phase: "pre",
   },
@@ -74,8 +76,8 @@ export const mapOrder = [
 
 // 兩階段：納管前（自己動手）→ 交給資訊單位納管 → 納管後（交接與正式環境）
 export const PHASES = {
-  pre: { label: "納管前：你可以自己做的", icon: "🙋" },
-  post: { label: "納管後：交接與正式環境", icon: "🏛️" },
+  pre: { label: "納管前：你可以自己做的", short: "納管前", icon: "🙋" },
+  post: { label: "納管後：交接與正式環境", short: "納管後", icon: "🏛️" },
 };
 
 export const totalReady = mapOrder.filter((l) => l.status === "ready").length;
@@ -197,7 +199,7 @@ export const RISKS = {
   boundary: {
     level: "必讀",
     points: [
-      "這一關不會上傳任何東西，但它決定了後面每一關你能做到哪裡。",
+      "這一關不會上傳任何東西，但它決定了剩下每一關你能做到哪裡。",
       "口訣：碰到「個資／機敏／對外正式服務／跨單位或全機關／帳號權限」→ 停，先找資訊單位。",
     ],
   },

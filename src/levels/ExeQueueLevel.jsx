@@ -14,8 +14,6 @@ export default function ExeQueueLevel({ ctx }) {
       badge={BADGES.exeQueue}
       done={{
         ...DONE.exeQueue,
-        secondary: { label: "回地圖看成果", onClick: () => ctx.goMap() },
-        primary: { label: "回地圖 🏆", onClick: () => ctx.goMap() },
       }}
       steps={[
         ({ next }) => <ConceptStep onNext={next} />,
