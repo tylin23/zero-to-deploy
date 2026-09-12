@@ -15,7 +15,10 @@ p.on("pageerror", (e) => errs.push("PAGEERR " + e.message));
 p.on("console", (m) => {
   if (m.type() === "error" && !/Failed to load resource/.test(m.text())) errs.push("CONSOLE " + m.text());
 });
+// goto 到「一模一樣的 hash」對 SPA 來說不算換頁，元件狀態會被保留，
+// 所以先繞過地圖，確保每次都是乾淨地重新掛載這一關。
 const go = async (id) => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
   await p.goto(`${base}/index.html#/level/${id}`, { waitUntil: "networkidle" });
 };
 const st = async (n, f) => {
@@ -48,14 +51,42 @@ await st("3 界線判斷", async () => {
   await p.waitForSelector("text=界線意識達成", { timeout: 3000 });
 });
 
-await st("1 網站怎麼被看到", async () => {
+await st("1 網站怎麼被看到（含前端／後端）", async () => {
   await go("intro");
-  await p.click("text=我懂了，下一步");
+  // 第一步：request/response 動畫
+  await p.waitForSelector("text=按「播放」看看資料怎麼跑");
+  await B("▶ 播放").click();
+  await p.waitForSelector("text=瀏覽器送出請求", { timeout: 4000 });
+  await p.waitForSelector("text=瀏覽器把收到的檔案", { timeout: 12000 });
+  await B("我懂了，下一步").click();
+
+  // 第二步：前端／後端分類，六題都要答對
+  await p.waitForSelector("text=公所的前台和後台");
+  const rows = await p.$$("[data-fb-row]");
+  if (rows.length !== 6) throw new Error("分類題數 " + rows.length);
+  for (const r of rows) {
+    const want = await r.getAttribute("data-fb-row");
+    await r.$eval(`[data-fb-pick=${want}]`, (e) => e.click());
+  }
+  await B("六題都對了，下一步").click();
+
+  // 第三步：小測驗
   await p.click("text=因為筆電會關機");
+  // 第四步：把檔案放上伺服器
   await p.waitForSelector("text=把你的網頁「放上」伺服器", { timeout: 4000 });
   await p.click("text=📄 index.html");
   await p.click("text=把檔案放進來");
   await p.waitForSelector("text=第一關完成", { timeout: 4000 });
+});
+
+await st("第一關動畫：三個階段可以自己點、方向箭頭會跟著換", async () => {
+  await go("intro");
+  await p.click("text=② 回傳檔案");
+  await p.waitForSelector("text=伺服器 → 瀏覽器");
+  await p.click("text=① 送出請求");
+  await p.waitForSelector("text=瀏覽器 → 伺服器");
+  // 封包身上要有看得懂的標籤，不能只有一顆 emoji
+  await p.waitForSelector("text=請求");
 });
 
 await st("2 GitHub Pages", async () => {
