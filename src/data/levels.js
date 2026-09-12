@@ -12,6 +12,69 @@ export const mapOrder = [
 
 export const totalReady = mapOrder.filter((l) => l.status === "ready").length;
 
+// 各部署方式的評估（給非資訊公務員的選型維度）
+// phase: pre=納管前自己做 / post=偏正式系統（納管後、多由資訊單位）
+// difficulty: 1~5 上手難易度
+// kind: 靜態 / 動態 / 單機
+// diy: green 可自己做 / yellow 要留意 / red 接近紅線（通常要問資訊單位）
+export const EVAL = {
+  "github-pages": {
+    phase: "pre", difficulty: 2, kind: "靜態",
+    diy: "red", diyLabel: "完全公開", risk: "只放可公開內容",
+    openness: "對外公開", cost: "免費", maintain: "免顧",
+    scenario: "活動公告頁、單頁看板",
+  },
+  api: {
+    phase: "pre", difficulty: 3, kind: "靜態＋讀 API",
+    diy: "green", diyLabel: "開放資料最安全", risk: "只用開放資料、不碰個資",
+    openness: "內部 / 公開", cost: "免費", maintain: "低",
+    scenario: "空品 / 垃圾車 / 場館看板",
+  },
+  gas: {
+    phase: "pre", difficulty: 3, kind: "動態（Google 跑）",
+    diy: "yellow", diyLabel: "留意個資", risk: "通知用案號、控管表單權限",
+    openness: "內部流程", cost: "免費（有額度）", maintain: "低",
+    scenario: "民眾申辦自動通知、每日彙整",
+  },
+  huggingface: {
+    phase: "pre", difficulty: 4, kind: "動態（跑模型）",
+    diy: "yellow", diyLabel: "界線邊緣", risk: "境外第三方、務必去識別化",
+    openness: "對外公開", cost: "免費 CPU", maintain: "低",
+    scenario: "問答小幫手、去識別化意見分析",
+  },
+  selfhost: {
+    phase: "post", difficulty: 5, kind: "動態（自架）",
+    diy: "red", diyLabel: "偏正式系統", risk: "對外需資安評估，多由資訊單位",
+    openness: "內網 / 對外", cost: "免費（自負硬體）", maintain: "要一直顧",
+    scenario: "機關內部工具、正式服務",
+  },
+  docker: {
+    phase: "post", difficulty: 5, kind: "打包 / 動態",
+    diy: "red", diyLabel: "偏正式系統", risk: "交接與正式環境會用到",
+    openness: "依環境", cost: "依環境", maintain: "中",
+    scenario: "正式環境交付、一致執行",
+  },
+  "exe-queue": {
+    phase: "post", difficulty: 4, kind: "單機 / 後端",
+    diy: "yellow", diyLabel: "小工具可自己做", risk: "執行檔信任、防毒；大量任務多屬正式系統",
+    openness: "給特定同仁", cost: "免費", maintain: "中（更新要重發）",
+    scenario: "批次改檔名、報表轉檔、大量通知",
+  },
+};
+
+// 選型指南「幫我選」的情境 → 推薦方式
+export const PICKER = [
+  { q: "只是想放一頁可公開的公告或看板", to: "github-pages", why: "靜態、免費、免顧，最快上線" },
+  { q: "想把政府開放資料變成一張看板", to: "api", why: "讀開放資料、不碰個資，最安全" },
+  { q: "要收民眾報名/意見，並自動通知承辦", to: "gas", why: "表單＋GAS 自動化，貼近日常" },
+  { q: "想用 AI 幫忙看文字（問答、意見分析）", to: "huggingface", why: "HF Spaces 一鍵部署；務必去識別化" },
+];
+
+const DIFF_LABEL = { 1: "很簡單", 2: "簡單", 3: "中等", 4: "稍難", 5: "偏難" };
+export const diffText = (n) => "⭐".repeat(n) + "　" + (DIFF_LABEL[n] || "");
+export const diyColor = { green: "var(--mint)", yellow: "var(--sun)", red: "var(--danger)" };
+export const diyText = { green: "🟢 可自己做", yellow: "🟡 要留意", red: "🔴 接近紅線" };
+
 // 各部署方式的風險備注（公務／行政情境）。每一關頂部都會顯示。
 export const RISKS = {
   intro: {
