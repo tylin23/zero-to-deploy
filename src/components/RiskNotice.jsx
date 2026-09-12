@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useProgress } from "../state/progress.jsx";
 
 // 風險預告書：進入闖關前先閱讀並確認（公務／行政使用情境）
-export default function RiskNotice({ navigate }) {
+export default function RiskNotice({ navigate, next }) {
   const { ackRisk, riskAck } = useProgress();
   const [checked, setChecked] = useState(false);
 
-  const proceed = () => { ackRisk(); navigate("#/map"); };
+  // next：被閘門擋下時記住原本要去的地方，確認後直接送過去
+  const proceed = () => { ackRisk(); navigate(next || "#/map"); };
 
   return (
     <div className="max-w-[720px] mx-auto">
@@ -15,6 +16,7 @@ export default function RiskNotice({ navigate }) {
         <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">開始之前</span>
         <h1 className="text-[clamp(24px,5vw,34px)] font-bold text-ink">風險預告書</h1>
         <p className="text-muted text-sm">請先閱讀，特別是在公務／行政情境使用時。</p>
+        {next && <p className="text-accent text-sm font-bold m-0">要開始操作之前，請先看過這份說明 👇</p>}
       </div>
 
       <div className="card space-y-4">

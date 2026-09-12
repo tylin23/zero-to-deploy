@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { ProgressProvider, useProgress } from "./state/progress.jsx";
 import { useHashRoute } from "./hooks/useHashRoute.js";
 import { mapOrder, RISKS, EVAL } from "./data/levels.js";
@@ -40,11 +41,24 @@ export default function App() {
 
 function Shell() {
   const { hash, navigate } = useHashRoute();
+  const { riskAck } = useProgress();
+  const mainRef = useRef(null);
 
-  let view;
+  // a11y：換頁後把焦點移到主要內容，鍵盤／讀屏使用者才不會迷失
+  useEffect(() => {
+    if (mainRef.current) mainRef.current.focus({ preventScroll: true });
+  }, [hash]);
+
   const levelMatch = hash.match(/^#\/level\/(.+)$/);
   const termsMatch = hash.match(/^#\/terms(?:\/(.+))?$/);
-  if (hash === "#/" || hash === "") view = <Home navigate={navigate} />;
+
+  // 風險閘門：還沒確認風險預告書之前，任何「動手」的頁面（地圖／關卡）
+  // 都先導到預告書；確認後再回到原本要去的地方（含深連結、書籤）。
+  const needsGate = (hash === "#/map" || !!levelMatch) && !riskAck;
+
+  let view;
+  if (needsGate) view = <RiskNotice navigate={navigate} next={hash} />;
+  else if (hash === "#/" || hash === "") view = <Home navigate={navigate} />;
   else if (hash === "#/risk") view = <RiskNotice navigate={navigate} />;
   else if (hash === "#/guide") view = <Guide navigate={navigate} />;
   else if (termsMatch) view = <TermsPage navigate={navigate} focusId={termsMatch[1] || null} />;
@@ -55,7 +69,7 @@ function Shell() {
   return (
     <div className="min-h-full flex flex-col">
       <TopBar navigate={navigate} />
-      <main className="flex-1 w-full max-w-[940px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-16">{view}</main>
+      <main ref={mainRef} tabIndex={-1} className="flex-1 w-full max-w-[940px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-16 outline-none">{view}</main>
       <footer className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center py-5 px-4 text-muted text-[13px] text-center">
         <span>Zero to Deploy · 一個用來教「網頁部署」的互動教材</span>
         <button type="button" onClick={() => navigate("#/guide")} className="text-ink font-bold underline underline-offset-2">🧭 選型指南</button>

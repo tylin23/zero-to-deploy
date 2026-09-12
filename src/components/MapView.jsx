@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useProgress } from "../state/progress.jsx";
 import { mapOrder } from "../data/levels.js";
 
@@ -32,10 +32,20 @@ export default function MapView({ navigate }) {
 
   const currentId = mapOrder.find((l) => l.status === "ready" && !isComplete(l.id))?.id;
 
+  // 回訪者：載入後自動捲到「目前這關」，不用自己找
+  const scrolled = useRef(false);
+  useEffect(() => {
+    if (scrolled.current || !w || !currentId) return;
+    const idx = mapOrder.findIndex((l) => l.id === currentId);
+    if (idx <= 0) { scrolled.current = true; return; }
+    const el = trailRef.current?.querySelector(`[data-node="${currentId}"]`);
+    if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); scrolled.current = true; }
+  }, [w, currentId]);
+
   const layout = useMemo(() => {
     const W = w || 520;
     const n = mapOrder.length;
-    const gap = W < 420 ? 118 : 134;
+    const gap = W < 420 ? 158 : 134;
     const padTop = 78, padBottom = 96;
     const amp = Math.min(W * 0.3, 150);
     const cx = W / 2;
@@ -118,7 +128,7 @@ function TrailNode({ lv, index, pos, done, current, navigate }) {
     : { background: "var(--surface)", color: "var(--muted)", borderColor: "var(--border)" };
 
   return (
-    <div className="absolute -translate-x-1/2 -translate-y-1/2 grid place-items-center" style={{ left: pos.x, top: pos.y }}>
+    <div data-node={lv.id} className="absolute -translate-x-1/2 -translate-y-1/2 grid place-items-center" style={{ left: pos.x, top: pos.y }}>
       {/* 編號角標 */}
       <span className="absolute -top-2 -left-2 w-7 h-7 rounded-full border-2 text-xs font-extrabold grid place-items-center z-[2]"
         style={{ ...num, boxShadow: "var(--shadow-sm)" }}>{index + 1}</span>
@@ -143,8 +153,8 @@ function TrailNode({ lv, index, pos, done, current, navigate }) {
         {done && <span className="absolute text-[34px] text-white">✓</span>}
       </button>
 
-      <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-max max-w-[150px] text-center">
-        <div className={`font-bold text-sm px-2.5 py-0.5 rounded-full ${locked ? "text-muted" : "text-ink"}`}
+      <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 w-max max-w-[124px] sm:max-w-[150px] text-center">
+        <div className={`font-bold text-[12px] sm:text-sm leading-tight px-2.5 py-0.5 rounded-full ${locked ? "text-muted" : "text-ink"}`}
           style={{ background: "color-mix(in srgb, var(--surface) 80%, transparent)" }}>{lv.title}</div>
       </div>
     </div>

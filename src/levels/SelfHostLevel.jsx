@@ -63,6 +63,25 @@ function ConceptStep({ onNext }) {
   );
 }
 
+// 提到模組層級：避免每次 render 重新建立元件型別導致重新掛載（會讓焦點遺失）
+function Toggle({ on, onToggle, icon, title, desc }) {
+  return (
+    <button type="button" role="switch" aria-checked={on} aria-label={title}
+      onClick={onToggle}
+      className={`flex items-center gap-3 w-full text-left py-3 px-4 border-2 rounded-[14px] transition-all ${on ? "border-mint bg-successSoft" : "border-line bg-surface"}`}>
+      <span className="text-2xl">{icon}</span>
+      <div className="flex-1">
+        <div className="font-bold text-ink">{title}</div>
+        <div className="text-[13px] text-muted">{desc}</div>
+      </div>
+      <span className="text-xs font-extrabold shrink-0" style={{ color: on ? "var(--success)" : "var(--muted)" }}>{on ? "已開啟" : "未開啟"}</span>
+      <span className={`w-12 h-7 rounded-full relative transition-colors shrink-0 ${on ? "bg-mint" : "bg-surface2 border border-line"}`}>
+        <span className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-all ${on ? "left-[22px]" : "left-0.5"}`} />
+      </span>
+    </button>
+  );
+}
+
 /* ---------- 步驟 2：讓訪客連進來的挑戰 ---------- */
 function ChallengeStep({ onNext }) {
   const [server, setServer] = useState(false);
@@ -80,20 +99,6 @@ function ChallengeStep({ onNext }) {
     setResult(r);
   };
 
-  const Toggle = ({ on, set, icon, title, desc }) => (
-    <button type="button" onClick={() => { set(!on); setResult(null); }}
-      className={`flex items-center gap-3 w-full text-left py-3 px-4 border-2 rounded-[14px] transition-all ${on ? "border-mint bg-successSoft" : "border-line bg-surface"}`}>
-      <span className="text-2xl">{icon}</span>
-      <div className="flex-1">
-        <div className="font-bold text-ink">{title}</div>
-        <div className="text-[13px] text-muted">{desc}</div>
-      </div>
-      <span className={`w-12 h-7 rounded-full relative transition-colors shrink-0 ${on ? "bg-mint" : "bg-surface2 border border-line"}`}>
-        <span className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-all ${on ? "left-[22px]" : "left-0.5"}`} />
-      </span>
-    </button>
-  );
-
   return (
     <div className="space-y-4">
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 2 / 3 · 動手挑戰</span>
@@ -101,9 +106,9 @@ function ChallengeStep({ onNext }) {
       <p className="text-muted text-sm">把下面三個開關打開，再按「訪客嘗試連線」。缺哪一步，訪客就會卡在哪 —— 從錯誤訊息學會每一步在做什麼。</p>
 
       <div className="grid gap-2.5">
-        <Toggle on={server} set={setServer} icon="🖥️" title="啟動 server，監聽 port 8080" desc="你的電腦開始『接電話』" />
-        <Toggle on={firewall} set={setFirewall} icon="🧱" title="防火牆開放 port 8080" desc="允許外來連線進入這個 port" />
-        <Toggle on={forward} set={setForward} icon="🔀" title="路由器設定 port forwarding" desc="把對外的連線轉給你這台電腦" />
+        <Toggle on={server} onToggle={() => { setServer(!server); setResult(null); }} icon="🖥️" title="啟動 server，監聽 port 8080" desc="你的電腦開始『接電話』" />
+        <Toggle on={firewall} onToggle={() => { setFirewall(!firewall); setResult(null); }} icon="🧱" title="防火牆開放 port 8080" desc="允許外來連線進入這個 port" />
+        <Toggle on={forward} onToggle={() => { setForward(!forward); setResult(null); }} icon="🔀" title="路由器設定 port forwarding" desc="把對外的連線轉給你這台電腦" />
       </div>
 
       <div className="text-center">
