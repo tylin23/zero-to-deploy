@@ -1,0 +1,254 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   調色盤（藍色系 #26418F）— 以 CSS 變數提供，Tailwind 顏色對應這些變數
+   ========================================================= */
+:root {
+  --bg-sky-1: #c3d8f5;
+  --bg-sky-2: #dde8f8;
+  --bg-sky-3: #eef3fb;
+  --surface: #ffffff;
+  --surface-2: #eef2fa;
+  --border: #dde4f2;
+  --ink: #1e2a4a;
+  --muted: #515e85; /* 加深以符合 WCAG AA（含漸層頁底） */
+
+  --primary: #26418f;
+  --primary-dark: #1a2e66;
+  --primary-soft: #e4e9f6;
+
+  --accent: #3b7dd8; /* 填色用（按鈕底、邊框、地圖目前關卡） */
+  --accent-dark: #2a5cab;
+  --accent-soft: #dce9fb;
+  --accent-text: #2a5cab; /* 文字用：淺底上需更深才達 AA */
+
+  /* 主要按鈕底色（白字需 ≥4.5） */
+  --btn-primary-bg: #26418f;
+  --btn-primary-edge: #1a2e66;
+  --btn-accent-bg: #2a5cab;
+  --btn-accent-edge: #1f4682;
+
+  /* 資料界線燈的「文字」色（淺底需加深） */
+  --diy-green-text: #0c6b41;
+  --diy-yellow-text: #7a5600;
+  --diy-red-text: #c22a45;
+
+  --mint: #2fce88;
+  --mint-dark: #1fa96a;
+  --success: #1fa96a;
+  --success-soft: #d9f7e7;
+
+  --sun: #ffc93c;
+  --sky-blue: #4aa8ff;
+  --danger: #ff5a76;
+  --danger-soft: #ffe2e8;
+  --track: #dbe2f0;
+
+  --shadow: 0 16px 34px -16px rgba(30, 42, 74, 0.35);
+  --shadow-sm: 0 8px 18px -12px rgba(30, 42, 74, 0.35);
+}
+
+:root[data-theme="dark"] {
+  --bg-sky-1: #0e1730;
+  --bg-sky-2: #121b38;
+  --bg-sky-3: #16203f;
+  --surface: #18223f;
+  --surface-2: #202c4c;
+  --border: #2d3a5e;
+  --ink: #eef2fb;
+  --muted: #9aa6c9;
+
+  --primary: #6b90e6;
+  --primary-dark: #3f5ca8;
+  --primary-soft: #1e2842; /* 加深，讓 text-primary 在其上達 AA */
+
+  --accent: #5b9bf0;
+  --accent-dark: #3f6fc0;
+  --accent-soft: #1f2c47;
+  --accent-text: #7fb3f5; /* 深底上用亮色 */
+
+  /* 深色模式按鈕底需更深，白字才達 AA */
+  --btn-primary-bg: #3f5ca8;
+  --btn-primary-edge: #2a3f78;
+  --btn-accent-bg: #2f63b8;
+  --btn-accent-edge: #22488a;
+
+  --diy-green-text: #3fd992;
+  --diy-yellow-text: #ffd45e;
+  --diy-red-text: #ff9aab;
+
+  --mint: #3fd992;
+  --mint-dark: #26b877;
+  --success: #3fd992;
+  --success-soft: #17321f;
+
+  --sun: #ffd45e;
+  --danger: #ff7d92;
+  --danger-soft: #3a1c24;
+  --track: #2c3352;
+
+  --shadow: 0 18px 38px -16px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 10px 20px -12px rgba(0, 0, 0, 0.6);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: theme("fontFamily.sans");
+    background:
+      radial-gradient(90% 60% at 15% 0%, var(--bg-sky-1), transparent 60%),
+      radial-gradient(
+        80% 50% at 100% 10%,
+        color-mix(in srgb, var(--sky-blue) 20%, transparent),
+        transparent 55%
+      ),
+      linear-gradient(180deg, var(--bg-sky-2) 0%, var(--bg-sky-3) 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.65;
+  }
+  h1,
+  h2,
+  h3 {
+    line-height: 1.25;
+    font-weight: 700;
+  }
+}
+
+/* =========================================================
+   元件類別：重複使用的立體遊戲風元素（仍屬 Tailwind @layer components）
+   ========================================================= */
+@layer components {
+  .card {
+    @apply bg-surface border-2 border-line rounded-[22px] p-5 sm:p-7;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* 立體厚實按鈕 */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-bold rounded-2xl px-6 py-3 text-base cursor-pointer transition-transform;
+    box-shadow: 0 5px 0 var(--border);
+  }
+  .btn:active {
+    transform: translateY(5px);
+    box-shadow: 0 0 0 var(--border);
+  }
+  .btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+    transform: none;
+    box-shadow: 0 5px 0 var(--border);
+  }
+  .btn-primary {
+    @apply text-white;
+    background: var(--btn-primary-bg);
+    box-shadow: 0 6px 0 var(--btn-primary-edge);
+  }
+  .btn-primary:active {
+    box-shadow: 0 0 0 var(--btn-primary-edge);
+    transform: translateY(6px);
+  }
+  .btn-accent {
+    @apply text-white;
+    background: var(--btn-accent-bg);
+    box-shadow: 0 6px 0 var(--btn-accent-edge);
+  }
+  .btn-accent:active {
+    box-shadow: 0 0 0 var(--btn-accent-edge);
+    transform: translateY(6px);
+  }
+  .btn-ghost {
+    @apply bg-surface border-2 border-line;
+    box-shadow: 0 5px 0 var(--border);
+  }
+  .btn-lg {
+    @apply px-8 py-4 text-lg rounded-[18px];
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold;
+  }
+
+  .gh-input {
+    @apply w-full px-3 py-2.5 rounded-[10px] border-2 border-line bg-surface text-ink font-mono text-sm;
+  }
+  .gh-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .gh-btn {
+    @apply inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] text-sm font-bold border border-line bg-surface text-ink cursor-pointer transition-colors;
+  }
+  .gh-btn-green {
+    background: #2da44e;
+    border-color: #2da44e;
+    color: #fff;
+    box-shadow: 0 4px 0 #1f7a39;
+  }
+  .gh-btn-green:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 #1f7a39;
+  }
+
+  .callout {
+    @apply text-sm rounded-r-[14px] py-3.5 px-4;
+    border-left: 5px solid var(--accent);
+    background: var(--accent-soft);
+  }
+  .callout-info {
+    border-left-color: var(--primary);
+    background: var(--primary-soft);
+  }
+
+  /* ---- 尺寸與狀態變體（取代散落各處的 ! 覆寫；宣告在基底之後以取得優先權） ---- */
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+  .btn-md {
+    @apply px-5 py-2.5 text-sm;
+  }
+  .gh-btn-sm {
+    @apply py-1.5;
+  }
+  /* 整列式的連結按鈕（例如「去逛開放資料平臺 ↗」） */
+  .gh-btn-row {
+    @apply justify-between py-3 text-[15px];
+  }
+  /* 被選取的 gh-btn（例如 SDK 選項） */
+  .gh-btn-selected {
+    @apply border-primary bg-primarySoft text-primary;
+  }
+  /* 需要用一般字體（非等寬）的輸入框 */
+  .gh-input-sans {
+    @apply font-sans;
+  }
+  /* 卡片尺寸變體 */
+  .card-sm {
+    @apply p-4;
+  }
+  .card-flush {
+    @apply p-0;
+  }
+}
+
+/* 慶祝彩帶 */
+.confetti {
+  position: absolute;
+  width: 9px;
+  height: 14px;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.05ms !important;
+  }
+}
