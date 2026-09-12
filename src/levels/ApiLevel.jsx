@@ -1,8 +1,8 @@
 import { useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
 import { BADGES } from "../data/levels.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -30,32 +30,21 @@ const ENDPOINTS = [
 ];
 
 export default function ApiLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-  const next = () => setStep((s) => s + 1);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="🔌"
-        title="API 入門達成！"
-        badge={BADGES.apiBasics}
-        text="你已經懂了 API 的核心：照著網址（endpoint）＋方法（GET/POST）發出 request，對方回你一包結構化的 JSON。之後很多部署（例如 AI 服務）都是靠 API 串起來的。"
-        secondary={{ label: "回地圖", onClick: () => ctx.goMap() }}
-        primary={{ label: "看看下一關 →", onClick: () => ctx.goMap() }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <ConceptStep onNext={next} />}
-        {step === 1 && <TesterStep onNext={next} />}
-        {step === 2 && <RealStep onFinish={() => { setFinished(true); ctx.complete(BADGES.apiBasics); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.apiBasics}
+      done={{
+        icon: "🔌",
+        title: "API 入門達成！",
+        text: "你已經懂了 API 的核心：照著網址（endpoint）＋方法（GET/POST）發出 request，對方回你一包結構化的 JSON。之後很多部署（例如 AI 服務）都是靠 API 串起來的。",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
+      }}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => <TesterStep onNext={next} />,
+        ({ finish }) => <RealStep onFinish={finish} />,
+      ]}
+    />
   );
 }
 
@@ -190,17 +179,7 @@ function RealStep({ onFinish }) {
 
       <hr className="border-0 border-t border-line my-2" />
 
-      <Quiz
-        question="你在瀏覽器打開那個「台北即時天氣」網址，看到一包 JSON。這代表什麼？"
-        options={[
-          { text: "你送了一個 GET 請求，API 回傳了結構化資料（JSON）", correct: true },
-          { text: "你把網站部署上線了", correct: false },
-          { text: "你下載了一個網頁的完整 HTML 畫面", correct: false },
-        ]}
-        explainOk="正是如此！GET 一個 endpoint → 拿回 JSON 資料。串接開放資料就是這樣運作，也是行政應用最安全的資料來源。"
-        explainNo="再想想：畫面上是純資料（key/value），不是排版好的網頁，也和「部署」是兩件事。"
-        onCorrect={() => setPassed(true)}
-      />
+      <Quiz {...QUIZZES.api} onCorrect={() => setPassed(true)} />
 
       <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>完成這一關 🎉</button>
     </div>

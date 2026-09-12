@@ -1,7 +1,7 @@
 import { useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -18,32 +18,21 @@ EXPOSE 3000
 CMD ["node", "server.js"]`;
 
 export default function DockerLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-  const next = () => setStep((s) => s + 1);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="🐳"
-        title="打包貨櫃達成！"
-        badge={BADGES.docker}
-        text="你懂了 Docker 的核心：把 App 和它需要的環境一起打包成 image，任何裝了 Docker 的機器都能跑出一樣的結果，徹底解決「在我電腦可以跑」的問題。"
-        secondary={{ label: "回地圖", onClick: () => ctx.goMap() }}
-        primary={{ label: "看看最後一關 →", onClick: () => ctx.goMap() }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <ConceptStep onNext={next} />}
-        {step === 1 && <BuildStep onNext={next} />}
-        {step === 2 && <RealStep onFinish={() => { setFinished(true); ctx.complete(BADGES.docker); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.docker}
+      done={{
+        icon: "🐳",
+        title: "打包貨櫃達成！",
+        text: "你懂了 Docker 的核心：把 App 和它需要的環境一起打包成 image，任何裝了 Docker 的機器都能跑出一樣的結果，徹底解決「在我電腦可以跑」的問題。",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "看看最後一關 →", onClick: () => ctx.goMap() },
+      }}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => <BuildStep onNext={next} />,
+        ({ finish }) => <RealStep onFinish={finish} />,
+      ]}
+    />
   );
 }
 
@@ -188,17 +177,7 @@ function RealStep({ onFinish }) {
 
       <hr className="border-0 border-t border-line my-2" />
 
-      <Quiz
-        question="Docker 最主要幫你解決什麼問題？"
-        options={[
-          { text: "把 App 和它需要的環境一起打包，避免「我電腦能跑、你那邊壞掉」", correct: true },
-          { text: "讓網頁的顏色變好看", correct: false },
-          { text: "自動幫你買一台伺服器", correct: false },
-        ]}
-        explainOk="正是！Docker 把環境一起帶著走，任何裝了 Docker 的機器都能跑出一致結果。這也是雲端部署超常用它的原因。"
-        explainNo="回想剛剛的互動：沒把環境打包，換台機器就壞了。Docker 就是要解決這個。"
-        onCorrect={() => setPassed(true)}
-      />
+      <Quiz {...QUIZZES.docker} onCorrect={() => setPassed(true)} />
 
       <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>完成這一關 🎉</button>
     </div>

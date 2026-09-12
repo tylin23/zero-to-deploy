@@ -1,8 +1,8 @@
 import { useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
 import { BADGES } from "../data/levels.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -22,32 +22,21 @@ function analyzeSentiment(text) {
 }
 
 export default function HuggingFaceLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-  const next = () => setStep((s) => s + 1);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="🤗"
-        title="AI 應用上線達成！"
-        badge={BADGES.hfSpace}
-        text="你已經看懂 AI 原生的部署方式：把模型或 App 交給 Hugging Face Spaces，它幫你 host 和跑，你只要一個網址就能分享互動式 AI。"
-        secondary={{ label: "回地圖", onClick: () => ctx.goMap() }}
-        primary={{ label: "看看下一關 →", onClick: () => ctx.goMap() }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <ConceptStep onNext={next} />}
-        {step === 1 && <SimStep onNext={next} />}
-        {step === 2 && <RealStep onFinish={() => { setFinished(true); ctx.complete(BADGES.hfSpace); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.hfSpace}
+      done={{
+        icon: "🤗",
+        title: "AI 應用上線達成！",
+        text: "你已經看懂 AI 原生的部署方式：把模型或 App 交給 Hugging Face Spaces，它幫你 host 和跑，你只要一個網址就能分享互動式 AI。",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
+      }}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => <SimStep onNext={next} />,
+        ({ finish }) => <RealStep onFinish={finish} />,
+      ]}
+    />
   );
 }
 
@@ -216,17 +205,7 @@ function RealStep({ onFinish }) {
 
       <hr className="border-0 border-t border-line my-2" />
 
-      <Quiz
-        question="為什麼 AI App 常常用 Hugging Face Spaces，而不是放 GitHub Pages？"
-        options={[
-          { text: "因為 AI 要跑模型（後端運算），GitHub Pages 只能放純靜態網頁", correct: true },
-          { text: "因為 GitHub Pages 要收費", correct: false },
-          { text: "因為 AI App 不能有網址", correct: false },
-        ]}
-        explainOk="正解！GitHub Pages 只送靜態檔案，不會幫你跑程式；AI 需要後端運算，所以用會幫你跑模型的 Spaces。挑對『部署平台』要看你的 App 需不需要後端。"
-        explainNo="回想第 2 關：GitHub Pages 只送靜態檔案、不跑後端；而 AI 需要跑模型（運算）。"
-        onCorrect={() => setPassed(true)}
-      />
+      <Quiz {...QUIZZES.huggingface} onCorrect={() => setPassed(true)} />
 
       <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>完成這一關 🎉</button>
     </div>

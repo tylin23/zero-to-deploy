@@ -1,8 +1,8 @@
 import { useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
 import { BADGES } from "../data/levels.js";
 
 const REPO = "my-first-site";
@@ -41,32 +41,21 @@ function downloadStarter() {
 }
 
 export default function GitHubPagesLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finishedUrl, setFinishedUrl] = useState(null);
-  const next = () => setStep((s) => s + 1);
-
-  if (finishedUrl) {
-    return (
-      <DoneScreen
-        icon="🚀"
-        title="你把網站部署上線了！"
-        badge={BADGES.firstDeploy}
-        text="這正是這個教學網站本身的做法。你已經完成整條主線：概念 → 模擬 → 真的部署。"
-        secondary={{ label: "打開我的網站 ↗", onClick: () => window.open(finishedUrl, "_blank", "noopener") }}
-        primary={{ label: "回地圖看看下一關 →", onClick: () => ctx.goMap() }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <ConceptStep onNext={next} />}
-        {step === 1 && <SimStep onNext={next} />}
-        {step === 2 && <RealStep onFinish={(url) => { setFinishedUrl(url); ctx.complete(BADGES.firstDeploy); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.firstDeploy}
+      done={(url) => ({
+        icon: "🚀",
+        title: "你把網站部署上線了！",
+        text: "這正是這個教學網站本身的做法。你已經完成整條主線：概念 → 模擬 → 真的部署。",
+        secondary: { label: "打開我的網站 ↗", onClick: () => window.open(url, "_blank", "noopener") },
+        primary: { label: "回地圖看看下一關 →", onClick: () => ctx.goMap() },
+      })}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => <SimStep onNext={next} />,
+        ({ finish }) => <RealStep onFinish={finish} />,
+      ]}
+    />
   );
 }
 
@@ -88,17 +77,7 @@ function ConceptStep({ onNext }) {
           <div key={t} className="card"><div className="text-3xl">{i}</div><b className="text-ink">{t}</b><p className="text-muted text-sm m-0">{d}</p></div>
         ))}
       </div>
-      <Quiz
-        question="GitHub Pages 最適合放哪一種網站？"
-        options={[
-          { text: "靜態網站：HTML / CSS / JS（例如作品集、活動頁）", correct: true },
-          { text: "需要資料庫、後端運算的大型系統", correct: false },
-          { text: "只有存在自己電腦裡的 Word 檔", correct: false },
-        ]}
-        explainOk="對！GitHub Pages 專門放「靜態網站」—— 純前端的頁面。要跑後端／資料庫就得用別的服務（之後的關會教）。"
-        explainNo="提示：GitHub Pages 不會幫你跑後端程式，它只負責把「檔案」原封不動送給瀏覽器。"
-        onCorrect={() => setPassed(true)}
-      />
+      <Quiz {...QUIZZES.githubPages} onCorrect={() => setPassed(true)} />
       <button type="button" className="btn btn-primary" disabled={!passed} onClick={onNext}>下一步：先在模擬介面練一次 →</button>
     </div>
   );

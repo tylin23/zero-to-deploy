@@ -10,20 +10,32 @@
 
 ---
 
-## 目前內容（8 關全數完成）
+## 課程結構（9 關，分成兩階段）
 
+主線是一個小工具的生命週期：**你自己動手做 → 好用了就交給資訊單位納管**。
+
+### 🙋 納管前：你可以自己做的
 | 關卡 | 主題 | 互動設計重點 |
 |------|------|----------|
+| 0 · 這個我可以自己做嗎？ | 界線判斷 | 認五條紅線 + 6 題公務情境判斷（可自己做／先問資訊單位／不該這樣做） |
 | 1 · 網站是怎麼被看到的？ | 部署核心概念 | request/response 動畫、把檔案「放上伺服器」的拖拉互動 |
 | 2 · **GitHub Pages**（旗艦） | 免費、純滑鼠部署靜態網站 | 概念測驗 → **站內模擬 GitHub 介面**點一遍 → 去真的 GitHub 做並**貼網址驗證** |
-| 3 · API 基礎 | 前後端怎麼對話 | 餐廳點餐比喻 + 可切換 endpoint 的 API 測試器 + 真的打公開 API |
-| 4 · GAS + API 推送 | 用 Google Apps Script 自動推播 | 設定訊息/觸發 → 看封包送達模擬聊天室 + 可複製的 GAS 程式碼 |
-| 5 · AI 原生 + Hugging Face | 把 AI 應用一鍵部署 | 模擬建立 Space → 可互動的情感分析 AI Demo + 真的逛 HF Spaces |
-| 6 · Windows / Linux 自架 | 用自己的電腦當伺服器 | server/防火牆/port forwarding 三開關挑戰（分階段錯誤教學）+ `python -m http.server` |
-| 7 · Docker | 把 App 和環境一起打包 | 選擇是否打包環境 → 在別台機器 run，體會可攜性 + Dockerfile 範例 |
-| 8 · EXE / Queue | 打包成程式、排隊處理任務 | 工作佇列模擬器（送任務→worker 消化）+ EXE 打包示意 |
+| 3 · API 基礎 | 前後端怎麼對話 | 餐廳點餐比喻 + 可切換 endpoint 的 API 測試器 + 真的打政府開放資料 |
+| 4 · GAS + API 推送 | 民眾申辦自動通知承辦 | 設定訊息/觸發 → 看封包送達模擬群組 + 可複製的 GAS 程式碼 |
+| 5 · AI 原生 + Hugging Face | 把 AI 應用一鍵部署 | 模擬建立 Space → 可互動的民意情緒分析 Demo |
 
-**教學設計核心**：概念 → 站內模擬（先在互動介面練一次，零風險）→ 真實實作（去平台親手做）→ 驗證過關拿徽章。全程盡量走「GUI／點選」路線，新手友善。完成 8 關即點亮整張地圖與所有徽章。
+### 🏛️ 交給資訊單位納管 → 納管後（偏正式系統，了解即可）
+| 關卡 | 主題 | 互動設計重點 |
+|------|------|----------|
+| 6 · Windows / Linux 自架 | **內網自用 vs 對外** | 三個開關 + 分別測「同仁從內網連」與「民眾從外網連」，帶出對外需資安評估與核准 |
+| 7 · Docker | 把 App 和環境一起打包 | 選擇是否打包環境 → 在別台機器 run，體會可攜性 |
+| 8 · EXE / Queue | 打包成程式、排隊處理任務 | 工作佇列模擬器 + EXE 打包示意 |
+
+**教學設計核心**：概念 → 站內模擬（零風險先練一次）→ 真實實作（去平台親手做）→ 驗證過關拿徽章。全程盡量走「GUI／點選」路線。
+
+### 另外兩個常駐資源
+- **🧭 選型指南**（`#/guide`）：依難易度、靜態/動態、資料界線、開放範圍、費用、維護比較各種部署方式，附「幫我選」推薦。
+- **📇 名詞小教室**（`#/terms`）：10 張概念卡（快取、佇列、CDN、冪等、日誌監控、環境、備份、Rollback、登入vs權限、HTTPS），其中快取與冪等有小互動。
 
 進度與徽章存在瀏覽器 `localStorage`，不需登入、不需後端。
 
@@ -71,29 +83,53 @@ src/
   hooks/useHashRoute.js  # 極簡 hash 路由
   data/levels.js         # 關卡地圖資料與徽章定義
   lib/confetti.js        # 過關彩帶
-  components/            # TopBar / Home / MapView(蜿蜒地圖) / Quiz / StepBar / Browser / DoneScreen
-  levels/                # 8 關各自一個檔案
-    IntroLevel.jsx       GitHubPagesLevel.jsx  ApiLevel.jsx
-    GasLevel.jsx         HuggingFaceLevel.jsx  SelfHostLevel.jsx
-    DockerLevel.jsx      ExeQueueLevel.jsx
+  content/quizzes.js     # 所有測驗題（集中管理，方便整批調整）
+  data/terms.js          # 名詞小教室的概念卡
+  components/
+    Level.jsx            # 關卡共用骨架（步驟、進度條、回上一步、過關畫面）
+    TopBar / Home / MapView(兩階段蜿蜒地圖) / Guide / TermsPage
+    RiskNotice / RiskNote / EvalBar / Quiz / StepBar / Browser / DoneScreen
+  levels/                # 9 關各自一個檔案
+    BoundaryLevel.jsx    IntroLevel.jsx        GitHubPagesLevel.jsx
+    ApiLevel.jsx         GasLevel.jsx          HuggingFaceLevel.jsx
+    SelfHostLevel.jsx    DockerLevel.jsx       ExeQueueLevel.jsx
 ```
 
 ---
 
-## 怎麼新增一關（把大綱其他主題補上）
+## 怎麼新增一關
 
-1. 在 `src/levels/` 新增 `YourLevel.jsx`，元件接收 `ctx` prop：
+1. 在 `src/levels/` 新增 `YourLevel.jsx`，用共用的 `<Level>` 骨架：
 
    ```jsx
-   export default function DockerLevel({ ctx }) {
-     // 用 components/ 裡的 Quiz、StepBar、DoneScreen、Browser 組互動內容
-     // 完成時：ctx.complete({ id, icon, name, desc })  ← 記錄過關並發徽章
-     // 導覽：ctx.goMap() / ctx.navigate("#/level/xxx")
+   import Level from "../components/Level.jsx";
+   import { BADGES } from "../data/levels.js";
+
+   export default function YourLevel({ ctx }) {
+     return (
+       <Level ctx={ctx} badge={BADGES.yourBadge}
+         done={{
+           icon: "🎉", title: "過關標題", text: "過關說明",
+           secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+           primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
+         }}
+         steps={[
+           ({ next })   => <ConceptStep onNext={next} />,
+           ({ finish }) => <RealStep onFinish={finish} />,
+         ]}
+       />
+     );
    }
    ```
 
-2. 在 `src/App.jsx` 的 `LEVELS` 對照表加入 `"docker": DockerLevel`。
-3. 在 `src/data/levels.js` 把該關的 `status` 從 `"soon"` 改成 `"ready"`。
+   `<Level>` 會處理步驟切換、進度條、「回上一步」、過關畫面與發徽章。
+
+2. 在 `src/App.jsx` 的 `LEVELS` 對照表加入 `"your-id": YourLevel`。
+3. 在 `src/data/levels.js`：
+   - `mapOrder` 加一筆（含 `phase: "pre" | "post"`、可選 `short` 地圖短標題）
+   - `BADGES` 加徽章、`RISKS` 加該關的風險備注
+   - 若是部署方式，`EVAL` 再加上難易度等評估維度
+4. 測驗題請寫在 `src/content/quizzes.js`，關卡內用 `<Quiz {...QUIZZES.yourKey} onCorrect={...} />`。
 
 關卡就會自動出現在地圖上、可以點、也會算進進度。
 
@@ -102,3 +138,18 @@ src/
 ## 授權
 
 見 [LICENSE](./LICENSE)。
+
+---
+
+## 端對端測試
+
+`tests/e2e.mjs` 會把 **9 關全部走完一遍**（含每關的互動、測驗與過關），並檢查「回上一步」與進度是否到 100%。用來確認改動沒有弄壞任何一關。
+
+```bash
+npm i -D playwright          # 僅測試需要，未列入 dependencies 以免拖慢部署
+npx playwright install chromium
+npm run build && npm run preview   # 另開一個終端機
+npm run test:e2e                   # 預設連 http://localhost:4173
+```
+
+可用 `BASE_URL` 指定其他位址，例如 `BASE_URL=http://localhost:8000 npm run test:e2e`。

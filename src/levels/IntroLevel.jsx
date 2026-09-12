@@ -1,51 +1,32 @@
 import { useRef, useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level, { Eyebrow } from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function IntroLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-  const next = () => setStep((s) => s + 1);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="🧭"
-        title="第一關完成！"
-        badge={BADGES.concept}
-        text="你已經懂了核心概念：部署 = 把檔案放到別人連得到的電腦上。接下來，我們用真正的服務「GitHub Pages」把它做出來。"
-        secondary={{ label: "回地圖", onClick: () => ctx.goMap() }}
-        primary={{ label: "前往 GitHub Pages 關 →", onClick: () => ctx.navigate("#/level/github-pages") }}
-      />
-    );
-  }
-
   return (
-    <div className="card space-y-4">
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      {step === 0 && <ConceptStep onNext={next} />}
-      {step === 1 && (
-        <div className="space-y-4">
-          <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">第二步 · 檢查一下</span>
-          <Quiz
-            question="為什麼不能只把網頁放在「自己的筆電」上就好？"
-            options={[
-              { text: "因為筆電會關機、會睡眠，別人不一定連得到", correct: true },
-              { text: "因為筆電不能開網頁", correct: false },
-              { text: "因為 HTML 只能在伺服器打開", correct: false },
-            ]}
-            explainOk="沒錯！要「一直開著、有固定網址」，別人才隨時看得到 —— 這就是為什麼我們需要部署到伺服器 / 託管服務。"
-            explainNo="再想想：關鍵在於「別人能不能隨時連到你的電腦」。"
-            onCorrect={() => setTimeout(next, 900)}
-          />
-        </div>
-      )}
-      {step === 2 && <DeployStep onDone={() => { setFinished(true); ctx.complete(BADGES.concept); }} />}
-    </div>
+    <Level ctx={ctx} badge={BADGES.concept}
+      done={{
+        icon: "🧭",
+        title: "第一關完成！",
+        text: "你已經懂了核心概念：部署 = 把檔案放到別人連得到的電腦上。接下來，我們用真正的服務「GitHub Pages」把它做出來。",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "前往 GitHub Pages 關 →", onClick: () => ctx.navigate("#/level/github-pages") },
+      }}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => (
+          <div className="space-y-4">
+            <Eyebrow>第二步 · 檢查一下</Eyebrow>
+            <Quiz {...QUIZZES.intro} onCorrect={() => setTimeout(next, 900)} />
+          </div>
+        ),
+        ({ finish }) => <DeployStep onDone={finish} />,
+      ]}
+    />
   );
 }
 

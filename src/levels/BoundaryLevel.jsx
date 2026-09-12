@@ -1,6 +1,5 @@
 import { useState } from "react";
-import StepBar from "../components/StepBar.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
+import Level from "../components/Level.jsx";
 import { BADGES } from "../data/levels.js";
 
 // 三種判斷
@@ -45,30 +44,20 @@ const CASES = [
 ];
 
 export default function BoundaryLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="🚦"
-        title="界線意識達成！"
-        badge={BADGES.boundary}
-        text="記住那句口訣：碰到「個資／機敏／對外正式服務／跨單位或全機關／帳號權限」，就停下來找資訊單位。接下來每一關，都在這條界線之內動手。"
-        secondary={{ label: "回地圖", onClick: () => ctx.goMap() }}
-        primary={{ label: "開始第一關 →", onClick: () => ctx.navigate("#/level/intro") }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={2} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <RedLines onNext={() => setStep(1)} />}
-        {step === 1 && <CaseGame onFinish={() => { setFinished(true); ctx.complete(BADGES.boundary); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.boundary}
+      done={{
+        icon: "🚦",
+        title: "界線意識達成！",
+        text: "記住那句口訣：碰到「個資／機敏／對外正式服務／跨單位或全機關／帳號權限」，就停下來找資訊單位。接下來每一關，都在這條界線之內動手。",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "開始第一關 →", onClick: () => ctx.navigate("#/level/intro") },
+      }}
+      steps={[
+        ({ next }) => <RedLines onNext={next} />,
+        ({ finish }) => <CaseGame onFinish={finish} />,
+      ]}
+    />
   );
 }
 

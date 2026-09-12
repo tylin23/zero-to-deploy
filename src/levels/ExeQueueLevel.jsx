@@ -1,38 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
 
 const PROCESS_MS = 900;
 
 export default function ExeQueueLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-  const next = () => setStep((s) => s + 1);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="🏆"
-        title="最後一關完成，全線通關！"
-        badge={BADGES.exeQueue}
-        text="你走完了整張部署地圖：從「網站怎麼被看到」到 GitHub Pages、API、自動推播、AI、自架、Docker，最後是 EXE 與工作佇列。恭喜你把部署的全貌都摸過一遍了！🎉"
-        secondary={{ label: "回地圖看成果", onClick: () => ctx.goMap() }}
-        primary={{ label: "回地圖 🏆", onClick: () => ctx.goMap() }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <ConceptStep onNext={next} />}
-        {step === 1 && <QueueStep onNext={next} />}
-        {step === 2 && <ExeStep onFinish={() => { setFinished(true); ctx.complete(BADGES.exeQueue); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.exeQueue}
+      done={{
+        icon: "🏆",
+        title: "最後一關完成，全線通關！",
+        text: "你走完了整張部署地圖：從「網站怎麼被看到」到 GitHub Pages、API、自動推播、AI、自架、Docker，最後是 EXE 與工作佇列。恭喜你把部署的全貌都摸過一遍了！🎉",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "回地圖 🏆", onClick: () => ctx.goMap() },
+      }}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => <QueueStep onNext={next} />,
+        ({ finish }) => <ExeStep onFinish={finish} />,
+      ]}
+    />
   );
 }
 
@@ -175,17 +164,7 @@ function ExeStep({ onFinish }) {
 
       <hr className="border-0 border-t border-line my-2" />
 
-      <Quiz
-        question="什麼情況最適合用「工作佇列（Queue）」？"
-        options={[
-          { text: "任務很多或很耗時，想讓使用者不用站著等、系統也不會被塞爆", correct: true },
-          { text: "想讓網站的字變大", correct: false },
-          { text: "只有在部署到 GitHub Pages 時才需要", correct: false },
-        ]}
-        explainOk="正解！把耗時或大量的任務丟進佇列、由背景慢慢消化，使用者能馬上得到回應，系統也更穩、可重試。這一關你把 EXE 與 Queue 都學起來了 🎉"
-        explainNo="回想剛剛的模擬：佇列的重點是『排隊慢慢處理』，讓使用者不用等、系統不被瞬間塞爆。"
-        onCorrect={() => setPassed(true)}
-      />
+      <Quiz {...QUIZZES.exeQueue} onCorrect={() => setPassed(true)} />
 
       <button type="button" className="btn btn-primary" disabled={!packed || !passed} onClick={onFinish}>完成整張地圖 🏆</button>
     </div>

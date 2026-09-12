@@ -1,7 +1,7 @@
 import { useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -23,32 +23,21 @@ const GAS_CODE = `function pushMessage() {
 }`;
 
 export default function GasLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-  const next = () => setStep((s) => s + 1);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="📬"
-        title="自動推播達成！"
-        badge={BADGES.gasPush}
-        text="你已經懂了自動化的骨架：一個觸發（定時或事件）→ 在雲端跑一段程式（GAS）→ 呼叫別人的 API 把訊息推出去。這就是很多「自動通知」背後的原理。"
-        secondary={{ label: "回地圖", onClick: () => ctx.goMap() }}
-        primary={{ label: "看看下一關 →", onClick: () => ctx.goMap() }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <ConceptStep onNext={next} />}
-        {step === 1 && <SimStep onNext={next} />}
-        {step === 2 && <RealStep onFinish={() => { setFinished(true); ctx.complete(BADGES.gasPush); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.gasPush}
+      done={{
+        icon: "📬",
+        title: "自動推播達成！",
+        text: "你已經懂了自動化的骨架：一個觸發（定時或事件）→ 在雲端跑一段程式（GAS）→ 呼叫別人的 API 把訊息推出去。這就是很多「自動通知」背後的原理。",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
+      }}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => <SimStep onNext={next} />,
+        ({ finish }) => <RealStep onFinish={finish} />,
+      ]}
+    />
   );
 }
 
@@ -226,17 +215,7 @@ function RealStep({ onFinish }) {
 
       <hr className="border-0 border-t border-line my-2" />
 
-      <Quiz
-        question="這條「GAS 自動推播」最關鍵的一步，是哪一段在做事？"
-        options={[
-          { text: "UrlFetchApp.fetch(...) —— 呼叫別人的 API 把訊息 POST 出去", correct: true },
-          { text: "把程式碼存檔", correct: false },
-          { text: "把網頁部署到 GitHub Pages", correct: false },
-        ]}
-        explainOk="沒錯！核心就是用 GAS 去『呼叫 API（POST）』。觸發只是決定「什麼時候跑」，真正把通知送出去的是那一行 fetch。"
-        explainNo="再看一次程式碼：真正把訊息送出去的，是呼叫 Webhook API 的那一行。"
-        onCorrect={() => setPassed(true)}
-      />
+      <Quiz {...QUIZZES.gas} onCorrect={() => setPassed(true)} />
 
       <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>完成這一關 🎉</button>
     </div>

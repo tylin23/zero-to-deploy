@@ -1,38 +1,27 @@
 import { useState } from "react";
-import StepBar from "../components/StepBar.jsx";
+import Level from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
-import DoneScreen from "../components/DoneScreen.jsx";
+import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
 
 const CMD = "python -m http.server 8000";
 
 export default function SelfHostLevel({ ctx }) {
-  const [step, setStep] = useState(0);
-  const [finished, setFinished] = useState(false);
-  const next = () => setStep((s) => s + 1);
-
-  if (finished) {
-    return (
-      <DoneScreen
-        icon="🖥️"
-        title="自架：內網與對外的差別"
-        badge={BADGES.selfHost}
-        text="關鍵不是技術有多難，而是：只給機關內部用，設定好就能跑；要讓民眾連得到，就必須先通過資安評估與核准，並交由資訊單位在受管控的環境提供。"
-        secondary={{ label: "回地圖", onClick: () => ctx.goMap() }}
-        primary={{ label: "看看下一關 →", onClick: () => ctx.goMap() }}
-      />
-    );
-  }
-
   return (
-    <div>
-      <StepBar current={step} total={3} doneUntil={step - 1} />
-      <div className="card">
-        {step === 0 && <ConceptStep onNext={next} />}
-        {step === 1 && <ChallengeStep onNext={next} />}
-        {step === 2 && <RealStep onFinish={() => { setFinished(true); ctx.complete(BADGES.selfHost); }} />}
-      </div>
-    </div>
+    <Level ctx={ctx} badge={BADGES.selfHost}
+      done={{
+        icon: "🖥️",
+        title: "自架：內網與對外的差別",
+        text: "關鍵不是技術有多難，而是：只給機關內部用，設定好就能跑；要讓民眾連得到，就必須先通過資安評估與核准，並交由資訊單位在受管控的環境提供。",
+        secondary: { label: "回地圖", onClick: () => ctx.goMap() },
+        primary: { label: "看看下一關 →", onClick: () => ctx.goMap() },
+      }}
+      steps={[
+        ({ next }) => <ConceptStep onNext={next} />,
+        ({ next }) => <ChallengeStep onNext={next} />,
+        ({ finish }) => <RealStep onFinish={finish} />,
+      ]}
+    />
   );
 }
 
@@ -173,17 +162,7 @@ function RealStep({ onFinish }) {
 
       <hr className="border-0 border-t border-line my-2" />
 
-      <Quiz
-        question="你的內部小工具在內網跑得好好的，長官說「乾脆開放給民眾用」。你該怎麼回應？"
-        options={[
-          { text: "對外提供服務要先經資安評估與核准，並交由資訊單位在受管控環境提供", correct: true },
-          { text: "直接把機關防火牆全部打開就好", correct: false },
-          { text: "把電腦搬回家接網路，比較快", correct: false },
-        ]}
-        explainOk="正解！內網自用是你的權責範圍；一旦對外，就牽涉資安、個資、維運責任與長期維護 —— 那是機關層級的決定，要走正式程序、由資訊單位承接。"
-        explainNo="再想想：對外開放不是把防火牆打開就好，它牽涉資安責任與長期維運，屬於機關層級的決定。"
-        onCorrect={() => setPassed(true)}
-      />
+      <Quiz {...QUIZZES.selfhost} onCorrect={() => setPassed(true)} />
 
       <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>完成這一關 🎉</button>
     </div>
