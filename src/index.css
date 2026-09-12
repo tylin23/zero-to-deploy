@@ -52,7 +52,10 @@
 
   --sun: #ffc93c;
   --sky-blue: #4aa8ff;
-  --danger: #ff5a76;
+  /* 與 --success 同理：--danger 在程式裡幾乎都是「文字色」（✗、答錯回饋、
+     錯誤訊息），原本的 #ff5a76 在白底只有 3.0、在 --danger-soft 上只有 2.5。
+     改深後白底 6.5、紅底 5.4。要「紅色填色」請用 --danger-soft 當底。 */
+  --danger: #b32340;
   --danger-soft: #ffe2e8;
   --track: #dbe2f0;
 

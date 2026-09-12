@@ -340,6 +340,8 @@ function RealStep({ onFinish }) {
         ⬇ 下載範本 index.html
       </button>
 
+      <OwnFileChecklist />
+
       <ul className="list-none p-0 m-0 grid gap-2.5">
         {ITEMS.map((it, i) => (
           <li
@@ -399,5 +401,64 @@ function RealStep({ onFinish }) {
         </div>
       )}
     </div>
+  );
+}
+
+// 要上傳「自己（或 AI 幫你）做的」檔案時，最常踩到的 5 個雷。
+// 這些在自己電腦上雙擊都看不出來，一上線才會壞。
+const PITFALLS = [
+  {
+    t: "首頁檔名一定要是 index.html（全部小寫）",
+    d: "叫 Index.html、公告.html、首頁.html 都不會被當成首頁，網址打開會是一片空白或檔案清單。",
+  },
+  {
+    t: "大小寫要完全一致",
+    d: '你的 Windows 不分大小寫，但伺服器分。程式裡寫 <img src="Photo.jpg"> 而檔案其實叫 photo.jpg，在你電腦上好好的，一上線就破圖。',
+  },
+  {
+    t: "不要留下你電腦裡的絕對路徑",
+    d: "AI 有時會寫成 C:\\Users\\你\\Pictures\\logo.png 或 file:///...。那條路徑只有你的電腦有。要改成同資料夾的相對路徑（例如 logo.png），而且圖片要一起上傳。",
+  },
+  {
+    t: "檔名用英文，別用中文和空白",
+    d: "中文檔名和空白在網址裡會被轉成一長串亂碼，容易連不到。用英文小寫，空白改成 -。",
+  },
+  {
+    t: "如果它需要「後端」，這一關放不了",
+    d: "程式裡如果出現 python app.py、node server.js、pip install、npm start，或要連資料庫，那就是有後端。GitHub Pages 只會把檔案原封不動送出去、不會幫你跑程式 —— 那種要用後面幾關的方式。",
+  },
+];
+
+function OwnFileChecklist() {
+  return (
+    <details
+      className="rounded-[14px] border-2 overflow-hidden"
+      style={{
+        borderColor: "color-mix(in srgb, var(--sun) 55%, var(--border))",
+        background: "color-mix(in srgb, var(--sun) 12%, var(--surface))",
+      }}
+    >
+      <summary className="cursor-pointer select-none list-none px-4 py-3 font-extrabold text-ink flex items-center gap-2 flex-wrap">
+        <span className="text-lg" aria-hidden="true">
+          🩹
+        </span>
+        <span>要傳自己做的檔案？先看這 5 個雷</span>
+        <span className="ml-auto text-muted text-xs font-normal hidden sm:inline">點此展開／收合</span>
+      </summary>
+      <div className="px-4 pb-4">
+        <p className="text-sm text-ink mt-0 mb-3">
+          如果你要上傳的不是上面的範本，而是<b>自己（或 AI 幫你）在電腦上做好的檔案</b>
+          ，下面這些在你電腦雙擊時完全看不出來，一上線才會壞：
+        </p>
+        <ol className="list-decimal pl-5 m-0 grid gap-2.5 text-sm">
+          {PITFALLS.map((p) => (
+            <li key={p.t}>
+              <b className="text-ink">{p.t}</b>
+              <div className="text-muted mt-0.5">{p.d}</div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </details>
   );
 }

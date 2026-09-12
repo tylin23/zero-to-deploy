@@ -14,7 +14,7 @@ export default function Home({ navigate }) {
       icon: "🗺️",
       title: "闖關地圖",
       sub: `${totalReady} 關 · 動手做`,
-      desc: "從「網站怎麼被看到」一路做到把市府活動公告頁真的上線。每關都先在站內模擬，再帶你去平台實作。",
+      desc: "從「我做好了怎麼給別人用」一路做到把市府活動公告頁真的上線。每關都先在站內模擬，再帶你去平台實作。",
       to: startTarget,
       primary: true,
     },
@@ -70,6 +70,12 @@ export default function Home({ navigate }) {
           </button>
         </div>
 
+        <div className="callout callout-info max-w-[640px] mx-auto text-left mb-5 text-sm">
+          <b className="text-ink">已經會用 AI 寫出東西了嗎？</b>
+          很多同仁已經能請 AI 幫忙做出一個 HTML，雙擊就能在自己電腦上跑 —— 卻卡在「這要怎麼給別人用」。第 1
+          關就從這個問題開始。
+        </div>
+
         <div className="flex flex-wrap gap-x-4 gap-y-1 justify-center text-muted text-[13px]">
           <span>📚 {totalReady} 關</span>
           <span>⏱ 全部約 60–90 分鐘</span>
@@ -107,6 +113,7 @@ export default function Home({ navigate }) {
         <h2 className="text-ink text-lg font-bold mb-3">學完你會…</h2>
         <div className="grid gap-2.5 sm:grid-cols-2">
           {[
+            ["🖱️", "把自己（或 AI 幫你）做好的 HTML，變成同仁和市民打得開的網址"],
             ["📢", "自己把一頁可公開的市府活動公告放上網，不用等排程"],
             ["📊", "把空品、垃圾車等市府開放資料變成一張看板"],
             ["📬", "讓市民線上陳情後，自動通知承辦科室"],

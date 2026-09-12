@@ -14,17 +14,232 @@ export default function IntroLevel({ ctx }) {
       badge={BADGES.concept}
       done={DONE.intro}
       steps={[
+        ({ next }) => <LocalVsDeployStep onNext={next} />,
         ({ next }) => <ConceptStep onNext={next} />,
         ({ next }) => <FrontBackStep onNext={next} />,
         ({ next }) => (
           <div className="space-y-4">
-            <Eyebrow>第三步 · 檢查一下</Eyebrow>
+            <Eyebrow>第四步 · 檢查一下</Eyebrow>
             <Quiz {...QUIZZES.intro} onCorrect={() => setTimeout(next, 1200)} />
           </div>
         ),
         ({ finish }) => <DeployStep onDone={finish} />,
       ]}
     />
+  );
+}
+
+/* =========================================================
+   第一步：本機的 HTML vs 部署後的網址
+   （很多同仁已經會用 AI 在自己電腦做出 HTML，卡住的是「怎麼給別人用」，
+     這一步就從那個痛點開始講。）
+   ========================================================= */
+
+const TRIES = [
+  {
+    id: "send",
+    icon: "📎",
+    label: "用 LINE / Email 把 index.html 傳給同事",
+    verdict: "warn",
+    title: "勉強可以，但問題很多",
+    points: [
+      "對方要先下載、找到檔案、再想辦法打開 —— 很多人卡在這一步。",
+      "附檔常被郵件系統或防毒擋掉，手機點開多半也不會顯示成網頁。",
+      "你每改一次內容，就要重傳一次給所有人，而且沒人知道誰手上是舊版。",
+      "如果不只一個檔案（圖片、CSS），傳過去就散掉了，會破圖。",
+      "最關鍵的是：你沒辦法用這個方式給市民。",
+    ],
+  },
+  {
+    id: "share",
+    icon: "📁",
+    label: "丟到科室的共用資料夾",
+    verdict: "warn",
+    title: "同仁可以，市民不行",
+    points: [
+      "共用資料夾的位置長這樣：\\\\server\\科室\\公告\\index.html —— 那是路徑，不是網址。",
+      "只有連得到市府內網的人打得開，市民完全拿不到。",
+      "檔案放在那裡，任何有權限的人都可能不小心改到或刪掉。",
+    ],
+  },
+  {
+    id: "come",
+    icon: "🖥️",
+    label: "請同事過來看我的電腦",
+    verdict: "bad",
+    title: "這其實就是「還沒部署」",
+    points: [
+      "一次只能給一個人看，你不在位子上就沒得看。",
+      "電腦關機、睡眠、被收回維修，東西就消失了。",
+      "這正是為什麼需要「一台一直開著、大家都連得到的電腦」。",
+    ],
+  },
+  {
+    id: "deploy",
+    icon: "🌐",
+    label: "放到一台一直開著的電腦上，給大家一個網址",
+    verdict: "good",
+    title: "對了 —— 這件事就叫「部署」",
+    points: [
+      "同事、市民、手機、電腦，任何人拿到網址就能打開。",
+      "你改了內容，重新上傳一次，所有人看到的立刻都是新版。",
+      "這整堂課要教的，就是怎麼做到這件事（而且不用寫程式、不用打指令）。",
+    ],
+  },
+];
+
+const VERDICT = {
+  good: { chip: "✅ 可行", color: "var(--success)", soft: "var(--success-soft)" },
+  warn: {
+    chip: "⚠️ 有問題",
+    color: "var(--diy-yellow-text)",
+    soft: "color-mix(in srgb, var(--sun) 16%, var(--surface))",
+  },
+  bad: { chip: "⛔ 不行", color: "var(--danger)", soft: "var(--danger-soft)" },
+};
+
+function LocalVsDeployStep({ onNext }) {
+  const [opened, setOpened] = useState({});
+  const allSeen = TRIES.every((t) => opened[t.id]);
+
+  return (
+    <div className="space-y-4">
+      <Eyebrow>第一步 · 你現在卡在哪裡</Eyebrow>
+      <h2 className="text-2xl font-bold text-ink">「在我電腦上跑得好好的」—— 然後呢？</h2>
+
+      <div className="callout callout-info">
+        <b className="text-ink">你可能已經會了：</b>用 AI
+        幫你寫一個小工具或一頁公告，存成檔案放在桌面，滑鼠雙擊，瀏覽器就打開了，功能都正常。
+        <br />
+        <br />
+        <b className="text-ink">卡住的是下一步：那要怎麼讓「別人」也打得開？</b>
+        這一關就從這裡開始。
+      </div>
+
+      <div>
+        <h3 className="text-ink font-bold mb-1">先想想：你現在會怎麼做？</h3>
+        <p className="text-muted text-sm mb-3">四個都點點看，就知道差在哪了。</p>
+        <div className="grid gap-2.5">
+          {TRIES.map((t) => {
+            const on = opened[t.id];
+            const v = VERDICT[t.verdict];
+            return (
+              <div
+                key={t.id}
+                data-try={t.id}
+                className="rounded-[16px] border-2 overflow-hidden"
+                style={{
+                  borderColor: on ? v.color : "var(--border)",
+                  background: on ? v.soft : "var(--surface)",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpened((o) => ({ ...o, [t.id]: true }))}
+                  aria-expanded={!!on}
+                  className="w-full text-left flex gap-2.5 items-center p-3.5"
+                >
+                  <span className="text-2xl shrink-0" aria-hidden="true">
+                    {t.icon}
+                  </span>
+                  <span className="font-bold text-ink text-[15px] flex-1">{t.label}</span>
+                  <span
+                    className="text-xs font-extrabold whitespace-nowrap"
+                    style={{ color: on ? v.color : "var(--muted)" }}
+                  >
+                    {on ? v.chip : "看結果 →"}
+                  </span>
+                </button>
+                {on && (
+                  <div className="px-3.5 pb-3.5 -mt-1">
+                    <div className="font-extrabold text-sm mb-1" style={{ color: v.color }}>
+                      {t.title}
+                    </div>
+                    <ul className="list-disc pl-5 m-0 grid gap-1 text-sm text-ink">
+                      {t.points.map((pt) => (
+                        <li key={pt}>{pt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {allSeen && (
+        <>
+          <h3 className="text-ink font-bold">差別，全部寫在網址列上</h3>
+          <p className="text-muted text-sm -mt-2">
+            下次你雙擊打開自己做的檔案時，看一眼瀏覽器最上面那一行 ——
+          </p>
+
+          <UrlBar
+            tone="local"
+            url="file:///C:/Users/你的帳號/Desktop/公告/index.html"
+            tag="現在（本機）"
+            note="開頭是 file://，它不是網址，是「你這台電腦裡的一條路徑」。只有你的電腦有這個資料夾；別人把這串字貼到瀏覽器，什麼也不會發生。"
+          />
+          <UrlBar
+            tone="web"
+            url="https://你的帳號.github.io/announce/"
+            tag="部署後"
+            note="開頭是 https://，這才是網址。同事、市民、手機、任何地方，拿到它就打得開。"
+          />
+
+          <div
+            className="callout"
+            style={{
+              borderLeftColor: "var(--sun)",
+              background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
+            }}
+          >
+            所以一句話講完：
+            <b className="text-ink">部署，就是把「只有你電腦有的那條路徑」，換成「全世界都到得了的網址」。</b>
+            你已經做好的 HTML 完全不用重做 —— 缺的只是後面這一步。
+          </div>
+
+          <button type="button" className="btn btn-primary" onClick={onNext}>
+            懂了，那網址是怎麼運作的？ →
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+// 只畫網址列：這一步的重點就是那串字，不需要整個瀏覽器視窗
+function UrlBar({ url, tone, tag, note }) {
+  const local = tone === "local";
+  const color = local ? "var(--danger)" : "var(--success)";
+  return (
+    <div>
+      <div
+        className="rounded-[14px] border-2 overflow-hidden"
+        style={{ borderColor: color, background: "var(--surface)" }}
+      >
+        <div className="flex items-center gap-2 py-2.5 px-3 border-b-2 border-line bg-surface2">
+          <div className="flex gap-1.5 shrink-0" aria-hidden="true">
+            <i className="w-2.5 h-2.5 rounded-full block" style={{ background: "#ff5f57" }} />
+            <i className="w-2.5 h-2.5 rounded-full block" style={{ background: "#febc2e" }} />
+            <i className="w-2.5 h-2.5 rounded-full block" style={{ background: "#28c840" }} />
+          </div>
+          <div className="flex-1 font-mono text-[11px] sm:text-xs text-ink bg-surface rounded-lg py-1.5 px-2.5 border border-line overflow-x-auto whitespace-nowrap">
+            {url}
+          </div>
+          <span className="text-[11px] font-extrabold whitespace-nowrap shrink-0" style={{ color }}>
+            {local ? "🔒 只有你" : "🌍 所有人"}
+          </span>
+        </div>
+        <div className="p-3">
+          <div className="text-xs font-extrabold mb-1" style={{ color }}>
+            {tag}
+          </div>
+          <p className="text-sm text-ink m-0">{note}</p>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -117,7 +332,7 @@ function ConceptStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <Eyebrow>第一步 · 概念</Eyebrow>
+      <Eyebrow>第二步 · 概念</Eyebrow>
       <h2 className="text-2xl font-bold text-ink">市民打開你做的「講座公告頁」時，發生了什麼事？</h2>
       <p className="text-muted text-sm">
         情境：你想把一頁「市民健康講座公告」放上網，讓市民查得到。按「播放」看一次「瀏覽器 ↔ 伺服器」的對話，
@@ -343,7 +558,7 @@ function FrontBackStep({ onNext }) {
 
   return (
     <div className="space-y-4">
-      <Eyebrow>第二步 · 前端與後端</Eyebrow>
+      <Eyebrow>第三步 · 前端與後端</Eyebrow>
       <h2 className="text-2xl font-bold text-ink">「前端」和「後端」，其實就是市府的前台和後台</h2>
 
       <div className="callout callout-info">
@@ -521,7 +736,7 @@ function DeployStep({ onDone }) {
 
   return (
     <div className="space-y-4">
-      <Eyebrow>第四步 · 動手試試</Eyebrow>
+      <Eyebrow>第五步 · 動手試試</Eyebrow>
       <h2 className="text-2xl font-bold text-ink">把你的網頁「放上」伺服器</h2>
       <p className="text-muted text-sm">把 index.html 拖到伺服器上（手機可以用點的：先點檔案，再點伺服器）</p>
 
