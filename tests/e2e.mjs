@@ -133,7 +133,7 @@ await st(
     }
     // 抽號碼牌要講到佇列、敬老櫃台要講到權限由後端把關
     await ms[1].hover();
-    await p.waitForSelector("text=佇列（Queue）");
+    await p.waitForSelector("text=排隊（Queue）");
     await ms[3].hover();
     await p.waitForSelector("text=權限一定要由後端把關");
   }

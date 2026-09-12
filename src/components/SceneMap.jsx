@@ -28,8 +28,8 @@ const SPOTS = [
     icon: "🎫",
     side: "back",
     name: "抽號碼機",
-    real: "抽一張號碼牌，系統記下你的順序，再照順序一個一個叫號。",
-    tech: "這就是「佇列（Queue）」。要一次寄幾千封市民通知、或產一大批月報表時，也是把任務排成一列，背景一個一個處理。好處是：你抽完號碼就能去坐著等，系統先回你一句「收到了」，不必站在櫃台前等到好。",
+    real: "人一多就先抽號碼牌。櫃台只有那幾個，所以照順序放人進去，不會讓大家全擠在櫃台前。",
+    tech: "這就是「排隊（Queue）」與流量管制：湧進來的比能處理的多，就先排成一列慢慢消化，而不是硬塞進去把櫃台（伺服器）壓垮。而且你抽完就能去坐著等，不必站著等到好。",
     term: "queue",
   },
   {
@@ -49,8 +49,8 @@ const SPOTS = [
     icon: "👵",
     side: "back",
     name: "敬老／愛心櫃台",
-    real: "不是每個人都能走這一條。要先確認身分（例如敬老卡、年齡），符合的人才用得到這個專門通道。",
-    tech: "這其實是兩件事：先確認「你是誰」（登入），再決定「你能用什麼」（權限）。系統裡最常見的是「承辦看得到名冊、其他科室看不到」。⚠️ 權限一定要由後端把關 —— 前端只把按鈕藏起來等於門沒鎖。",
+    real: "不是每個人都能走這一條。要先確認身分（例如敬老卡），符合的人才用得到。",
+    tech: "這是兩件事：先確認「你是誰」（登入），再決定「你能用什麼」（權限）。⚠️ 權限一定要由後端把關 —— 前端只把按鈕藏起來等於門沒鎖。",
     term: "authz",
   },
   {
@@ -116,17 +116,17 @@ export default function SceneMap({ navigate }) {
           />
         ))}
 
-        {/* 桌機：浮在圖上的說明框 */}
+        {/* 夠寬（lg 以上）才浮在圖上：圖再小的話高度不夠，說明框一定會蓋住標記本身 */}
         {spot && <Tip spot={spot} navigate={navigate} floating />}
       </div>
 
       <figcaption className="text-muted text-[13px] mt-2 text-center">
-        把滑鼠移到圖上的 <b className="text-ink">5 個標記</b> 上（手機直接點），
+        把滑鼠移到圖上的 <b className="text-ink">5 個標記</b> 上（手機、平板直接點），
         看看現場的每個東西對應到網站的什麼。
       </figcaption>
 
-      {/* 手機：說明改放在圖的下面，浮動框在小螢幕會蓋住整張圖 */}
-      <div className="sm:hidden mt-2.5">
+      {/* lg 以下：說明放在圖的下面。浮動框在小螢幕會蓋住整張圖、也擠不出位置 */}
+      <div className="lg:hidden mt-2.5">
         {spot ? (
           <Tip spot={spot} navigate={navigate} />
         ) : (
@@ -202,7 +202,8 @@ function Tip({ spot, navigate, floating = false }) {
       const H = el.offsetHeight;
       const CH = box.clientHeight;
       const py = (spot.y / 100) * CH;
-      let t = py - 26 - H; // 放上方
+      // 標記本身（圓圈 30px + 箭頭 9px）就在目標點上方，要讓開它才不會蓋住編號
+      let t = py - 48 - H; // 放上方
       if (t < 8) t = py + 14; // 放不下 → 翻到下方
       if (t + H > CH - 8) t = Math.max(8, CH - 8 - H); // 還是超出 → 貼齊
       setTop(t);
@@ -221,7 +222,7 @@ function Tip({ spot, navigate, floating = false }) {
         transform: `translateX(${spot.x < 28 ? "-10%" : spot.x > 72 ? "-90%" : "-50%"})`,
         // 一定要給明確寬度：只設 left 的絕對定位元素會被右邊界擠成細長條，
         // transform 只是視覺位移，救不回已經算好的寬度。
-        width: "min(300px, 78%)",
+        width: "min(320px, 80%)",
       }
     : undefined;
 
@@ -231,7 +232,7 @@ function Tip({ spot, navigate, floating = false }) {
       role="status"
       className={
         floating
-          ? "hidden sm:block absolute z-[4] rounded-[14px] border-2 p-3 pointer-events-none"
+          ? "hidden lg:block absolute z-[4] rounded-[14px] border-2 p-3 pointer-events-none"
           : "rounded-[14px] border-2 p-3"
       }
       style={{
