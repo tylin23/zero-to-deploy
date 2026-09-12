@@ -4,6 +4,7 @@ import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
 import { DONE } from "../content/levelCopy.js";
+import SceneMap from "../components/SceneMap.jsx";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -16,7 +17,7 @@ export default function IntroLevel({ ctx }) {
       steps={[
         ({ next }) => <LocalVsDeployStep onNext={next} />,
         ({ next }) => <ConceptStep onNext={next} />,
-        ({ next }) => <FrontBackStep onNext={next} />,
+        ({ next }) => <FrontBackStep onNext={next} navigate={ctx.navigate} />,
         ({ next }) => (
           <div className="space-y-4">
             <Eyebrow>第四步 · 檢查一下</Eyebrow>
@@ -547,7 +548,7 @@ const PARTS = [
   },
 ];
 
-function FrontBackStep({ onNext }) {
+function FrontBackStep({ onNext, navigate }) {
   const [ans, setAns] = useState({}); // { [index]: "front" | "back" }
   const done = PARTS.every((p, i) => ans[i] === p.a);
 
@@ -565,6 +566,8 @@ function FrontBackStep({ onNext }) {
         剛剛那張圖的兩台電腦，各自負責不同的事。用你最熟的場景來想 ——
         <b className="text-ink">市民走進市民服務中心洽公</b>：
       </div>
+
+      <SceneMap navigate={navigate} />
 
       <div className="grid gap-3 sm:grid-cols-2">
         <SideCard
