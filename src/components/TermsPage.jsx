@@ -168,7 +168,7 @@ function CacheDemo() {
           onClick={query}
           disabled={status === "loading"}
         >
-          🔍 查詢陳情案件統計
+          🔍 查詢 YouBike 站點
         </button>
         <button type="button" className="gh-btn" onClick={invalidate}>
           🔄 資料更新了（清快取）

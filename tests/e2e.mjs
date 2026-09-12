@@ -190,36 +190,51 @@ await st("儀表板範本：連不到 API 時退回內建資料，畫面不空�
     ),
     rows: document.querySelectorAll("#rows tr").length,
     imgs: document.querySelectorAll("img").length,
-    total: document.getElementById("kTotal").textContent,
+    total: document.getElementById("kStations").textContent,
   }));
   if (!r.cls.includes("fallback")) throw new Error("狀態列不是 fallback：" + r.cls);
   if (r.bars < 3) throw new Error("長條只有 " + r.bars + " 條");
   if (Math.min(...r.widths) < 2) throw new Error("有長條寬度是 0（span 沒有 display:block？）");
   if (r.rows < 5) throw new Error("表格只有 " + r.rows + " 列");
   if (r.imgs !== 0) throw new Error("引用了外部圖片");
-  if (r.total === "—") throw new Error("總案件數沒算出來");
+  if (r.total === "—") throw new Error("站點數沒算出來");
   if (errs2.length) throw new Error(errs2.join(" | "));
   await page.close();
 });
 
-await st("儀表板範本：API 通的時候顯示真實資料", async () => {
+await st("儀表板範本：API 通的時候顯示即時資料", async () => {
   const page = await ctx.newPage();
-  await page.route("**data.taipei/**", (route) =>
+  // YouBike 的回傳是「一個陣列」，每站一個物件
+  await page.route("**youbike_immediate.json*", (route) =>
     route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({
-        result: {
-          limit: 200,
-          offset: 0,
-          count: 51234,
-          results: [
-            { 案件編號: "A1", 案件主類別: "交通運輸", 受理機關: "交通局" },
-            { 案件編號: "A2", 案件主類別: "交通運輸", 受理機關: "交通局" },
-            { 案件編號: "A3", 案件主類別: "環境保護", 受理機關: "環境保護局" },
-          ],
+      body: JSON.stringify([
+        {
+          sna: "YouBike2.0_甲站",
+          sarea: "大安區",
+          available_rent_bikes: 10,
+          available_return_bikes: 5,
+          Quantity: 15,
+          mday: "2026-09-13 03:03:03",
         },
-      }),
+        {
+          sna: "YouBike2.0_乙站",
+          sarea: "大安區",
+          available_rent_bikes: 0,
+          available_return_bikes: 20,
+          Quantity: 20,
+          mday: "2026-09-13 03:03:03",
+        },
+        {
+          sna: "YouBike2.0_丙站",
+          sarea: "信義區",
+          available_rent_bikes: 7,
+          available_return_bikes: 3,
+          Quantity: 10,
+          mday: "2026-09-13 03:03:03",
+        },
+      ]),
     })
   );
   await page.setContent(DASHBOARD_HTML);
@@ -227,15 +242,20 @@ await st("儀表板範本：API 通的時候顯示真實資料", async () => {
     timeout: 8000,
   });
   const r = await page.evaluate(() => ({
-    total: document.getElementById("kTotal").textContent,
-    rows: document.getElementById("kRows").textContent,
-    cats: document.getElementById("kCats").textContent,
-    top: document.querySelector("#bars .bar span").textContent,
+    stations: document.getElementById("kStations").textContent,
+    bikes: document.getElementById("kBikes").textContent,
+    docks: document.getElementById("kDocks").textContent,
+    empty: document.getElementById("kEmpty").textContent,
+    topArea: document.querySelector("#bars .bar span").textContent,
+    firstRow: document.querySelector("#rows td").textContent,
   }));
-  if (r.total !== "51,234") throw new Error("總案件數 " + r.total);
-  if (r.rows !== "3") throw new Error("抓回筆數 " + r.rows);
-  if (r.cats !== "2") throw new Error("類別數 " + r.cats);
-  if (r.top !== "交通運輸") throw new Error("最大類別 " + r.top);
+  if (r.stations !== "3") throw new Error("站點數 " + r.stations);
+  if (r.bikes !== "17") throw new Error("可借總數 " + r.bikes);
+  if (r.docks !== "28") throw new Error("可還總數 " + r.docks);
+  if (r.empty !== "1") throw new Error("無車站數 " + r.empty);
+  if (r.topArea !== "大安區") throw new Error("站數最多的區 " + r.topArea);
+  // 站名前綴要被拿掉才好讀
+  if (r.firstRow !== "甲站") throw new Error("第一列站名 " + r.firstRow);
   await page.close();
 });
 
@@ -291,12 +311,12 @@ await st("2 GitHub Pages", async () => {
 await st("4 API 基礎", async () => {
   await go("api");
   await p.click("text=自己送一個 request");
-  await p.click("text=先拿 1 筆看看長什麼樣");
+  await p.click("text=拿全部站點");
   await B("送出 Send").click();
   await p.waitForSelector("text=200 OK", { timeout: 3000 });
-  // 回傳要是 data.taipei 的真實外層與欄位
-  await p.waitForSelector("text=resourceAquire");
-  await p.waitForSelector("text=案件主類別");
+  // 回傳要是 YouBike 的真實欄位
+  await p.waitForSelector("text=available_rent_bikes");
+  await p.waitForSelector("text=sarea");
   await p.click("text=試試真的 API");
   await p.click("text=你送了一個 GET 請求");
   await B("完成這一關").click();
