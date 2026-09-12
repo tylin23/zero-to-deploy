@@ -71,12 +71,36 @@ function Shell() {
   return (
     <div className="min-h-full flex flex-col">
       <TopBar navigate={navigate} />
-      <main ref={mainRef} tabIndex={-1} className="flex-1 w-full max-w-[940px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-16 outline-none">{view}</main>
+      <main
+        ref={mainRef}
+        tabIndex={-1}
+        className="flex-1 w-full max-w-[940px] mx-auto px-4 sm:px-6 pt-6 sm:pt-10 pb-16 outline-none"
+      >
+        {view}
+      </main>
       <footer className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center py-5 px-4 text-muted text-[13px] text-center">
         <span>Zero to Deploy · 一個用來教「網頁部署」的互動教材</span>
-        <button type="button" onClick={() => navigate("#/guide")} className="text-ink font-bold underline underline-offset-2">🧭 選型指南</button>
-        <button type="button" onClick={() => navigate("#/terms")} className="text-ink font-bold underline underline-offset-2">📇 名詞小教室</button>
-        <button type="button" onClick={() => navigate("#/risk")} className="text-ink font-bold underline underline-offset-2">⚠️ 風險預告書</button>
+        <button
+          type="button"
+          onClick={() => navigate("#/guide")}
+          className="text-ink font-bold underline underline-offset-2"
+        >
+          🧭 選型指南
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("#/terms")}
+          className="text-ink font-bold underline underline-offset-2"
+        >
+          📇 名詞小教室
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("#/risk")}
+          className="text-ink font-bold underline underline-offset-2"
+        >
+          ⚠️ 風險預告書
+        </button>
         <span className="text-accent font-bold">這個網站本身，就是用 GitHub Pages 部署的 ✨</span>
       </footer>
     </div>
@@ -87,21 +111,34 @@ function LevelPage({ id, navigate }) {
   const { markComplete, awardBadge } = useProgress();
   const meta = mapOrder.find((l) => l.id === id);
   const LevelComp = LEVELS[id];
-  if (!meta || !LevelComp) { navigate("#/map"); return null; }
+  if (!meta || !LevelComp) {
+    navigate("#/map");
+    return null;
+  }
 
   const ctx = {
-    complete: (badge) => { markComplete(id); if (badge) awardBadge(badge); },
+    complete: (badge) => {
+      markComplete(id);
+      if (badge) awardBadge(badge);
+    },
     goMap: () => navigate("#/map"),
     navigate,
   };
 
   return (
     <div>
-      <button type="button" onClick={() => navigate("#/map")}
+      <button
+        type="button"
+        onClick={() => navigate("#/map")}
         className="inline-flex items-center gap-1.5 bg-surface border-2 border-line text-muted font-bold text-sm py-2 px-4 rounded-full mb-4 active:translate-y-1 transition-transform"
-        style={{ boxShadow: "0 4px 0 var(--border)" }}>← 回地圖</button>
+        style={{ boxShadow: "0 4px 0 var(--border)" }}
+      >
+        ← 回地圖
+      </button>
       <div className="flex items-center gap-3.5 mb-2">
-        <span className="text-[44px]" style={{ filter: "drop-shadow(0 3px 3px rgba(0,0,0,.12))" }}>{meta.emoji}</span>
+        <span className="text-[44px]" style={{ filter: "drop-shadow(0 3px 3px rgba(0,0,0,.12))" }}>
+          {meta.emoji}
+        </span>
         <div>
           <h1 className="text-[clamp(22px,4vw,30px)] font-bold text-ink m-0">{meta.title}</h1>
           <p className="text-muted text-sm m-0">{meta.tagline}</p>
@@ -125,8 +162,14 @@ function RelatedTerms({ ids, navigate }) {
         const t = termById(tid);
         if (!t) return null;
         return (
-          <button key={tid} type="button" onClick={() => navigate("#/terms/" + tid)}
-            className="gh-btn !py-1.5">{t.emoji} {t.name}</button>
+          <button
+            key={tid}
+            type="button"
+            onClick={() => navigate("#/terms/" + tid)}
+            className="gh-btn !py-1.5"
+          >
+            {t.emoji} {t.name}
+          </button>
         );
       })}
     </div>

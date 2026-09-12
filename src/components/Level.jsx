@@ -34,8 +34,11 @@ export default function Level({ ctx, badge, steps, done, total }) {
     <div>
       <StepBar current={step} total={total ?? steps.length} doneUntil={step - 1} />
       {step > 0 && (
-        <button type="button" onClick={back}
-          className="text-muted hover:text-ink text-sm font-bold mb-2 inline-flex items-center gap-1">
+        <button
+          type="button"
+          onClick={back}
+          className="text-muted hover:text-ink text-sm font-bold mb-2 inline-flex items-center gap-1"
+        >
           ← 回上一步
         </button>
       )}

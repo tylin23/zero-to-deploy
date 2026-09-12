@@ -45,7 +45,9 @@ const CASES = [
 
 export default function BoundaryLevel({ ctx }) {
   return (
-    <Level ctx={ctx} badge={BADGES.boundary}
+    <Level
+      ctx={ctx}
+      badge={BADGES.boundary}
       done={{
         icon: "🚦",
         title: "界線意識達成！",
@@ -53,10 +55,7 @@ export default function BoundaryLevel({ ctx }) {
         secondary: { label: "回地圖", onClick: () => ctx.goMap() },
         primary: { label: "開始第一關 →", onClick: () => ctx.navigate("#/level/intro") },
       }}
-      steps={[
-        ({ next }) => <RedLines onNext={next} />,
-        ({ finish }) => <CaseGame onFinish={finish} />,
-      ]}
+      steps={[({ next }) => <RedLines onNext={next} />, ({ finish }) => <CaseGame onFinish={finish} />]}
     />
   );
 }
@@ -65,7 +64,9 @@ export default function BoundaryLevel({ ctx }) {
 function RedLines({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 1 / 2 · 先認得紅線</span>
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+        步驟 1 / 2 · 先認得紅線
+      </span>
       <h2 className="text-2xl font-bold text-ink">動手之前，先問自己一句話</h2>
 
       <div className="callout callout-info">
@@ -83,7 +84,10 @@ function RedLines({ onNext }) {
             ["🏢", "跨單位 / 全機關", "不只你科室自己用"],
             ["🔑", "帳號與權限", "需要登入、要控管誰能看誰能改"],
           ].map(([i, t, d]) => (
-            <div key={t} className="flex gap-2.5 items-start py-3 px-3.5 border-2 border-line rounded-[14px] bg-surface">
+            <div
+              key={t}
+              className="flex gap-2.5 items-start py-3 px-3.5 border-2 border-line rounded-[14px] bg-surface"
+            >
               <span className="text-2xl shrink-0">{i}</span>
               <div>
                 <div className="font-bold text-ink text-sm">{t}</div>
@@ -94,11 +98,20 @@ function RedLines({ onNext }) {
         </div>
       </div>
 
-      <div className="callout" style={{ borderLeftColor: "var(--sun)", background: "color-mix(in srgb, var(--sun) 14%, var(--surface))" }}>
-        <b className="text-ink">停下來 ≠ 不能做。</b>只是代表這件事該由資訊單位評估、或由他們納管後再做 —— 對你也是保護。
+      <div
+        className="callout"
+        style={{
+          borderLeftColor: "var(--sun)",
+          background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
+        }}
+      >
+        <b className="text-ink">停下來 ≠ 不能做。</b>只是代表這件事該由資訊單位評估、或由他們納管後再做 ——
+        對你也是保護。
       </div>
 
-      <button type="button" className="btn btn-primary" onClick={onNext}>下一步：來判斷幾個實際情境 →</button>
+      <button type="button" className="btn btn-primary" onClick={onNext}>
+        下一步：來判斷幾個實際情境 →
+      </button>
     </div>
   );
 }
@@ -111,13 +124,20 @@ function CaseGame({ onFinish }) {
   const correct = picked === c.answer;
   const isLast = idx === CASES.length - 1;
 
-  const next = () => { setIdx((i) => i + 1); setPicked(null); };
+  const next = () => {
+    setIdx((i) => i + 1);
+    setPicked(null);
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 2 / 2 · 情境判斷</span>
-        <span className="text-xs font-extrabold text-muted">第 {idx + 1} / {CASES.length} 題</span>
+        <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+          步驟 2 / 2 · 情境判斷
+        </span>
+        <span className="text-xs font-extrabold text-muted">
+          第 {idx + 1} / {CASES.length} 題
+        </span>
       </div>
 
       <div className="border-2 border-line rounded-[18px] bg-surface2 p-4 sm:p-5">
@@ -130,13 +150,22 @@ function CaseGame({ onFinish }) {
           const isPicked = picked === ch.id;
           const isAnswer = ch.id === c.answer;
           let style = { borderColor: "var(--border)", background: "var(--surface)" };
-          if (correct && isAnswer) style = { borderColor: ch.color, background: `color-mix(in srgb, ${ch.color} 16%, var(--surface))` };
-          else if (isPicked && !correct) style = { borderColor: "var(--danger)", background: "var(--danger-soft)", opacity: .7 };
+          if (correct && isAnswer)
+            style = {
+              borderColor: ch.color,
+              background: `color-mix(in srgb, ${ch.color} 16%, var(--surface))`,
+            };
+          else if (isPicked && !correct)
+            style = { borderColor: "var(--danger)", background: "var(--danger-soft)", opacity: 0.7 };
           return (
-            <button key={ch.id} type="button" disabled={correct}
+            <button
+              key={ch.id}
+              type="button"
+              disabled={correct}
               onClick={() => setPicked(ch.id)}
               className="py-3 px-3 rounded-[14px] border-2 font-bold text-sm transition-all"
-              style={style}>
+              style={style}
+            >
               {ch.label}
             </button>
           );

@@ -11,17 +11,24 @@ export default function Home({ navigate }) {
 
   const parts = [
     {
-      icon: "🗺️", title: "闖關地圖", sub: `${totalReady} 關 · 動手做`,
+      icon: "🗺️",
+      title: "闖關地圖",
+      sub: `${totalReady} 關 · 動手做`,
       desc: "從「網站怎麼被看到」一路做到把公告頁真的上線。每關都先在站內模擬，再帶你去平台實作。",
-      to: startTarget, primary: true,
+      to: startTarget,
+      primary: true,
     },
     {
-      icon: "🧭", title: "選型指南", sub: "我該用哪一種？",
+      icon: "🧭",
+      title: "選型指南",
+      sub: "我該用哪一種？",
       desc: "依難易度、靜態/動態、資料界線、費用、維護一次比較，還有「幫我選」直接推薦。",
       to: "#/guide",
     },
     {
-      icon: "📇", title: "名詞小教室", sub: `${TERMS.length} 張概念卡`,
+      icon: "📇",
+      title: "名詞小教室",
+      sub: `${TERMS.length} 張概念卡`,
       desc: "快取、佇列、環境、權限…看懂這些詞，做事更順，也更能跟資訊單位溝通。",
       to: "#/terms",
     },
@@ -31,28 +38,35 @@ export default function Home({ navigate }) {
     <div className="space-y-10">
       {/* Hero */}
       <section className="text-center pt-2">
-        <div className="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-surface border-2 border-line font-extrabold text-[13px] mb-5"
-          style={{ boxShadow: "0 4px 0 var(--border)" }}>
+        <div
+          className="inline-flex items-center gap-2 py-2 px-4 rounded-full bg-surface border-2 border-line font-extrabold text-[13px] mb-5"
+          style={{ boxShadow: "0 4px 0 var(--border)" }}
+        >
           🏛️ 給非資訊背景的公務員
         </div>
 
         <h1 className="font-extrabold tracking-tight mb-4 text-[clamp(30px,6.5vw,52px)] text-ink">
           從零到部署，
-          <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(120deg, var(--primary), var(--accent))" }}>
+          <span
+            className="text-transparent bg-clip-text"
+            style={{ backgroundImage: "linear-gradient(120deg, var(--primary), var(--accent))" }}
+          >
             親手把網站放上網
           </span>
         </h1>
 
         <p className="text-muted mx-auto mb-6 max-w-[640px] text-[clamp(15px,2.4vw,18px)]">
-          不用寫程式、不用打指令。用闖關的方式搞懂「部署」到底在做什麼，
-          並且<b className="text-ink">真的把一頁公告上線</b>—— 同時清楚知道哪些事可以自己做、哪裡該找資訊單位。
+          不用寫程式、不用打指令。用闖關的方式搞懂「部署」到底在做什麼， 並且
+          <b className="text-ink">真的把一頁公告上線</b>—— 同時清楚知道哪些事可以自己做、哪裡該找資訊單位。
         </p>
 
         <div className="flex gap-3 justify-center flex-wrap mb-4">
           <button type="button" className="btn btn-primary btn-lg" onClick={() => navigate(startTarget)}>
             {started ? `繼續闖關（${doneCount}/${totalReady}）→` : "開始闖關 →"}
           </button>
-          <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate("#/risk")}>⚠️ 風險預告書</button>
+          <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate("#/risk")}>
+            ⚠️ 風險預告書
+          </button>
         </div>
 
         <div className="flex flex-wrap gap-x-4 gap-y-1 justify-center text-muted text-[13px]">
@@ -69,9 +83,13 @@ export default function Home({ navigate }) {
         <p className="text-center text-muted text-sm mb-5">可以照順序闖關，也可以隨時跳去查指南和名詞。</p>
         <div className="grid gap-4 md:grid-cols-3">
           {parts.map((p) => (
-            <button key={p.title} type="button" onClick={() => navigate(p.to)}
+            <button
+              key={p.title}
+              type="button"
+              onClick={() => navigate(p.to)}
               className="card text-left transition-transform active:translate-y-1 hover:border-primary"
-              style={p.primary ? { borderColor: "var(--primary)" } : undefined}>
+              style={p.primary ? { borderColor: "var(--primary)" } : undefined}
+            >
               <div className="text-4xl mb-1">{p.icon}</div>
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span className="font-extrabold text-ink text-lg">{p.title}</span>

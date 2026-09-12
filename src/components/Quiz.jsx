@@ -3,9 +3,9 @@ import { useState } from "react";
 // 單選小測驗：答對才呼叫 onCorrect()
 // options: [{ text, correct }]
 export default function Quiz({ question, options, explainOk, explainNo, onCorrect }) {
-  const [locked, setLocked] = useState(false);       // 答對後鎖定
-  const [disabled, setDisabled] = useState({});      // 答錯的選項各自 disable
-  const [feedback, setFeedback] = useState(null);    // { ok, text }
+  const [locked, setLocked] = useState(false); // 答對後鎖定
+  const [disabled, setDisabled] = useState({}); // 答錯的選項各自 disable
+  const [feedback, setFeedback] = useState(null); // { ok, text }
 
   const pick = (opt, i) => {
     if (locked || disabled[i]) return;
@@ -47,7 +47,9 @@ export default function Quiz({ question, options, explainOk, explainNo, onCorrec
         })}
       </div>
       {feedback && (
-        <div className={`mt-3 py-3 px-4 rounded-[14px] text-sm font-bold ${feedback.ok ? "bg-successSoft text-success" : "bg-dangerSoft text-danger"}`}>
+        <div
+          className={`mt-3 py-3 px-4 rounded-[14px] text-sm font-bold ${feedback.ok ? "bg-successSoft text-success" : "bg-dangerSoft text-danger"}`}
+        >
           {feedback.text}
         </div>
       )}

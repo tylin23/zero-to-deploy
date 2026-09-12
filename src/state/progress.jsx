@@ -13,7 +13,11 @@ function read() {
   }
 }
 function write(state) {
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* 忽略 */ }
+  try {
+    localStorage.setItem(KEY, JSON.stringify(state));
+  } catch {
+    /* 忽略 */
+  }
 }
 
 const Ctx = createContext(null);

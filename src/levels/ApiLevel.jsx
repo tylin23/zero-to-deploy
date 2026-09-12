@@ -31,7 +31,9 @@ const ENDPOINTS = [
 
 export default function ApiLevel({ ctx }) {
   return (
-    <Level ctx={ctx} badge={BADGES.apiBasics}
+    <Level
+      ctx={ctx}
+      badge={BADGES.apiBasics}
       done={{
         icon: "🔌",
         title: "API 入門達成！",
@@ -52,10 +54,13 @@ export default function ApiLevel({ ctx }) {
 function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 1 / 3 · 這是什麼</span>
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+        步驟 1 / 3 · 這是什麼
+      </span>
       <h2 className="text-2xl font-bold text-ink">API 是什麼？用「餐廳點餐」來想</h2>
       <div className="callout callout-info">
-        API 就像餐廳的<b className="text-ink">服務生＋菜單</b>：你（前端）不會自己衝進廚房，而是照著菜單點餐，服務生（API）幫你把需求送進廚房（後端），再把做好的菜（資料）端回來給你。
+        API 就像餐廳的<b className="text-ink">服務生＋菜單</b>
+        ：你（前端）不會自己衝進廚房，而是照著菜單點餐，服務生（API）幫你把需求送進廚房（後端），再把做好的菜（資料）端回來給你。
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -73,9 +78,18 @@ function ConceptStep({ onNext }) {
       </div>
 
       <div className="callout">
-        重點是「<b className="text-ink">照規則問、拿到結構化的答案</b>」。這份規則包含：要去哪個網址（<code className="font-mono text-sm bg-surface2 px-1.5 py-0.5 rounded border border-line">endpoint</code>）、用什麼方法（<b className="text-ink">GET</b> 拿資料、<b className="text-ink">POST</b> 送資料），回來的通常是 <b className="text-ink">JSON</b>。行政情境最常見的用法，就是<b className="text-ink">串接政府開放資料</b>（空氣品質、垃圾車、場館資訊）—— 這類公開資料沒有個資疑慮，最安全。
+        重點是「<b className="text-ink">照規則問、拿到結構化的答案</b>」。這份規則包含：要去哪個網址（
+        <code className="font-mono text-sm bg-surface2 px-1.5 py-0.5 rounded border border-line">
+          endpoint
+        </code>
+        ）、用什麼方法（<b className="text-ink">GET</b> 拿資料、<b className="text-ink">POST</b>{" "}
+        送資料），回來的通常是 <b className="text-ink">JSON</b>。行政情境最常見的用法，就是
+        <b className="text-ink">串接政府開放資料</b>（空氣品質、垃圾車、場館資訊）——
+        這類公開資料沒有個資疑慮，最安全。
       </div>
-      <button type="button" className="btn btn-primary" onClick={onNext}>下一步：自己送一個 request →</button>
+      <button type="button" className="btn btn-primary" onClick={onNext}>
+        下一步：自己送一個 request →
+      </button>
     </div>
   );
 }
@@ -95,18 +109,27 @@ function TesterStep({ onNext }) {
     setSentOnce(true);
   };
 
-  const pick = (i) => { setSelected(i); setStatus("idle"); };
+  const pick = (i) => {
+    setSelected(i);
+    setStatus("idle");
+  };
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 2 / 3 · 自己試一次</span>
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+        步驟 2 / 3 · 自己試一次
+      </span>
       <h2 className="text-2xl font-bold text-ink">送出一個 API 請求，看看回什麼</h2>
       <p className="text-muted text-sm">選一個要問的東西，按「送出 Send」，看伺服器回你的 JSON。</p>
 
       <div className="flex flex-wrap gap-2">
         {ENDPOINTS.map((e, i) => (
-          <button key={e.path} type="button" onClick={() => pick(i)}
-            className={`gh-btn ${selected === i ? "!border-primary !bg-primarySoft text-primary" : ""}`}>
+          <button
+            key={e.path}
+            type="button"
+            onClick={() => pick(i)}
+            className={`gh-btn ${selected === i ? "!border-primary !bg-primarySoft text-primary" : ""}`}
+          >
             {e.label}
           </button>
         ))}
@@ -116,8 +139,15 @@ function TesterStep({ onNext }) {
         {/* request 列 */}
         <div className="flex items-center gap-2 flex-wrap">
           <span className="pill bg-successSoft text-success">{ep.method}</span>
-          <code className="font-mono text-sm bg-surface2 px-2 py-1 rounded border border-line flex-1 min-w-[160px] truncate">{ep.path}</code>
-          <button type="button" className="btn btn-primary !py-2 !px-4 !text-sm" onClick={send} disabled={status === "loading"}>
+          <code className="font-mono text-sm bg-surface2 px-2 py-1 rounded border border-line flex-1 min-w-[160px] truncate">
+            {ep.path}
+          </code>
+          <button
+            type="button"
+            className="btn btn-primary !py-2 !px-4 !text-sm"
+            onClick={send}
+            disabled={status === "loading"}
+          >
             {status === "loading" ? "傳送中…" : "送出 Send ▸"}
           </button>
         </div>
@@ -125,22 +155,29 @@ function TesterStep({ onNext }) {
         {/* response 區 */}
         <div className="mt-3">
           <div className="text-xs font-extrabold text-muted mb-1.5">Response</div>
-          {status === "idle" && <div className="text-muted text-sm py-6 text-center">👆 按「送出」看看回應</div>}
-          {status === "loading" && <div className="text-muted text-sm py-6 text-center">⏳ 等待伺服器回應…</div>}
+          {status === "idle" && (
+            <div className="text-muted text-sm py-6 text-center">👆 按「送出」看看回應</div>
+          )}
+          {status === "loading" && (
+            <div className="text-muted text-sm py-6 text-center">⏳ 等待伺服器回應…</div>
+          )}
           {status === "done" && (
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="pill bg-successSoft text-success">200 OK</span>
                 <span className="text-xs text-muted">application/json · 約 40 ms</span>
               </div>
-              <pre className="font-mono text-[13px] bg-surface2 border border-line rounded-[10px] p-3.5 overflow-x-auto whitespace-pre">{JSON.stringify(ep.data, null, 2)}</pre>
+              <pre className="font-mono text-[13px] bg-surface2 border border-line rounded-[10px] p-3.5 overflow-x-auto whitespace-pre">
+                {JSON.stringify(ep.data, null, 2)}
+              </pre>
             </div>
           )}
         </div>
       </Browser>
 
       <div className="callout">
-        看到了嗎？回來的不是一整頁網頁，而是<b className="text-ink">乾淨的資料（JSON）</b>。前端拿到後，就能自己決定怎麼把它畫成畫面 —— 這就是前後端「分工」的方式。
+        看到了嗎？回來的不是一整頁網頁，而是<b className="text-ink">乾淨的資料（JSON）</b>
+        。前端拿到後，就能自己決定怎麼把它畫成畫面 —— 這就是前後端「分工」的方式。
       </div>
 
       <button type="button" className="btn btn-primary" disabled={!sentOnce} onClick={onNext}>
@@ -157,31 +194,50 @@ function RealStep({ onFinish }) {
 
   return (
     <div className="space-y-4">
-      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 3 / 3 · 真的看一次</span>
+      <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">
+        步驟 3 / 3 · 真的看一次
+      </span>
       <h2 className="text-2xl font-bold text-ink">打開一個真正的開放資料 API 🌍</h2>
       <div className="callout">
-        很多 API 用 <b className="text-ink">GET</b> 的時候，其實在瀏覽器貼上網址就能直接看到回傳的 JSON。點下面的連結看看（都是<b className="text-ink">公開的開放資料</b>，不需登入、沒有個資）：
+        很多 API 用 <b className="text-ink">GET</b> 的時候，其實在瀏覽器貼上網址就能直接看到回傳的
+        JSON。點下面的連結看看（都是<b className="text-ink">公開的開放資料</b>，不需登入、沒有個資）：
       </div>
 
       <div className="grid gap-2.5">
-        <a href="https://api.open-meteo.com/v1/forecast?latitude=25.03&longitude=121.56&current_weather=true" target="_blank" rel="noopener noreferrer"
+        <a
+          href="https://api.open-meteo.com/v1/forecast?latitude=25.03&longitude=121.56&current_weather=true"
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={() => setOpened(true)}
-          className="gh-btn justify-between !py-3 !text-[15px]">
-          <span>🔗 GET 台北即時天氣（開放資料 JSON）</span><span>↗</span>
+          className="gh-btn justify-between !py-3 !text-[15px]"
+        >
+          <span>🔗 GET 台北即時天氣（開放資料 JSON）</span>
+          <span>↗</span>
         </a>
-        <a href="https://data.gov.tw/" target="_blank" rel="noopener noreferrer"
+        <a
+          href="https://data.gov.tw/"
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={() => setOpened(true)}
-          className="gh-btn justify-between !py-3 !text-[15px]">
-          <span>🔗 逛逛「政府資料開放平臺」data.gov.tw</span><span>↗</span>
+          className="gh-btn justify-between !py-3 !text-[15px]"
+        >
+          <span>🔗 逛逛「政府資料開放平臺」data.gov.tw</span>
+          <span>↗</span>
         </a>
       </div>
-      {opened && <p className="text-success text-sm font-bold">✓ 你剛剛就發了一個真的 GET request！瀏覽器幫你把回來的 JSON 顯示出來了。</p>}
+      {opened && (
+        <p className="text-success text-sm font-bold">
+          ✓ 你剛剛就發了一個真的 GET request！瀏覽器幫你把回來的 JSON 顯示出來了。
+        </p>
+      )}
 
       <hr className="border-0 border-t border-line my-2" />
 
       <Quiz {...QUIZZES.api} onCorrect={() => setPassed(true)} />
 
-      <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>完成這一關 🎉</button>
+      <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>
+        完成這一關 🎉
+      </button>
     </div>
   );
 }
