@@ -5,6 +5,7 @@ import { QUIZZES } from "../content/quizzes.js";
 import Browser from "../components/Browser.jsx";
 import { BADGES } from "../data/levels.js";
 import { DONE } from "../content/levelCopy.js";
+import { OPEN_DATA } from "../content/openData.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -195,28 +196,39 @@ function RealStep({ onFinish }) {
       <h2 className="text-2xl font-bold text-ink">打開一個真正的開放資料 API 🌍</h2>
       <div className="callout">
         很多 API 用 <b className="text-ink">GET</b> 的時候，其實在瀏覽器貼上網址就能直接看到回傳的
-        JSON。點下面的連結看看（都是<b className="text-ink">公開的開放資料</b>，不需登入、沒有個資）：
+        JSON。下面第一條就是<b className="text-ink">臺北市政府開放資料的真實 API</b>
+        ，點下去會在新分頁看到一整包 JSON（公開資料，不需登入、沒有個資）：
       </div>
 
       <div className="grid gap-2.5">
         <a
-          href="https://api.open-meteo.com/v1/forecast?latitude=25.03&longitude=121.56&current_weather=true"
+          href={OPEN_DATA.apiUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setOpened(true)}
           className="gh-btn gh-btn-row"
         >
-          <span>🔗 GET 本市即時天氣（開放資料 JSON）</span>
+          <span>🔗 GET 臺北市開放資料 API（會直接看到 JSON）</span>
           <span>↗</span>
         </a>
         <a
-          href="https://data.gov.tw/"
+          href={OPEN_DATA.datasetUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setOpened(true)}
           className="gh-btn gh-btn-row"
         >
-          <span>🔗 逛逛「政府資料開放平臺」data.gov.tw</span>
+          <span>🔗 這份資料的說明頁（欄位、更新頻率、授權）</span>
+          <span>↗</span>
+        </a>
+        <a
+          href={OPEN_DATA.portalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setOpened(true)}
+          className="gh-btn gh-btn-row"
+        >
+          <span>🔗 逛逛「臺北市資料大平臺」data.taipei</span>
           <span>↗</span>
         </a>
       </div>
