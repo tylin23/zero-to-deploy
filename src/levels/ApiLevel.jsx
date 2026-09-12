@@ -6,8 +6,21 @@ import Browser from "../components/Browser.jsx";
 import { BADGES } from "../data/levels.js";
 import { DONE } from "../content/levelCopy.js";
 import { OPEN_DATA } from "../content/openData.js";
+import { DASHBOARD_HTML } from "../content/dashboardPage.js";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function downloadDashboard() {
+  const blob = new Blob([DASHBOARD_HTML], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "dashboard.html";
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 // 站內模擬用的 API：打的是「臺北市陳情系統類別資料」這份真實開放資料。
 // 網址與欄位都照真的寫，回傳值是示範用的假資料（真實內容請看第 3 步的連結）。
@@ -359,6 +372,48 @@ function RealStep({ onFinish }) {
           ✓ 你剛剛就發了一個真的 GET request！瀏覽器幫你把回來的 JSON 顯示出來了。
         </p>
       )}
+
+      <hr className="border-0 border-t border-line my-2" />
+
+      <h3 className="text-ink font-bold">換你把這包 JSON 變成一張看板 📊</h3>
+      <div className="callout callout-info">
+        看懂 JSON 只是一半。<b className="text-ink">真正有用的是把它變成同仁看得懂的畫面</b>
+        —— 這就是「靜態網站 ＋ 讀 API」：網頁本身還是那幾個檔案（跟第 2 關一樣好部署）， 資料則是每次打開時去
+        API 拿最新的。
+      </div>
+
+      <button type="button" className="btn btn-accent" onClick={downloadDashboard}>
+        ⬇ 下載 dashboard.html（陳情案件儀表板）
+      </button>
+
+      <ol className="list-decimal pl-5 m-0 grid gap-2 text-sm">
+        <li>
+          下載{" "}
+          <code className="font-mono bg-surface2 px-1.5 py-0.5 rounded border border-line">
+            dashboard.html
+          </code>
+          。它是<b className="text-ink">單一檔案</b>，圖表用純 CSS 畫，不需要任何額外檔案。
+        </li>
+        <li>
+          把它上傳到<b className="text-ink">第 2 關那個 repo</b>（Add file → Upload files → Commit）。
+        </li>
+        <li>
+          打開 <b className="text-ink">你的網址 + /dashboard.html</b>，就看到你的儀表板了。
+        </li>
+      </ol>
+
+      <div
+        className="callout"
+        style={{
+          borderLeftColor: "var(--sun)",
+          background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
+        }}
+      >
+        <b className="text-ink">如果畫面上出現黃色提示說「抓不到即時資料」</b>
+        ，那不是你做錯 —— 網頁去要「別人家網域」的資料時，要對方允許才給（這個限制叫
+        <b className="text-ink"> CORS</b>）。範本遇到這種情況會自動改用內建的範例資料， 畫面不會空白。想確認
+        API 本身沒問題，直接在新分頁打開上面那串網址就看得到。
+      </div>
 
       <hr className="border-0 border-t border-line my-2" />
 
