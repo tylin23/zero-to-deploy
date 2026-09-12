@@ -60,8 +60,10 @@ export default function MapView({ navigate }) {
         <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">部署地圖</span>
         <h1 className="text-[clamp(26px,5vw,38px)] font-bold text-ink">沿著路徑闖關 🗺️</h1>
         <p className="text-muted text-sm">從起點一路往下走，每一站學會一種部署方式。</p>
-        <button type="button" onClick={() => navigate("#/guide")}
-          className="btn btn-ghost !py-2 !px-4 !text-sm mt-2">🧭 不知道用哪種？看選型指南</button>
+        <div className="flex flex-wrap gap-2 justify-center mt-2">
+          <button type="button" onClick={() => navigate("#/guide")} className="btn btn-ghost !py-2 !px-4 !text-sm">🧭 選型指南</button>
+          <button type="button" onClick={() => navigate("#/terms")} className="btn btn-ghost !py-2 !px-4 !text-sm">📇 名詞小教室</button>
+        </div>
       </div>
 
       <div ref={trailRef} data-testid="trail" className="relative mx-auto max-w-[560px]" style={{ height: layout.height }}>

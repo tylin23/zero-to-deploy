@@ -8,6 +8,8 @@ import RiskNotice from "./components/RiskNotice.jsx";
 import RiskNote from "./components/RiskNote.jsx";
 import EvalBar from "./components/EvalBar.jsx";
 import Guide from "./components/Guide.jsx";
+import TermsPage from "./components/TermsPage.jsx";
+import { LEVEL_TERMS, termById } from "./data/terms.js";
 import IntroLevel from "./levels/IntroLevel.jsx";
 import GitHubPagesLevel from "./levels/GitHubPagesLevel.jsx";
 import ApiLevel from "./levels/ApiLevel.jsx";
@@ -41,9 +43,11 @@ function Shell() {
 
   let view;
   const levelMatch = hash.match(/^#\/level\/(.+)$/);
+  const termsMatch = hash.match(/^#\/terms(?:\/(.+))?$/);
   if (hash === "#/" || hash === "") view = <Home navigate={navigate} />;
   else if (hash === "#/risk") view = <RiskNotice navigate={navigate} />;
   else if (hash === "#/guide") view = <Guide navigate={navigate} />;
+  else if (termsMatch) view = <TermsPage navigate={navigate} focusId={termsMatch[1] || null} />;
   else if (hash === "#/map") view = <MapView navigate={navigate} />;
   else if (levelMatch) view = <LevelPage id={levelMatch[1]} navigate={navigate} />;
   else view = <Home navigate={navigate} />;
@@ -55,6 +59,7 @@ function Shell() {
       <footer className="flex flex-wrap gap-x-5 gap-y-1.5 justify-center py-5 px-4 text-muted text-[13px] text-center">
         <span>Zero to Deploy · 一個用來教「網頁部署」的互動教材</span>
         <button type="button" onClick={() => navigate("#/guide")} className="text-ink font-bold underline underline-offset-2">🧭 選型指南</button>
+        <button type="button" onClick={() => navigate("#/terms")} className="text-ink font-bold underline underline-offset-2">📇 名詞小教室</button>
         <button type="button" onClick={() => navigate("#/risk")} className="text-ink font-bold underline underline-offset-2">⚠️ 風險預告書</button>
         <span className="text-accent font-bold">這個網站本身，就是用 GitHub Pages 部署的 ✨</span>
       </footer>
@@ -89,6 +94,25 @@ function LevelPage({ id, navigate }) {
       <EvalBar ev={EVAL[id]} />
       <RiskNote risk={RISKS[id]} />
       <LevelComp ctx={ctx} />
+      <RelatedTerms ids={LEVEL_TERMS[id]} navigate={navigate} />
+    </div>
+  );
+}
+
+// 關卡下方的「延伸名詞」：連到名詞小教室對應卡片
+function RelatedTerms({ ids, navigate }) {
+  if (!ids || !ids.length) return null;
+  return (
+    <div className="card mt-5 flex flex-wrap items-center gap-2.5">
+      <span className="font-extrabold text-ink text-sm">📇 延伸名詞小教室：</span>
+      {ids.map((tid) => {
+        const t = termById(tid);
+        if (!t) return null;
+        return (
+          <button key={tid} type="button" onClick={() => navigate("#/terms/" + tid)}
+            className="gh-btn !py-1.5">{t.emoji} {t.name}</button>
+        );
+      })}
     </div>
   );
 }
