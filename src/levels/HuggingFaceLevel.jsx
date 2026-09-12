@@ -70,7 +70,10 @@ function ConceptStep({ onNext }) {
         ))}
       </div>
       <div className="callout">
-        和第 2 關的 GitHub Pages 很像 —— 都是「把東西推上去，平台給你網址」。差別是 Spaces 還會幫你<b className="text-ink">跑後端運算（跑 AI 模型）</b>，這是純靜態的 GitHub Pages 做不到的。
+        和第 2 關的 GitHub Pages 很像 —— 都是「把東西推上去，平台給你網址」。差別是 Spaces 還會幫你<b className="text-ink">跑後端運算（跑 AI 模型）</b>，這是純靜態的 GitHub Pages 做不到的。行政上可用來做<b className="text-ink">民意/陳情文字的情緒分析、常見問答小幫手</b>等。
+      </div>
+      <div className="callout" style={{ borderLeftColor: "var(--sun)", background: "color-mix(in srgb, var(--sun) 14%, var(--surface))" }}>
+        <b className="text-ink">⚠️ 公務提醒：</b>Spaces 屬<b className="text-ink">境外第三方平台</b>，上傳的文字/資料會交給它處理。示範一律用去識別化或假資料，切勿上傳真實民眾個資或機敏公務資料。
       </div>
       <button type="button" className="btn btn-primary" onClick={onNext}>下一步：部署一個 AI Demo 來玩 →</button>
     </div>
@@ -91,14 +94,14 @@ function SimStep({ onNext }) {
   return (
     <div className="space-y-4">
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 2 / 3 · 部署來玩</span>
-      <h2 className="text-2xl font-bold text-ink">建一個 Space，部署一個情感分析 AI</h2>
+      <h2 className="text-2xl font-bold text-ink">建一個 Space，部署一個「民意情緒分析」AI</h2>
 
       {phase === "create" && (
         <Browser url="huggingface.co/new-space">
           <h3 className="mt-0 text-ink font-bold">Create a new Space</h3>
           <div className="mb-3.5">
             <label className="text-[13px] font-bold block mb-1.5">Space name</label>
-            <input className="gh-input" value="sentiment-demo" readOnly />
+            <input className="gh-input" value="opinion-sentiment" readOnly />
           </div>
           <div className="mb-3.5">
             <label className="text-[13px] font-bold block mb-1.5">Select the SDK</label>
@@ -118,7 +121,7 @@ function SimStep({ onNext }) {
       )}
 
       {phase === "building" && (
-        <Browser url="huggingface.co/spaces/你/sentiment-demo">
+        <Browser url="huggingface.co/spaces/你/opinion-sentiment">
           <div className="text-center py-10 text-muted">
             <div className="text-4xl mb-2 animate-pop">⚙️</div>
             Building… 正在安裝環境、啟動你的 AI App
@@ -130,7 +133,7 @@ function SimStep({ onNext }) {
         <>
           <div className="callout" style={{ borderLeftColor: "var(--success)", background: "var(--success-soft)", color: "var(--success)" }}>
             <b>✅ 上線了！</b> 你的 Space 有網址了：
-            <code className="font-mono text-sm bg-surface2 px-1.5 py-0.5 rounded border border-line ml-1">你.hf.space/sentiment-demo</code>
+            <code className="font-mono text-sm bg-surface2 px-1.5 py-0.5 rounded border border-line ml-1">你.hf.space/opinion-sentiment</code>
           </div>
           <SentimentDemo onAnalyzed={() => setAnalyzedOnce(true)} />
         </>
@@ -144,7 +147,7 @@ function SimStep({ onNext }) {
 }
 
 function SentimentDemo({ onAnalyzed }) {
-  const [text, setText] = useState("這堂課有夠讚，我學到好多！");
+  const [text, setText] = useState("承辦人員態度親切，處理很快，謝謝！");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -162,10 +165,10 @@ function SentimentDemo({ onAnalyzed }) {
     <div className="border-2 border-line rounded-[18px] bg-surface2 p-4">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-xl">🤗</span>
-        <b className="text-ink">情感分析 Demo</b>
+        <b className="text-ink">民意情緒分析 Demo</b>
         <span className="pill bg-primarySoft text-primary">Gradio</span>
       </div>
-      <label className="text-[13px] font-bold block mb-1.5">輸入一句話，AI 幫你判斷情緒</label>
+      <label className="text-[13px] font-bold block mb-1.5">輸入一則民眾回饋（示範用去識別化文字），AI 幫你判斷情緒</label>
       <textarea className="gh-input !font-sans resize-none" rows={2} value={text} onChange={(e) => setText(e.target.value)} />
       <button type="button" className="btn btn-accent !py-2 !px-5 !text-sm mt-2.5" onClick={run} disabled={loading}>
         {loading ? "分析中…" : "分析 Analyze"}

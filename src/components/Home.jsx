@@ -1,8 +1,10 @@
 import { useProgress } from "../state/progress.jsx";
 
 export default function Home({ navigate }) {
-  const { completed } = useProgress();
+  const { completed, riskAck } = useProgress();
   const started = Object.keys(completed).length > 0;
+  // 尚未讀過風險預告書就先導到預告書；讀過才直接進地圖
+  const startTarget = riskAck ? "#/map" : "#/risk";
 
   return (
     <div className="text-center py-4 sm:py-10">
@@ -23,10 +25,10 @@ export default function Home({ navigate }) {
       </p>
 
       <div className="flex gap-3.5 justify-center flex-wrap">
-        <button type="button" className="btn btn-primary btn-lg" onClick={() => navigate("#/map")}>
+        <button type="button" className="btn btn-primary btn-lg" onClick={() => navigate(startTarget)}>
           {started ? "繼續闖關 →" : "開始冒險 →"}
         </button>
-        <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate("#/level/intro")}>直接看第一關</button>
+        <button type="button" className="btn btn-ghost btn-lg" onClick={() => navigate("#/risk")}>先看風險預告書</button>
       </div>
 
       <div className="flex gap-3.5 justify-center flex-wrap mt-9">

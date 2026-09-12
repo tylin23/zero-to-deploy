@@ -7,22 +7,26 @@ import { BADGES } from "../data/levels.js";
 
 const REPO = "my-first-site";
 
+// 範本：一頁「可公開」的里民活動公告（不含任何個資）
 const STARTER_HTML = `<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的第一個網站</title>
+  <title>里民活動公告</title>
   <style>
     body { font-family: system-ui, sans-serif; display: grid; place-items: center;
            min-height: 100vh; margin: 0; background: linear-gradient(120deg,#26418f,#3b7dd8); color:#fff; text-align:center; }
-    h1 { font-size: 3rem; }
+    h1 { font-size: 2.4rem; }
+    p { font-size: 1.1rem; }
   </style>
 </head>
 <body>
   <div>
-    <h1>🎉 我的網站上線了！</h1>
-    <p>這是我用 GitHub Pages 部署的第一個網頁。</p>
+    <h1>📢 里民健康講座</h1>
+    <p>時間：6/15（六）上午 9:00</p>
+    <p>地點：本里活動中心　自由入座</p>
+    <!-- 注意：這頁會完全公開，只放可對外的公告資訊，勿放個資 -->
   </div>
 </body>
 </html>`;
@@ -74,7 +78,10 @@ function ConceptStep({ onNext }) {
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 1 / 3 · 這是什麼</span>
       <h2 className="text-2xl font-bold text-ink">GitHub Pages 是什麼？</h2>
       <div className="callout callout-info">
-        GitHub Pages 是 GitHub 提供的<b className="text-ink">免費網站託管服務</b>。你把網頁檔案（HTML/CSS/JS）放進一個 repository，打開開關，它就給你一個網址、幫你放上網。全程可以在網站上用滑鼠點完。
+        GitHub Pages 是 GitHub 提供的<b className="text-ink">免費網站託管服務</b>。你把網頁檔案（HTML/CSS/JS）放進一個 repository，打開開關，它就給你一個網址、幫你放上網。全程可以在網站上用滑鼠點完。很適合放<b className="text-ink">可公開的公告、活動頁、開放資料儀表板</b>。
+      </div>
+      <div className="callout" style={{ borderLeftColor: "var(--sun)", background: "color-mix(in srgb, var(--sun) 14%, var(--surface))" }}>
+        <b className="text-ink">⚠️ 公務提醒：</b>放上 Pages 的內容會<b className="text-ink">完全公開</b>並被搜尋引擎索引。只放可對外公開的資訊，絕不放民眾個資或內部檔案。
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[["💸", "免費", "個人專案不用付錢"], ["🖱️", "純 GUI", "用網頁點一點就好"], ["🔗", "有網址", "username.github.io"]].map(([i, t, d]) => (

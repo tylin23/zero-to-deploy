@@ -45,6 +45,9 @@ function ConceptStep({ onNext }) {
       <div className="callout callout-info">
         前面都用別人的平台（GitHub、HF）幫你 host。<b className="text-ink">自架（Self-host）</b>則是：在<b className="text-ink">你自己的電腦</b>跑一個 server，自己扛起「那台一直開著的電腦」的角色。好處是完全掌控、免費；代價是要自己維護、電腦得一直開著、還要處理連線與安全。
       </div>
+      <div className="callout" style={{ borderLeftColor: "var(--sun)", background: "color-mix(in srgb, var(--sun) 14%, var(--surface))" }}>
+        <b className="text-ink">🏢 行政情境：</b>做一個「只給同仁用、資料不出機關」的內部查詢／登記小工具時，架在<b className="text-ink">機關內網（localhost/內網）</b>反而比丟到境外平台更能保護不可公開的資料 —— 但一旦要對外開放，就得先經機關資安評估與核准。
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {[
           ["🔌", "Port（連接埠）", "server 會「監聽」一個號碼，例如 8000。像電腦裡的門牌號"],

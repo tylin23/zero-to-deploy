@@ -2,7 +2,7 @@ import { createContext, useContext, useCallback, useEffect, useMemo, useState } 
 
 // 進度／徽章／主題狀態，存在瀏覽器 localStorage（全部包 try/catch）
 const KEY = "ztd_progress_v1";
-const DEFAULT = { completed: {}, badges: {}, theme: null };
+const DEFAULT = { completed: {}, badges: {}, theme: null, riskAck: false };
 
 function read() {
   try {
@@ -56,6 +56,15 @@ export function ProgressProvider({ children }) {
     });
   }, []);
 
+  const ackRisk = useCallback(() => {
+    setState((s) => {
+      if (s.riskAck) return s;
+      const next = { ...s, riskAck: true };
+      write(next);
+      return next;
+    });
+  }, []);
+
   const reset = useCallback(() => {
     const next = { ...DEFAULT };
     write(next);
@@ -69,14 +78,16 @@ export function ProgressProvider({ children }) {
       completed: state.completed,
       badges: state.badges,
       theme: state.theme,
+      riskAck: state.riskAck,
       isComplete,
       markComplete,
       awardBadge,
       toggleTheme,
+      ackRisk,
       reset,
       ratio: (total) => (total ? Math.round((Object.keys(state.completed).length / total) * 100) : 0),
     }),
-    [state, isComplete, markComplete, awardBadge, toggleTheme, reset]
+    [state, isComplete, markComplete, awardBadge, toggleTheme, ackRisk, reset]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

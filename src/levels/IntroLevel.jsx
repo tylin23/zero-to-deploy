@@ -73,8 +73,8 @@ function ConceptStep({ onNext }) {
   return (
     <div className="space-y-4">
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">第一步 · 概念</span>
-      <h2 className="text-2xl font-bold text-ink">你打開一個網站時，發生了什麼事？</h2>
-      <p className="text-muted text-sm">點下面的按鈕，看一次「瀏覽器 ↔ 伺服器」的對話：</p>
+      <h2 className="text-2xl font-bold text-ink">民眾打開你做的「活動公告頁」時，發生了什麼事？</h2>
+      <p className="text-muted text-sm">情境：你想把一頁「里民活動公告」放上網，讓民眾查得到。點按鈕看「瀏覽器 ↔ 伺服器」的對話：</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-2.5">
         <Node emoji="💻" label="你的瀏覽器" sub="使用者 / 前端" />
@@ -89,7 +89,7 @@ function ConceptStep({ onNext }) {
       <button type="button" className="btn btn-accent" onClick={play}>▶ 播放</button>
 
       <div className="callout">
-        所以「<b className="text-ink">部署（Deploy）</b>」就是：把你做好的網頁檔案，放到一台「一直開著、全世界都連得到」的電腦（伺服器）上，別人才看得到。
+        所以「<b className="text-ink">部署（Deploy）</b>」就是：把你做好的網頁檔案（例如那頁活動公告），放到一台「一直開著、大家都連得到」的電腦（伺服器）上，民眾才看得到。也因為是放到別人連得到的地方，<b className="text-ink">上傳前要先確認這份內容可以對外公開</b>。
       </div>
       <button type="button" className="btn btn-primary" onClick={onNext}>我懂了，下一步 →</button>
     </div>
@@ -146,7 +146,7 @@ function DeployStep({ onDone }) {
             : picked ? "border-accent bg-surface text-muted animate-pulseRing" : "border-line bg-surface text-muted"}`}
       >
         {filled ? (
-          <span>✅ 上線了！你的網站現在在：<br /><code className="font-mono text-sm bg-surface2 px-1.5 py-0.5 rounded border border-line">https://你的網站.example.com</code></span>
+          <span>✅ 上線了！你的活動公告頁現在在：<br /><code className="font-mono text-sm bg-surface2 px-1.5 py-0.5 rounded border border-line">https://你的機關.example.gov.tw/活動公告</code></span>
         ) : "🖥️  這是一台開著的伺服器 — 把檔案放進來"}
       </div>
     </div>

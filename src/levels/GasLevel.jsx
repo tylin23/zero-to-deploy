@@ -8,9 +8,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const GAS_CODE = `function pushMessage() {
   // 把這裡換成你的 Webhook 網址（Discord / Slack 都可以）
+  // 提醒：Webhook 網址等同密鑰，勿寫進公開的 repo 或截圖外流
   const webhook = "https://你的-webhook-網址";
 
-  const payload = { content: "🚀 來自 GAS 的自動通知！" };
+  // 通知內容用案號代替民眾個資（勿放姓名、電話）
+  const payload = { content: "新申辦案 A-1130512，請承辦同仁查看" };
 
   // 用 GAS 內建的 UrlFetchApp 呼叫別人的 API
   UrlFetchApp.fetch(webhook, {
@@ -57,7 +59,7 @@ function ConceptStep({ onNext }) {
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 1 / 3 · 這是什麼</span>
       <h2 className="text-2xl font-bold text-ink">GAS 是什麼？為什麼能「自動推播」？</h2>
       <div className="callout callout-info">
-        <b className="text-ink">GAS（Google Apps Script）</b>是 Google 提供的<b className="text-ink">免費雲端小程式</b>。它可以「定時」或「有事發生時」自動執行，執行時再去<b className="text-ink">呼叫別人的 API</b>（上一關學的！）把訊息推到 Discord、Slack、LINE 等地方。
+        <b className="text-ink">GAS（Google Apps Script）</b>是 Google 提供的<b className="text-ink">免費雲端小程式</b>。行政上很常這樣用：<b className="text-ink">民眾用 Google 表單線上申辦 → GAS 自動把「有新案件」通知承辦同仁的群組</b>。它可以「定時」或「有事發生時」自動執行，執行時再去呼叫別人的 API（上一關學的！）把訊息推到 Slack/Teams/LINE 等地方。
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {[
@@ -78,12 +80,12 @@ function ConceptStep({ onNext }) {
 
 /* ---------- 步驟 2：站內模擬推播流程 ---------- */
 const TRIGGERS = [
-  { id: "time", icon: "⏰", label: "定時觸發", sub: "每天早上 9:00" },
-  { id: "event", icon: "⚡", label: "事件觸發", sub: "有人下單時" },
+  { id: "time", icon: "⏰", label: "定時觸發", sub: "每天 9:00 彙整昨日案件" },
+  { id: "event", icon: "⚡", label: "事件觸發", sub: "民眾送出申辦表單時" },
 ];
 
 function SimStep({ onNext }) {
-  const [msg, setMsg] = useState("庫存只剩 3 件，快來補貨！");
+  const [msg, setMsg] = useState("新報修案 A-1130512：中正路路燈不亮");
   const [trigger, setTrigger] = useState(null);
   const [status, setStatus] = useState("idle"); // idle | running | done
   const [chat, setChat] = useState([]);
@@ -104,10 +106,10 @@ function SimStep({ onNext }) {
   return (
     <div className="space-y-4">
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accent">步驟 2 / 3 · 讓它跑一次</span>
-      <h2 className="text-2xl font-bold text-ink">組一條自動推播流程 ⚙️</h2>
+      <h2 className="text-2xl font-bold text-ink">組一條「民眾申辦 → 自動通知承辦」流程 ⚙️</h2>
 
       <div>
-        <label className="text-[13px] font-bold block mb-1.5">① 要推播的訊息</label>
+        <label className="text-[13px] font-bold block mb-1.5">① 要推播的訊息（用案號，勿放民眾個資）</label>
         <input className="gh-input !font-sans" value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="輸入要自動送出的通知內容" />
       </div>
 
@@ -130,7 +132,7 @@ function SimStep({ onNext }) {
           <div className="absolute top-1/2 left-0 right-0 h-1 rounded-full" style={{ background: "var(--track)" }} />
           <div className="absolute top-1/2 -translate-y-1/2 text-xl transition-[left,opacity] duration-[900ms]" style={{ left: pkt.left, opacity: pkt.opacity }}>📤</div>
         </div>
-        <FlowNode icon="💬" label="聊天室" sub="收到通知的地方" active={status === "done"} />
+        <FlowNode icon="💬" label="承辦群組" sub="收到通知的地方" active={status === "done"} />
       </div>
 
       <div className="text-center">
@@ -142,7 +144,7 @@ function SimStep({ onNext }) {
 
       {/* 模擬聊天室 */}
       <div className="border-2 border-line rounded-[18px] bg-surface2 p-3.5 min-h-[90px]">
-        <div className="text-xs font-extrabold text-muted mb-2">💬 #通知 頻道</div>
+        <div className="text-xs font-extrabold text-muted mb-2">💬 #承辦通知 頻道</div>
         {chat.length === 0 ? (
           <div className="text-muted text-sm text-center py-3">還沒有訊息 —— 執行一次看看</div>
         ) : (
@@ -151,7 +153,7 @@ function SimStep({ onNext }) {
               <div key={m.id} className="flex items-start gap-2 animate-pop">
                 <span className="text-xl">🤖</span>
                 <div>
-                  <div className="text-xs font-bold text-ink">推播機器人 <span className="text-muted font-normal">· 剛剛</span></div>
+                  <div className="text-xs font-bold text-ink">申辦通知機器人 <span className="text-muted font-normal">· 剛剛</span></div>
                   <div className="text-sm bg-surface border border-line rounded-lg px-3 py-1.5 inline-block mt-0.5">{m.text}</div>
                 </div>
               </div>
