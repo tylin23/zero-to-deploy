@@ -47,6 +47,8 @@ export default {
           "0%,100%": { transform: "translateX(-50%) translateY(0)" },
           "50%": { transform: "translateX(-50%) translateY(-4px)" },
         },
+        // 流動方向箭頭：靜止狀態是「全亮」，才能在 prefers-reduced-motion 下仍看得見
+        chev: { "0%,100%": { opacity: 1 }, "50%": { opacity: 0.25 } },
         pulseRing: {
           "0%": { boxShadow: "0 0 0 0 color-mix(in srgb, var(--accent) 60%, transparent)" },
           "70%": { boxShadow: "0 0 0 12px transparent" },
@@ -57,6 +59,7 @@ export default {
         pop: "pop .5s cubic-bezier(.2,1.4,.4,1)",
         bob: "bob 1.2s ease-in-out infinite",
         pulseRing: "pulseRing 1.6s infinite",
+        chev: "chev 1.1s ease-in-out infinite",
       },
     },
   },

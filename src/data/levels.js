@@ -7,7 +7,7 @@ export const mapOrder = [
     emoji: "🌐",
     title: "網站是怎麼被看到的？",
     short: "網站怎麼被看到",
-    tagline: "部署的核心概念",
+    tagline: "前端、後端與部署的核心概念",
     status: "ready",
     phase: "pre",
   },
@@ -206,7 +206,7 @@ export const RISKS = {
   intro: {
     level: "觀念",
     points: [
-      "這關只教觀念，不會上傳任何東西。",
+      "這關只教觀念（前端／後端／部署），不會上傳任何東西。",
       "但請記得：只要「部署到網路上」，就等於把資料交到你電腦以外的地方，之後每一關都要想清楚『這份資料可以外流嗎？』",
     ],
   },

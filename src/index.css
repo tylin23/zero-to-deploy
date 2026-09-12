@@ -30,6 +30,10 @@
   --btn-accent-bg: #2a5cab;
   --btn-accent-edge: #1f4682;
 
+  /* 第 1 關「前端 vs 後端」的分類色：藍 vs 紫，兩個色相分得開，且都達 AA */
+  --frontend-text: #2a5cab; /* 白底 6.5:1 */
+  --backend-text: #6b3fa0; /* 白底 7.4:1 */
+
   /* 資料界線燈的「文字」色（淺底需加深） */
   --diy-green-text: #0c6b41;
   --diy-yellow-text: #7a5600;
@@ -40,7 +44,10 @@
   /* 已完成節點上的白字／深色字要達 WCAG AA，另備兩個專用色 */
   --mint-deep: #0c6b41; /* 底色：白字放上去 6.6:1 */
   --on-mint: #04381f; /* 文字：放在亮綠色填色上 6.5:1 */
-  --success: #1fa96a;
+  /* --success 實際上都當「文字色」用（✓、答對回饋、狀態字），
+     所以要比填色用的 --mint 深：在 --success-soft 上 5.8:1、白底 6.6:1。
+     要「綠色填色」請用 --mint / --mint-dark。 */
+  --success: #0c6b41;
   --success-soft: #d9f7e7;
 
   --sun: #ffc93c;
@@ -71,6 +78,9 @@
   --accent-dark: #3f6fc0;
   --accent-soft: #1f2c47;
   --accent-text: #7fb3f5; /* 深底上用亮色 */
+
+  --frontend-text: #7fb3f5; /* 深底 7.2:1 */
+  --backend-text: #c9aaf5; /* 深底 7.9:1 */
 
   /* 深色模式按鈕底需更深，白字才達 AA */
   --btn-primary-bg: #3f5ca8;
