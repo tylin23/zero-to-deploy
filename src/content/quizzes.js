@@ -1,6 +1,20 @@
 // 所有關卡的測驗題集中在這裡，方便老師整批檢視與調整文字。
 // 每題：question 題目／options 選項（correct 標出正解）／explainOk 答對說明／explainNo 答錯提示。
 export const QUIZZES = {
+  landscape: {
+    question:
+      "同仁在 AI 工具裡做了一頁統計圖表，按「發布」拿到連結，貼進科內的 LINE 群組。下面哪一句最正確？",
+    options: [
+      { text: "拿到那個連結的人都打得開，被轉傳出去就收不回來了", correct: true },
+      { text: "只有 LINE 群組裡的 8 個人看得到，群組外的人打不開", correct: false },
+      { text: "沒有那個 AI 服務帳號的人打不開", correct: false },
+    ],
+    explainOk:
+      "沒錯。已發布的連結通常是「有連結就能看」，不需要帳號、也不管你貼在哪個群組。所以決定要不要按發布之前，先問自己：這份內容被轉傳出去會怎樣？",
+    explainNo:
+      "再想想：連結本身就是通行證。貼在哪個群組、對方有沒有帳號，都擋不住有人把網址複製出去。",
+  },
+
   intro: {
     question: "為什麼不能只把網頁放在「自己的筆電」上就好？",
     options: [
@@ -58,7 +72,7 @@ export const QUIZZES = {
     ],
     explainOk:
       "正解！GitHub Pages 只送靜態檔案，不會幫你跑程式；AI 需要後端運算，所以用會幫你跑模型的 Spaces。挑對『部署平台』要看你的 App 需不需要後端。",
-    explainNo: "回想第 2 關：GitHub Pages 只送靜態檔案、不跑後端；而 AI 需要跑模型（運算）。",
+    explainNo: "回想第 3 關：GitHub Pages 只送靜態檔案、不跑後端；而 AI 需要跑模型（運算）。",
   },
 
   selfhost: {

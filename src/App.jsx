@@ -13,8 +13,9 @@ import Guide from "./components/Guide.jsx";
 import TermsPage from "./components/TermsPage.jsx";
 import { LEVEL_TERMS, termById } from "./data/terms.js";
 
-// 關卡採 lazy 載入：首頁與地圖不必先下載 9 關的程式碼
+// 關卡採 lazy 載入：首頁與地圖不必先下載每一關的程式碼
 const LEVELS = {
+  landscape: lazy(() => import("./levels/LandscapeLevel.jsx")),
   intro: lazy(() => import("./levels/IntroLevel.jsx")),
   "github-pages": lazy(() => import("./levels/GitHubPagesLevel.jsx")),
   boundary: lazy(() => import("./levels/BoundaryLevel.jsx")),

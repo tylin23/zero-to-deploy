@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { mapOrder, EVAL, PICKER, diffText, diyTextColor, diyText } from "../data/levels.js";
+import { mapOrder, EXTRA_METHODS, EVAL, PICKER, diffText, diyTextColor, diyText } from "../data/levels.js";
 
-const meta = (id) => mapOrder.find((l) => l.id === id) || {};
+// 比較表同時涵蓋「關卡」與「沒有獨立關卡的部署方式」（例如 AI 工具的分享連結）
+const ALL = [...EXTRA_METHODS, ...mapOrder];
+const meta = (id) => ALL.find((l) => l.id === id) || {};
+// 沒有自己的關卡時，連到介紹它的那一關
+const levelOf = (row) => row.goLevel || row.id;
+const rowsFor = (phase) => ALL.filter((l) => EVAL[l.id]?.phase === phase);
 
 export default function Guide({ navigate }) {
   const [pick, setPick] = useState(null);
 
-  const pre = mapOrder.filter((l) => EVAL[l.id]?.phase === "pre");
-  const post = mapOrder.filter((l) => EVAL[l.id]?.phase === "post");
+  const pre = rowsFor("pre");
+  const post = rowsFor("post");
 
   return (
     <div>
@@ -45,7 +50,7 @@ export default function Guide({ navigate }) {
               <button
                 type="button"
                 className="btn btn-primary btn-sm"
-                onClick={() => navigate("#/level/" + pick.to)}
+                onClick={() => navigate("#/level/" + levelOf(meta(pick.to)))}
               >
                 前往這一關 →
               </button>
@@ -105,14 +110,15 @@ function CompareTable({ rows, navigate }) {
             const ev = EVAL[l.id];
             return (
               <tr key={l.id} className="border-t-2 border-line align-top">
-                <td className="px-3 py-3">
+                <td className="px-3 py-3 min-w-[172px]">
                   <button
                     type="button"
-                    onClick={() => navigate("#/level/" + l.id)}
+                    onClick={() => navigate("#/level/" + levelOf(l))}
                     className="font-bold text-ink hover:text-primary text-left"
                   >
                     {l.emoji} {l.title} ↗
                   </button>
+                  {l.note && <div className="text-muted text-xs mt-0.5">{l.note}</div>}
                 </td>
                 <td className="px-3 py-3 whitespace-nowrap">{diffText(ev.difficulty)}</td>
                 <td className="px-3 py-3 whitespace-nowrap">{ev.kind}</td>
