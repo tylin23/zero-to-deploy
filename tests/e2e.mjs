@@ -347,7 +347,8 @@ await st("3 GitHub Pages", async () => {
 await st("5 API 基礎", async () => {
   await go("api");
   await p.click("text=自己送一個 request");
-  await p.click("text=拿全部站點");
+  // 只有一支端點，不該再有「自己篩」那種選單按鈕
+  if (await p.locator("button", { hasText: "自己篩" }).count()) throw new Error("端點選單又跑回來了");
   await B("送出 Send").click();
   await p.waitForSelector("text=200 OK", { timeout: 3000 });
   // 回傳要是 YouBike 的真實欄位
