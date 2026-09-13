@@ -138,7 +138,7 @@ function ConceptStep({ onNext }) {
         </div>
         <p className="text-sm text-ink mt-2.5 mb-0">
           它敢公開，是因為它只到<b>「現況」這一層</b>
-          —— 哪一站現在剩幾台車，而不是誰借走了哪一台。這就是第 3 關講的界線：
+          —— 哪一站現在剩幾台車，而不是誰借走了哪一台。這就是第 4 關講的界線：
           <b>去識別化後的統計可以公開，帶得到個人的紀錄不行。</b>
         </p>
       </div>
@@ -293,7 +293,7 @@ function RealStep({ onFinish }) {
       <h3 className="text-ink font-bold">換你把這包 JSON 變成一張看板 📊</h3>
       <div className="callout callout-info">
         看懂 JSON 只是一半。<b className="text-ink">真正有用的是把它變成同仁看得懂的畫面</b>
-        —— 這就是「靜態網站 ＋ 讀 API」：網頁本身還是那幾個檔案（跟第 2 關一樣好部署）， 資料則是每次打開時去
+        —— 這就是「靜態網站 ＋ 讀 API」：網頁本身還是那幾個檔案（跟第 3 關一樣好部署）， 資料則是每次打開時去
         API 拿最新的。
       </div>
 
@@ -310,7 +310,7 @@ function RealStep({ onFinish }) {
           。它是<b className="text-ink">單一檔案</b>，圖表用純 CSS 畫，不需要任何額外檔案。
         </li>
         <li>
-          把它上傳到<b className="text-ink">第 2 關那個 repo</b>（Add file → Upload files → Commit）。
+          把它上傳到<b className="text-ink">第 3 關那個 repo</b>（Add file → Upload files → Commit）。
         </li>
         <li>
           打開 <b className="text-ink">你的網址 + /dashboard.html</b>，就看到你的儀表板了。

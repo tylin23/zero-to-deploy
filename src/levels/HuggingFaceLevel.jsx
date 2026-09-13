@@ -99,7 +99,7 @@ function ConceptStep({ onNext }) {
         ))}
       </div>
       <div className="callout">
-        和第 2 關的 GitHub Pages 很像 —— 都是「把東西推上去，平台給你網址」。差別是 Spaces 還會幫你
+        和第 3 關的 GitHub Pages 很像 —— 都是「把東西推上去，平台給你網址」。差別是 Spaces 還會幫你
         <b className="text-ink">跑後端運算（跑 AI 模型）</b>，這是純靜態的 GitHub Pages
         做不到的。市政上可用來做
         <b className="text-ink">1999 與市政信箱陳情文字的情緒分析、市民常見問答小幫手</b>等。

@@ -64,7 +64,7 @@ export default function RiskNotice({ navigate, next }) {
         <section>
           <h3 className="text-ink font-bold flex items-center gap-2">🚦 碰到這五件事，先停下來</h3>
           <p className="text-muted text-sm mt-1 mb-2">
-            這是全站的判斷準則。現在先有印象就好，第 3 關會帶你用實際情境練一遍。
+            這是全站的判斷準則。現在先有印象就好，第 4 關會帶你用實際情境練一遍。
           </p>
           <div className="grid gap-2 sm:grid-cols-2">
             {[

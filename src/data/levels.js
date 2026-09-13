@@ -1,7 +1,20 @@
 // 地圖上的所有關卡（含尚未開放的），對應備課大綱
+// ⚠️ 調整這個陣列的順序＝所有「第 N 關」的編號都會跟著變。教材文案裡有寫死的編號，
+//    改完請 `grep -rn "第 [0-9] 關" src` 一起更新（tests/e2e.mjs 也有斷言）。
 // 順序原則：先給零前提的觀念 → 親手做一次真的部署 → 才問「我可以做到哪裡」。
 // 「界線意識」需要學生已經體會過「公開到網路上」是什麼意思，所以排在 GitHub Pages 之後。
+// 「方法全景」放最前面：從學員已經有的經驗（AI 工具按分享）接進「部署」這個詞，
+// 它是一張地圖不是一堂課 —— 不要求看懂，只要知道等一下會走過哪些地方。
 export const mapOrder = [
+  {
+    id: "landscape",
+    emoji: "🔭",
+    title: "上線的方法有哪些？",
+    short: "方法全景",
+    tagline: "先看全景：從 AI 工具的分享連結，到機關正式系統",
+    status: "ready",
+    phase: "pre",
+  },
   {
     id: "intro",
     emoji: "🌐",
@@ -207,6 +220,13 @@ export const RISKS = {
       "口訣：碰到「個資／機敏／對外正式服務／跨局處或全市府／帳號權限」→ 停，先找資訊單位。",
     ],
   },
+  landscape: {
+    level: "觀念",
+    points: [
+      "這一關只認識選項、不上傳任何東西，但先記住一件事：AI 工具的「發布／分享連結」多半是「拿到連結的人都能開」，轉傳一次就收不回來。",
+      "那些內容會存在平台（多為境外）的伺服器上。示範請用假資料或去識別化資料，真實市民個資一律不要放上去。",
+    ],
+  },
   intro: {
     level: "觀念",
     points: [
@@ -270,6 +290,7 @@ export const RISKS = {
 
 export const BADGES = {
   boundary: { id: "boundary", icon: "🚦", name: "界線意識", desc: "分得清自己做與該找資訊單位" },
+  landscape: { id: "landscape", icon: "🔭", name: "全景視野", desc: "知道上線有哪些選項、各自差在哪" },
   concept: { id: "concept", icon: "🧭", name: "概念啟航", desc: "看懂前端、伺服器與部署" },
   firstDeploy: { id: "first-deploy", icon: "🚀", name: "首次部署", desc: "把第一個網站放上 GitHub Pages" },
   apiBasics: { id: "api-basics", icon: "🔌", name: "API 入門", desc: "看懂 request / response 與 JSON" },
