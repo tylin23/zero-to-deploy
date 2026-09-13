@@ -491,6 +491,17 @@ await st("關卡頁：上一關／下一關可用", async () => {
   await p.waitForFunction(() => location.hash === "#/level/github-pages", null, { timeout: 2500 });
 });
 
+await st("名詞小教室：CORS 卡有「被擋住怎麼辦」的三條路", async () => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${base}/index.html#/terms/cors`, { waitUntil: "networkidle" });
+  const card = p.locator("div.card", { has: p.locator("text=跨來源限制") }).first();
+  for (const h of ["換一個有開放的資料源", "不要讓瀏覽器去抓", "請資料提供方開放"]) {
+    await card.locator(`text=${h}`).first().waitFor({ state: "visible", timeout: 3000 });
+  }
+  // 不要教學員用來路不明的 proxy —— 這句一定要在
+  await card.locator("text=第三方伺服器").first().waitFor({ state: "visible", timeout: 3000 });
+});
+
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");
 await b.close();
 process.exit(errs.length ? 1 : 0);

@@ -105,6 +105,33 @@ function TermCard({ t, isOpen, onToggle, navigate, innerRef }) {
             <p className="text-sm text-ink m-0">{t.relation}</p>
           </div>
 
+          {t.more && (
+            <div className="border-2 border-line rounded-[14px] bg-surface2 p-3.5">
+              <div className="text-xs font-extrabold text-muted mb-2">{t.more.title}</div>
+              <ol className="m-0 pl-0 list-none space-y-2.5">
+                {t.more.items.map(([head, body], i) => (
+                  <li key={head} className="flex gap-2.5">
+                    <span
+                      className="shrink-0 w-[22px] h-[22px] rounded-full grid place-items-center text-xs font-extrabold mt-0.5"
+                      style={{ background: "var(--primary-soft)", color: "var(--primary)" }}
+                    >
+                      {i + 1}
+                    </span>
+                    <div>
+                      <div className="text-sm font-extrabold text-ink">{head}</div>
+                      <p className="text-sm text-ink m-0">{body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              {t.more.warn && (
+                <p className="text-sm m-0 mt-3 pt-3 border-t-2 border-line" style={{ color: "var(--danger)" }}>
+                  {t.more.warn}
+                </p>
+              )}
+            </div>
+          )}
+
           {t.demo === "cache" && <CacheDemo />}
           {t.demo === "idem" && <IdemDemo />}
 
