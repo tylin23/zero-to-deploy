@@ -87,6 +87,18 @@ export const mapOrder = [
   },
 ];
 
+// 不是獨立關卡、但一定要放進選型比較表的部署方式。
+// AI 服務內建的「發布／分享」本身就是一種託管，第 1 關會介紹，這裡要能跟其他方式並排比較。
+export const EXTRA_METHODS = [
+  {
+    id: "ai-tools",
+    emoji: "🤖",
+    title: "AI 工具的分享連結",
+    note: "Claude Artifacts · Gemini Canvas · ChatGPT Sites",
+    goLevel: "landscape",
+  },
+];
+
 // 兩階段：納管前（自己動手）→ 交給資訊單位納管 → 納管後（交接與正式環境）
 export const PHASES = {
   pre: { label: "納管前：你可以自己做的", short: "納管前", icon: "🙋" },
@@ -101,6 +113,18 @@ export const totalReady = mapOrder.filter((l) => l.status === "ready").length;
 // kind: 靜態 / 動態 / 單機
 // diy: green 可自己做 / yellow 要留意 / red 接近紅線（通常要問資訊單位）
 export const EVAL = {
+  "ai-tools": {
+    phase: "pre",
+    difficulty: 1,
+    kind: "靜態（平台代管）",
+    diy: "yellow",
+    diyLabel: "看你放什麼",
+    risk: "有連結就能看；內容存在平台（多為境外）",
+    openness: "拿到連結的人",
+    cost: "免費 / 方案內",
+    maintain: "免顧（但平台說了算）",
+    scenario: "會議用的一次性圖表、點子原型",
+  },
   "github-pages": {
     phase: "pre",
     difficulty: 2,
@@ -189,6 +213,11 @@ export const EVAL = {
 
 // 選型指南「幫我選」的情境 → 推薦方式
 export const PICKER = [
+  {
+    q: "開會要用一次，或只是想先做個雛形看看長什麼樣",
+    to: "ai-tools",
+    why: "五分鐘就有一個能點的成品；但記得那個連結是「拿到的人都能開」",
+  },
   { q: "只是想放一頁可公開的市府活動公告或看板", to: "github-pages", why: "靜態、免費、免顧，最快上線" },
   { q: "想把市府開放資料變成一張看板給同仁看", to: "api", why: "讀開放資料、不碰個資，最安全" },
   { q: "要收市民報名／陳情，並自動通知承辦科室", to: "gas", why: "表單＋GAS 自動化，貼近日常" },
