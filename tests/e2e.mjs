@@ -565,6 +565,72 @@ await st("選型指南：AI 工具也在比較表裡，且連得到第 1 關", a
   await p.waitForFunction(() => location.hash === "#/level/landscape", null, { timeout: 2500 });
 });
 
+await st("第 3 關：教怎麼在網頁裡放圖片（四個寫法的判斷）", async () => {
+  await go("github-pages");
+  // 走到步驟 3（圖片教學掛在「真的動手」那一步）
+  await p.click("text=靜態網站：HTML");
+  await B("先在模擬介面練一次").click();
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Create a new repository");
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=拖曳檔案到這裡上傳");
+  await p.click("text=📄 index.html");
+  await p.click("text=拖曳檔案到這裡上傳");
+  await p.waitForFunction(() => {
+    const x = document.querySelector(".gh-btn-green");
+    return x && !x.disabled;
+  });
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Branch");
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Your site is live");
+  await p.click("text=我真的做一次");
+
+  const sum = p.locator("summary", { hasText: "想放自己的照片或圖片" });
+  await sum.waitFor({ state: "visible", timeout: 4000 });
+  await sum.click();
+  // 相對路徑 vs 本機絕對路徑 vs 大小寫 vs 子資料夾
+  for (const [id, pickOk, expect] of [
+    ["same", "🖼️ 會顯示", "🖼️ 會顯示"],
+    ["abs", "🖼️ 會顯示", "💔 會破圖"],
+    ["case", "💔 會破圖", "💔 會破圖"],
+    ["folder", "🖼️ 會顯示", "🖼️ 會顯示"],
+  ]) {
+    await p.locator(`[data-img=${id}] button`, { hasText: pickOk }).click();
+    await p.locator(`[data-img=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
+  }
+  await p.locator("text=不要直接貼別人網站的圖片網址").first().waitFor({ state: "visible", timeout: 2000 });
+});
+
+await st("名片範本：頭像換成 <img> 照片時不會被拉扁", async () => {
+  // 範本註解教學生「把整個 <svg class=avatar> 換成一行 <img class=avatar>」，
+  // 這裡照著做一次，確認教學步驟跟實際標籤對得上、而且圓形裁切正常。
+  const PHOTO =
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="600" height="400" fill="#f2a03d"/></svg>');
+  const swapped = STARTER_HTML.replace(
+    /<svg class="avatar"[\s\S]*?<\/svg>/,
+    `<img class="avatar" src="${PHOTO}" alt="測試大頭照">`
+  );
+  if (swapped === STARTER_HTML) throw new Error("註解教的 <svg class=\"avatar\"> 在範本裡找不到");
+  const page = await ctx.newPage();
+  await page.setContent(swapped, { waitUntil: "networkidle" });
+  const r = await page.evaluate(() => {
+    const el = document.querySelector("img.avatar");
+    const b = el.getBoundingClientRect();
+    return {
+      loaded: el.complete && el.naturalWidth > 0,
+      w: Math.round(b.width),
+      h: Math.round(b.height),
+      fit: getComputedStyle(el).objectFit,
+    };
+  });
+  if (!r.loaded) throw new Error("照片沒載入");
+  if (r.w !== r.h) throw new Error(`頭像不是正方形 ${r.w}x${r.h}`);
+  if (r.fit !== "cover") throw new Error("object-fit 是 " + r.fit + "，3:2 的照片會被拉扁");
+  await page.close();
+});
+
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");
 await b.close();
 process.exit(errs.length ? 1 : 0);
