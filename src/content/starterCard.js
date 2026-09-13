@@ -47,6 +47,8 @@ export const STARTER_HTML = `<!DOCTYPE html>
   .avatar{
     width:106px; height:106px; border-radius:50%; display:block; margin:0 auto 12px;
     border:4px solid #fff; background:#fff; box-shadow:0 6px 16px rgba(16,24,40,.14);
+    /* 換成 <img> 時要有這行：照片不是正方形也會自動裁成圓的，不會被拉扁 */
+    object-fit:cover;
   }
   .name{
     margin:0 0 2px; font-size:22px; font-weight:800;
@@ -118,10 +120,32 @@ export const STARTER_HTML = `<!DOCTYPE html>
 
     <!-- ===== 頭像 =====
          這是照著熊讚的特徵自己畫的「簡化示意圖」，不是官方圖檔。
-         要換成官方圖或你自己的照片，把下面整個 <svg>…</svg> 換成這一行，
-         並把 avatar.png 跟 index.html 放在同一個資料夾、一起上傳：
-             <img class="avatar" src="avatar.png" alt="頭像">
-         注意：不要寫 C:\\Users\\... 這種路徑，那只有你的電腦找得到。 -->
+
+         ▼ 要換成自己的照片（或科室的 logo），三個步驟：
+
+         1. 檔名先改乾淨：「頭貼 1.JPG」→「avatar.jpg」
+            英文小寫、不要空白、不要中文。順便把圖縮小到 400x400 左右，
+            手機拍的原圖動輒 3~5 MB，網頁會很慢。
+
+         2. 把 avatar.jpg 跟 index.html「一起」上傳到 repo
+            （GitHub 上 Add file → Upload files，可以一次拖兩個檔進去）。
+            網頁不會把圖存在自己裡面，它只是記著「去哪裡拿那張圖」，
+            所以圖片沒上傳 = 別人打開就是破圖。
+
+         3. 把下面整個 <svg>…</svg> 刪掉，換成這一行：
+                <img class="avatar" src="avatar.jpg" alt="這裡寫圖片內容，例如：王小明的大頭照">
+
+         ▼ 三個常見錯誤（在你自己電腦上都看不出來，一上線才壞）：
+
+         X  src="C:\\Users\\你的帳號\\Pictures\\avatar.jpg"
+            那是你電腦裡的路徑，只有你找得到。要用相對路徑（同資料夾就直接寫檔名）。
+         X  src="Avatar.JPG" 但檔案其實叫 avatar.jpg
+            Windows 不分大小寫，伺服器分 —— 檔名怎麼拼就要一字不差地怎麼寫。
+         X  直接貼別人網站的圖片網址
+            對方一改檔名你就破圖，而且有版權問題。存下來、確認可以用，再上傳到自己的 repo。
+
+         ▼ 提醒：這頁全世界都看得到。不要放有市民臉孔的照片、含姓名電話的截圖，
+            用別人的圖也要先確認授權。 -->
     <svg class="avatar" viewBox="0 0 106 106" role="img" aria-label="台灣黑熊示意圖">
       <defs>
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">

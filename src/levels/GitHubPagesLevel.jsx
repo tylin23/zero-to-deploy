@@ -319,6 +319,7 @@ function RealStep({ onFinish }) {
       </button>
 
       <OwnFileChecklist />
+      <ImageHowTo />
 
       <ul className="list-none p-0 m-0 grid gap-2.5">
         {ITEMS.map((it, i) => (
@@ -406,6 +407,179 @@ const PITFALLS = [
     d: "程式裡如果出現 python app.py、node server.js、pip install、npm start，或要連資料庫，那就是有後端。GitHub Pages 只會把檔案原封不動送出去、不會幫你跑程式 —— 那種要用後面幾關的方式。",
   },
 ];
+
+// 想在網頁上放自己的照片／圖片 —— 學生一定會遇到，而且四種寫法只有兩種會活。
+// setup 寫「檔案實際在哪」，code 寫「HTML 裡怎麼寫」，兩者要合起來看才知道會不會破圖。
+const IMG_CASES = [
+  {
+    id: "same",
+    setup: "avatar.jpg 和 index.html 放在同一層，兩個都上傳了",
+    code: '<img src="avatar.jpg" alt="我的大頭照">',
+    ok: true,
+    why: "最標準的寫法。相對路徑的意思是「從 index.html 出發去找 avatar.jpg」—— 只要兩個檔案一起上傳，別人打開就看得到。",
+  },
+  {
+    id: "abs",
+    setup: "圖片還躺在你電腦的「圖片」資料夾裡，沒有上傳",
+    code: '<img src="C:\\Users\\你的帳號\\Pictures\\avatar.jpg">',
+    ok: false,
+    why: "這條路徑只有你的電腦找得到 —— 跟上一關的 file:// 是同一件事。你自己開看得到，別人開就是一個破掉的圖示。圖片一定要先上傳到 repo，再用相對路徑。AI 幫你寫的程式很愛出現這種路徑，要記得改掉。",
+  },
+  {
+    id: "case",
+    setup: "上傳的檔案其實叫 avatar.jpg（小寫、副檔名也是小寫）",
+    code: '<img src="Avatar.JPG" alt="我的大頭照">',
+    ok: false,
+    why: "Windows 不分大小寫，伺服器分。在你電腦上測試好好的，一上線就破圖 —— 這是最難自己抓到的雷。檔名怎麼拼，程式裡就要一字不差地怎麼寫。",
+  },
+  {
+    id: "folder",
+    setup: "repo 裡開了一個 images 資料夾，圖片放在裡面",
+    code: '<img src="images/avatar.jpg" alt="我的大頭照">',
+    ok: true,
+    why: "圖片多的時候可以開資料夾收好，路徑就寫「資料夾名／檔名」。上傳時把整個資料夾拖進 GitHub，結構會被保留。",
+  },
+];
+
+function ImageHowTo() {
+  const [picked, setPicked] = useState({});
+
+  return (
+    <details
+      className="rounded-[14px] border-2 overflow-hidden"
+      style={{
+        borderColor: "color-mix(in srgb, var(--accent) 45%, var(--border))",
+        background: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+      }}
+    >
+      <summary className="cursor-pointer select-none list-none px-4 py-3 font-extrabold text-ink flex items-center gap-2 flex-wrap">
+        <span className="text-lg" aria-hidden="true">
+          🖼️
+        </span>
+        <span>想放自己的照片或圖片？</span>
+        <span className="ml-auto text-muted text-xs font-normal hidden sm:inline">點此展開／收合</span>
+      </summary>
+
+      <div className="px-4 pb-4 space-y-3.5">
+        <p className="text-sm text-ink mt-0 mb-0">
+          網頁<b>不會</b>把圖片存在自己裡面，它只是記著「去哪裡拿那張圖」。所以圖片一定要
+          <b className="text-ink">跟網頁一起上傳</b>，而且路徑要寫對 —— 三個步驟：
+        </p>
+
+        <ol className="list-decimal pl-5 m-0 grid gap-2 text-sm">
+          <li>
+            <b className="text-ink">先把檔名改乾淨</b>
+            <div className="text-muted mt-0.5">
+              <code className="font-mono text-xs bg-surface2 px-1.5 py-0.5 rounded border border-line">
+                頭貼 1.JPG
+              </code>{" "}
+              →{" "}
+              <code className="font-mono text-xs bg-surface2 px-1.5 py-0.5 rounded border border-line">
+                avatar.jpg
+              </code>
+              　英文小寫、不要空白、不要中文。
+            </div>
+          </li>
+          <li>
+            <b className="text-ink">跟 index.html 一起上傳到 repo</b>
+            <div className="text-muted mt-0.5">
+              Add file → Upload files，可以一次把好幾個檔案（或整個資料夾）拖進去。
+            </div>
+          </li>
+          <li>
+            <b className="text-ink">在 HTML 裡用相對路徑引用它</b>
+            <div className="text-muted mt-0.5">
+              <code className="font-mono text-xs bg-surface2 px-1.5 py-0.5 rounded border border-line">
+                {'<img src="avatar.jpg" alt="我的大頭照">'}
+              </code>
+              　<b className="text-ink">alt</b> 一定要寫：圖沒載出來、或用螢幕報讀軟體的人，靠它知道這是什麼。
+            </div>
+          </li>
+        </ol>
+
+        <div className="text-sm font-extrabold text-muted pt-1">
+          🧪 練習：下面四個會顯示，還是會破圖？
+        </div>
+
+        <div className="grid gap-2.5">
+          {IMG_CASES.map((c) => {
+            const my = picked[c.id];
+            const right = my === (c.ok ? "ok" : "no");
+            return (
+              <div key={c.id} data-img={c.id} className="border-2 border-line rounded-[14px] bg-surface p-3">
+                <div className="text-xs text-muted mb-1.5">📁 {c.setup}</div>
+                <pre className="font-mono text-[12px] bg-surface2 border border-line rounded-[8px] px-2.5 py-2 overflow-x-auto whitespace-pre m-0">
+                  {c.code}
+                </pre>
+                {!my ? (
+                  <div className="flex flex-wrap gap-2 mt-2.5">
+                    <button
+                      type="button"
+                      className="gh-btn gh-btn-sm"
+                      onClick={() => setPicked((s) => ({ ...s, [c.id]: "ok" }))}
+                    >
+                      🖼️ 會顯示
+                    </button>
+                    <button
+                      type="button"
+                      className="gh-btn gh-btn-sm"
+                      onClick={() => setPicked((s) => ({ ...s, [c.id]: "no" }))}
+                    >
+                      💔 會破圖
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    className="mt-2.5 rounded-[10px] p-2.5 border-2"
+                    style={{
+                      borderColor: "var(--border)",
+                      background: c.ok
+                        ? "var(--success-soft)"
+                        : "color-mix(in srgb, var(--sun) 16%, var(--surface))",
+                    }}
+                  >
+                    <div
+                      className="text-sm font-extrabold mb-1"
+                      style={{ color: c.ok ? "var(--diy-green-text)" : "var(--diy-yellow-text)" }}
+                    >
+                      {right ? "答對了 —— " : "正解是 —— "}
+                      {c.ok ? "🖼️ 會顯示" : "💔 會破圖"}
+                    </div>
+                    <p className="text-sm text-ink m-0">{c.why}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="border-t-2 border-line pt-3 grid gap-2 text-sm">
+          <div>
+            <b className="text-ink">📉 圖片先縮小再上傳。</b>
+            <span className="text-muted">
+              　手機拍的照片動輒 3～5 MB，網頁會慢到市民不想等。頭貼 400×400、橫幅寬 1200
+              就很夠了，用小畫家或線上工具縮一下即可。
+            </span>
+          </div>
+          <div>
+            <b className="text-ink">🔗 不要直接貼別人網站的圖片網址。</b>
+            <span className="text-muted">
+              　那叫「熱連結」：對方改個檔名、或擋掉外部連結，你的頁面就破圖，而且等於用了別人的頻寬，也有版權問題。要用就把圖存下來、確認可以用，再上傳到自己的
+              repo。
+            </span>
+          </div>
+          <div>
+            <b className="text-ink">⚠️ 圖片一上傳就是全世界看得到。</b>
+            <span className="text-muted">
+              　不要放有市民臉孔的活動照、含姓名電話的截圖、未公開的公文影像。用別人的圖也要確認授權（機關素材、CC
+              授權或自己拍的最安全）。
+            </span>
+          </div>
+        </div>
+      </div>
+    </details>
+  );
+}
 
 function OwnFileChecklist() {
   return (
