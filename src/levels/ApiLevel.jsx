@@ -24,7 +24,8 @@ function downloadDashboard() {
 
 // 站內模擬用的 API：打的是 YouBike 即時資訊這份真實開放資料。
 // 網址與欄位都照真的寫，數值是示範用的（真實數字請按第 3 步的連結看）。
-// 三個選項示範的是「這個 API 一次把全部給你，篩選要自己做」。
+// 只有一個端點 —— 因為真實的 YouBike API 就只有這一支：它一次把全部站點給你，
+// 要只看某個行政區、只看還有車的站，都是拿到之後自己在前端篩。
 const ST = (sna, sarea, rent, ret, qty) => ({
   sna,
   sarea,
@@ -42,26 +43,11 @@ const STATIONS = [
   ST("YouBike2.0_大安森林公園站", "大安區", 17, 11, 29),
 ];
 
-const ENDPOINTS = [
-  {
-    method: "GET",
-    path: "/dotapp/youbike/v2/youbike_immediate.json",
-    label: "拿全部站點（這個 API 一次給你全部）",
-    data: STATIONS,
-  },
-  {
-    method: "GET",
-    path: "/dotapp/youbike/v2/youbike_immediate.json",
-    label: "只看大安區（自己篩）",
-    data: STATIONS.filter((x) => x.sarea === "大安區"),
-  },
-  {
-    method: "GET",
-    path: "/dotapp/youbike/v2/youbike_immediate.json",
-    label: "只看還有車的站（自己篩）",
-    data: STATIONS.filter((x) => x.available_rent_bikes > 0),
-  },
-];
+const ENDPOINT = {
+  method: "GET",
+  path: "/dotapp/youbike/v2/youbike_immediate.json",
+  data: STATIONS,
+};
 
 export default function ApiLevel({ ctx }) {
   return (
@@ -152,10 +138,9 @@ function ConceptStep({ onNext }) {
 
 /* ---------- 步驟 2：站內 API 測試器 ---------- */
 function TesterStep({ onNext }) {
-  const [selected, setSelected] = useState(0);
   const [status, setStatus] = useState("idle"); // idle | loading | done
   const [sentOnce, setSentOnce] = useState(false);
-  const ep = ENDPOINTS[selected];
+  const ep = ENDPOINT;
 
   const send = async () => {
     if (status === "loading") return;
@@ -165,31 +150,13 @@ function TesterStep({ onNext }) {
     setSentOnce(true);
   };
 
-  const pick = (i) => {
-    setSelected(i);
-    setStatus("idle");
-  };
-
   return (
     <div className="space-y-4">
       <span className="uppercase tracking-[2.5px] text-xs font-extrabold text-accentText">
         步驟 2 / 3 · 自己試一次
       </span>
       <h2 className="text-2xl font-bold text-ink">送出一個 API 請求，看看回什麼</h2>
-      <p className="text-muted text-sm">選一個要問的東西，按「送出 Send」，看伺服器回你的 JSON。</p>
-
-      <div className="flex flex-wrap gap-2">
-        {ENDPOINTS.map((e, i) => (
-          <button
-            key={e.path}
-            type="button"
-            onClick={() => pick(i)}
-            className={`gh-btn ${selected === i ? "!border-primary !bg-primarySoft text-primary" : ""}`}
-          >
-            {e.label}
-          </button>
-        ))}
-      </div>
+      <p className="text-muted text-sm">按「送出 Send」，看伺服器回你的 JSON。</p>
 
       <Browser url="api.example.com">
         {/* request 列 */}
@@ -234,6 +201,11 @@ function TesterStep({ onNext }) {
       <div className="callout">
         看到了嗎？回來的不是一整頁網頁，而是<b className="text-ink">乾淨的資料（JSON）</b>
         。前端拿到後，就能自己決定怎麼把它畫成畫面 —— 這就是前後端「分工」的方式。
+        <div className="mt-2">
+          另外注意：這支 API <b className="text-ink">一次把全部站點都給你</b>
+          ，沒有「只給我大安區」這種選項。想只看某一區、或只看還有車的站，都是
+          <b className="text-ink">拿到之後自己在前端篩</b> —— 等一下的看板就是這樣做的。
+        </div>
       </div>
 
       <button type="button" className="btn btn-primary" disabled={!sentOnce} onClick={onNext}>
