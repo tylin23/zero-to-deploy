@@ -71,11 +71,13 @@ await st("1 方法全景（含 AI 工具）", async () => {
   // 步驟 3：全景清單 + 測驗
   await p.waitForSelector("[data-scope=ai]");
   const n = await p.locator("[data-scope]").count();
-  if (n !== 10) throw new Error("全景清單應該有 10 項，實際 " + n);
+  // 這份清單要跟選型指南一樣涵蓋所有部署方式，少一個就代表新關卡忘了補進來
+  if (n !== 11) throw new Error("全景清單應該有 11 項，實際 " + n);
+  await p.locator("[data-scope=flask]").first().waitFor({ state: "visible", timeout: 2500 });
   await p.click("[data-scope=github-pages] button");
   await p.waitForSelector("[data-scope=github-pages] >> text=第 3 關會教這個", { timeout: 2500 });
-  await p.click("text=拿到那個連結的人都打得開");
-  await p.waitForSelector("text=已發布的連結通常是", { timeout: 2500 });
+  await p.click("text=是那個連結的權限設定決定的");
+  await p.waitForSelector("text=而且預設值每家不一樣", { timeout: 2500 });
   await B("完成這一關").click();
   await p.waitForSelector("text=全景視野達成", { timeout: 3000 });
 });
@@ -652,6 +654,26 @@ await st("地圖：13 關全完成", async () => {
 });
 
 // 教材文案裡有寫死的「第 N 關」，順序一動就會對不上，所以這裡把整條順序釘住。
+await st("換步驟會自動回到頂端（不然使用者要自己往上找）", async () => {
+  await p.setViewportSize({ width: 1100, height: 700 });
+  // 用第 10 關：它的第一步沒有「要先做完某件事」的門檻，按了就會換步驟
+  await go("flask");
+  const toBottom = async () => {
+    await p.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await p.waitForFunction(() => window.scrollY > 100, null, { timeout: 2500 });
+  };
+  const atTop = () => p.waitForFunction(() => window.scrollY < 20, null, { timeout: 4000 });
+
+  // 先捲到底，模擬「讀完這一步才按下一步」
+  await toBottom();
+  await B("先在模擬介面跑一次").click();
+  await atTop(); // smooth 捲動要等它跑完
+  // 「回上一步」也一樣
+  await toBottom();
+  await B("回上一步").first().click();
+  await atTop();
+});
+
 await st("關卡順序：全景 → 觀念 → 動手 → 界線", async () => {
   for (const [id, no] of [
     ["landscape", 1],

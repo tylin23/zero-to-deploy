@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { scrollToTop } from "../lib/scroll.js";
 import StepBar from "./StepBar.jsx";
 import DoneScreen from "./DoneScreen.jsx";
 
@@ -16,6 +17,18 @@ import DoneScreen from "./DoneScreen.jsx";
 export default function Level({ ctx, badge, steps, done, total }) {
   const [step, setStep] = useState(0);
   const [result, setResult] = useState(null); // null = 尚未過關
+
+  // 換步驟（和進到過關畫面）時回到頂端。這裡沒有換網址，所以路由那層的
+  // 捲動不會觸發 —— 不補這一段，使用者會停在上一步的捲動位置。
+  // 第一次進來不用捲，那在路由換頁時已經做過了。
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    scrollToTop();
+  }, [step, result]);
 
   const next = () => setStep((s) => Math.min(steps.length - 1, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
