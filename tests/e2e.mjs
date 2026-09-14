@@ -849,6 +849,60 @@ await st("第 3 關：教怎麼在網頁裡放圖片（四個寫法的判斷）"
   await p.locator("text=不要直接貼別人網站的圖片網址").first().waitFor({ state: "visible", timeout: 2000 });
 });
 
+await st("第 3 關：CDN 對照（同一份 body，差別只在樣式在不在）", async () => {
+  await go("github-pages");
+  await p.click("text=靜態網站：HTML");
+  await B("先在模擬介面練一次").click();
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Create a new repository");
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=拖曳檔案到這裡上傳");
+  await p.click("text=📄 index.html");
+  await p.click("text=拖曳檔案到這裡上傳");
+  await p.waitForFunction(() => {
+    const x = document.querySelector(".gh-btn-green");
+    return x && !x.disabled;
+  });
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Branch");
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Your site is live");
+  await p.click("text=我真的做一次");
+
+  const sum = p.locator("summary", { hasText: "別人家的網址" });
+  await sum.waitFor({ state: "visible", timeout: 4000 });
+  await sum.click();
+
+  // 兩個預覽必須是「同一份內容、只差樣式」，不然對照就不成立
+  const demo = await p.$$eval("[data-cdn-compare] [data-demo]", (els) =>
+    els.map((e) => {
+      const btn = e.querySelector(".btn2");
+      const cs = getComputedStyle(btn);
+      return {
+        kind: e.dataset.demo,
+        text: e.textContent.replace(/\s+/g, " ").trim(),
+        display: cs.display,
+        radius: parseFloat(cs.borderTopLeftRadius),
+        serif: /serif/i.test(getComputedStyle(e).fontFamily),
+      };
+    })
+  );
+  if (demo.length !== 2) throw new Error("對照應該有兩個預覽，實際 " + demo.length);
+  const [on, off] = demo;
+  if (on.text !== off.text) throw new Error("兩邊的內容不一樣，這樣不算對照");
+  // 左邊：藥丸按鈕（整塊、圓角）
+  if (on.display !== "block" || on.radius < 20) throw new Error("左邊應該是有樣式的藥丸按鈕");
+  // 右邊：瀏覽器預設（襯線字、連結擠成一行、沒有圓角）
+  if (!off.serif) throw new Error("右邊應該退回襯線字");
+  if (off.display !== "inline" || off.radius > 0) throw new Error("右邊不該有按鈕樣式");
+
+  // 三行的後果不一樣，這是這段的重點
+  const txt = await p.locator("details", { has: p.locator("text=別人家的網址") }).first().innerText();
+  for (const t of ["整頁垮掉", "在瀏覽器裡即時產生 CSS", "機關內網擋外連"]) {
+    if (!txt.includes(t)) throw new Error("CDN 那段少了「" + t + "」");
+  }
+});
+
 await st("名片範本：頭像換成 <img> 照片時不會被拉扁", async () => {
   // 範本註解教學生「把整個 <svg class=avatar> 換成一行 <img class=avatar>」，
   // 這裡照著做一次，確認教學步驟跟實際標籤對得上、而且圓形裁切正常。

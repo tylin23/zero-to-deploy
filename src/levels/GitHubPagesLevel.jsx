@@ -319,9 +319,10 @@ function RealStep({ onFinish }) {
       </button>
 
       <div className="text-[13px] font-extrabold text-muted pt-1">
-        ⬇ 下面四段是延伸主題，需要時再展開
+        ⬇ 下面五段是延伸主題，需要時再展開
       </div>
       <OwnFileChecklist />
+      <CdnHowTo />
       <SecretsHowTo />
       <ImageHowTo />
       <ReadmeHowTo />
@@ -757,6 +758,151 @@ function ReadmeHowTo() {
         >
           <b className="text-ink">⚠️ README 也是公開的。</b>
           不要在裡面寫內部系統網址、帳號密碼、金鑰，或個人手機 —— 它跟網頁一樣，全世界都看得到。
+        </div>
+      </div>
+    </details>
+  );
+}
+
+/* AI 生的網頁常常掛著 CDN，而 CDN 連不到的時候不是「醜一點」，是整頁垮掉。
+   這一段把同一份 DOM 渲染兩次做對照，差別只在 .cdn-off 這個 class 套不套。
+   （不放實際截圖是刻意的：截圖來自別人的檔案，畫面上有真實 email。
+     也試過用 iframe srcdoc 真的渲染，但那會讓頁面永遠達不到 network idle。） */
+function DemoCard({ off }) {
+  return (
+    <div className={"cdn-demo" + (off ? " cdn-off" : "")} data-demo={off ? "off" : "on"}>
+      <h4>熊讚 Bravo</h4>
+      <p className="role">臺北市吉祥物 ・ 城市代言人</p>
+      <a className="btn2 primary" href="#" onClick={(e) => e.preventDefault()}>
+        Facebook 粉絲團
+      </a>
+      <a className="btn2" href="#" onClick={(e) => e.preventDefault()}>
+        臺北市政府網站
+      </a>
+      <a className="btn2" href="#" onClick={(e) => e.preventDefault()}>
+        1999 市民熱線
+      </a>
+    </div>
+  );
+}
+
+function CdnHowTo() {
+  return (
+    <details
+      className="rounded-[14px] border-2 overflow-hidden"
+      style={{
+        borderColor: "color-mix(in srgb, var(--danger) 40%, var(--border))",
+        background: "color-mix(in srgb, var(--danger) 6%, var(--surface))",
+      }}
+    >
+      <summary className="cursor-pointer select-none list-none px-4 py-3 font-extrabold text-ink flex items-center gap-2 flex-wrap">
+        <span className="text-lg" aria-hidden="true">
+          🌐
+        </span>
+        <span>AI 幫你做的網頁，常常掛著「別人家的網址」</span>
+        <span className="ml-auto text-muted text-xs font-normal hidden sm:inline">點此展開／收合</span>
+      </summary>
+
+      <div className="px-4 pb-4 space-y-3.5">
+        <p className="text-sm text-ink mt-0 mb-0">
+          你請 AI 做一個好看的網頁，它給你的檔案，開頭很可能長這樣：
+        </p>
+
+        <pre className="font-mono text-[11.5px] leading-relaxed bg-surface2 border-2 border-line rounded-[12px] p-3 overflow-x-auto m-0 text-ink">
+          {`<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/.../font-awesome.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC" rel="stylesheet">`}
+        </pre>
+
+        <p className="text-sm text-ink m-0">
+          這三行的意思都是「
+          <b>這個網頁要用的東西不在檔案裡，打開的時候去別人家抓</b>
+          」。網路通的時候完全沒問題 —— 問題是<b>連不到的時候</b>：
+        </p>
+
+        {/* 對照 */}
+        <div className="grid gap-3 sm:grid-cols-2" data-cdn-compare>
+          <figure className="m-0">
+            <figcaption className="text-xs font-extrabold text-ink mb-1.5 flex items-center gap-1.5">
+              <span
+                className="inline-block w-2.5 h-2.5 rounded-full"
+                style={{ background: "var(--success)" }}
+                aria-hidden="true"
+              />
+              抓得到（你自己家的網路）
+            </figcaption>
+            <DemoCard />
+          </figure>
+
+          <figure className="m-0">
+            <figcaption className="text-xs font-extrabold text-ink mb-1.5 flex items-center gap-1.5">
+              <span
+                className="inline-block w-2.5 h-2.5 rounded-full"
+                style={{ background: "var(--danger)" }}
+                aria-hidden="true"
+              />
+              抓不到（機關內網擋外連、或離線）
+            </figcaption>
+            <DemoCard off />
+          </figure>
+        </div>
+
+        <p className="text-sm text-ink m-0">
+          右邊不是「醜一點」，是<b>整頁的樣式一行都沒有</b>。
+        </p>
+
+        <div className="callout m-0">
+          <b className="text-ink">為什麼差這麼多？三行的後果其實不一樣：</b>
+          <div className="mt-1.5 text-sm">
+            <b className="text-ink">字型</b>連不到 → 換成系統字，看起來有點不一樣而已。
+            <br />
+            <b className="text-ink">icon 字型</b>連不到 → icon 變空白或小方框，其他還在。
+            <br />
+            <b className="text-ink">Tailwind 的 CDN</b> 連不到 →{" "}
+            <b className="text-ink">整頁垮掉</b>。因為它不是一份 CSS 檔，是一支「
+            <b className="text-ink">在瀏覽器裡即時產生 CSS</b>
+            」的程式；它沒跑起來，就等於一行 CSS 都沒有，而 AI 生的版面通常每一個樣式都靠它。
+          </div>
+        </div>
+
+        <div className="text-sm font-extrabold text-ink">什麼時候會連不到？</div>
+        <ul className="list-disc pl-5 m-0 grid gap-1 text-sm text-ink">
+          <li>
+            <b>機關內網擋外連</b> —— 對公務環境來說這是最常見的一種，而且你在家測都是好的。
+          </li>
+          <li>離線展示：帶著筆電去會議室、現場沒網路。</li>
+          <li>對方網路不穩，或那個 CDN 自己出問題、改版、停止服務。</li>
+        </ul>
+
+        <div className="text-sm font-extrabold text-ink">那該怎麼辦？</div>
+        <ol className="list-decimal pl-5 m-0 grid gap-1.5 text-sm text-ink">
+          <li>
+            <b>最省事：請 AI 重做一次。</b>直接說「
+            <span className="text-muted">不要用任何 CDN，把 CSS 直接寫在同一個檔案裡，icon 用 inline SVG</span>
+            」。這句話值得存起來。
+          </li>
+          <li>
+            <b>已經做好了：把樣式搬進檔案裡。</b>把用到的 CSS 貼進{" "}
+            <code className="font-mono text-xs">&lt;style&gt;</code>，圖片下載下來一起上傳。
+          </li>
+          <li>
+            <b>真的需要框架：那就走建置。</b>React、Vue 這類東西本來就該先 build 成純 HTML／CSS／JS
+            再上線 —— 那是<b>第 5 關</b>的事，平台會自動幫你做，產出的檔案就不再依賴 CDN。
+          </li>
+        </ol>
+
+        <div
+          className="callout m-0"
+          style={{
+            borderLeftColor: "var(--mint)",
+            background: "color-mix(in srgb, var(--mint) 12%, var(--surface))",
+          }}
+        >
+          <b className="text-ink">你剛下載的那個名片範本，就是零外部依賴的。</b>
+          <div className="mt-1 text-sm">
+            icon 全是寫在檔案裡的 SVG、字型用系統內建的，所以它<b className="text-ink">離線也打得開</b>。
+            不信可以自己試：把 Wi-Fi 關掉，再用瀏覽器打開你電腦裡那個 index.html。
+          </div>
         </div>
       </div>
     </details>

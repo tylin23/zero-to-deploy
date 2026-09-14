@@ -248,6 +248,35 @@
     @apply font-sans;
   }
   /* 卡片尺寸變體 */
+  /* 第 3 關的 CDN 對照：同一份 DOM 渲染兩次，差別只在這組樣式套不套。
+     固定白底深字，因為它在模擬「一個獨立的 HTML 檔」，不跟著本站的深色主題走。
+     （原本用 iframe srcdoc，但那會讓頁面永遠達不到 network idle。） */
+  .cdn-demo {
+    background: #fff; color: #1f2733; text-align: center;
+    padding: 16px; border-radius: 12px; border: 2px solid var(--border);
+    height: 238px; overflow: hidden;
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  }
+  .cdn-demo h4 { font-size: 19px; font-weight: 800; margin: 0 0 2px }
+  .cdn-demo .role { color: #666f7b; font-size: 12px; margin: 0 0 14px }
+  .cdn-demo .btn2 {
+    display: block; padding: 10px 16px; margin: 0 0 9px; border-radius: 999px;
+    background: #fff; border: 1px solid #e6e8ec; color: #1f2733;
+    text-decoration: none; font-weight: 700; font-size: 13px;
+  }
+  .cdn-demo .btn2.primary {
+    background: linear-gradient(90deg, #2b3440, #0d1117); color: #fff; border-color: transparent;
+  }
+
+  /* 樣式抓不到時，瀏覽器就是這樣畫的：襯線字、藍色底線連結、全部擠成一行 */
+  .cdn-demo.cdn-off { font-family: "Times New Roman", Times, serif; text-align: left }
+  .cdn-demo.cdn-off h4 { font-size: 2em; font-weight: bold; margin: 0.67em 0 }
+  .cdn-demo.cdn-off .role { color: #000; font-size: 1em; margin: 1em 0 }
+  .cdn-demo.cdn-off .btn2 {
+    display: inline; padding: 0; margin: 0 6px 0 0; border: 0; border-radius: 0;
+    background: none; color: #00e; text-decoration: underline; font-weight: 400; font-size: 1em;
+  }
+
   .card-sm {
     @apply p-4;
   }
