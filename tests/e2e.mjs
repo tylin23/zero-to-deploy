@@ -680,13 +680,15 @@ await st("名詞小教室：CORS 卡有「被擋住怎麼辦」的三條路", as
   await card.locator("text=第三方伺服器").first().waitFor({ state: "visible", timeout: 3000 });
 });
 
-await st("選型指南：AI 工具也在比較表裡，且連得到第 1 關", async () => {
+await st("選型指南：AI 工具也在比較清單裡，且連得到第 1 關", async () => {
   await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
   await p.goto(`${base}/index.html#/guide`, { waitUntil: "networkidle" });
-  // 納管前那張表要多一列「AI 工具的分享連結」，而且不是關卡 —— 點名稱要連到介紹它的第 1 關
-  const row = p.locator("table tbody tr", { hasText: "AI 工具的分享連結" }).first();
+  // 納管前要多一張「AI 工具的分享連結」卡，而且它不是關卡 —— 點名稱要連到介紹它的第 1 關
+  const row = p.locator('[data-method="ai-tools"]').first();
   await row.waitFor({ state: "visible", timeout: 3000 });
   await row.locator("text=Claude Artifacts").first().waitFor({ state: "visible", timeout: 2000 });
+  // 「什麼時候選它」以前在表格最右邊會被切掉，現在必須直接看得到
+  await row.locator("text=什麼時候選它").first().waitFor({ state: "visible", timeout: 2000 });
   await row.locator("button", { hasText: "AI 工具的分享連結" }).click();
   await p.waitForFunction(() => location.hash === "#/level/landscape", null, { timeout: 2500 });
 
