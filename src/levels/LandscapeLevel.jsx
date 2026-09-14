@@ -301,7 +301,8 @@ function ToolShot({ id, alt }) {
         alt={alt}
         loading="lazy"
         onError={() => setBroken(true)}
-        className="block max-w-full max-h-[260px] w-auto rounded-[12px] border-2 border-line bg-surface2"
+        /* 手機靠寬度限制就夠；桌機放寬到 400px，不然截整個視窗的圖會小到看不清選單文字 */
+        className="block max-w-full max-h-[220px] sm:max-h-[400px] w-auto rounded-[12px] border-2 border-line bg-surface2"
       />
       <figcaption className="text-xs text-muted mt-1">▲ {alt}</figcaption>
     </figure>
