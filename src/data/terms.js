@@ -36,6 +36,36 @@ export const TERMS = [
       "要一次寄幾千封市民講座通知、產各局處月報表時，把任務丟進佇列排隊，使用者馬上得到回應、系統不被瞬間塞爆、失敗還能重試。第 2 關那張市民服務中心的圖裡，抽號碼機就是這件事。",
   },
   {
+    id: "worker",
+    emoji: "🤖",
+    name: "Worker（背景工人）",
+    en: "Worker",
+    cat: "perf",
+    related: ["hosting"],
+    oneLiner: "在背景默默把事情做完的那個角色 —— 你按完送出就能走，剩下的它來做。",
+    analogy: "郵局後場的分信員：你在窗口寄完就走了，包裹是後面的人一件一件處理掉的。",
+    relation:
+      "佇列（Queue）講的是「任務排成一列」，Worker 就是「把那一列消化掉的人」—— 這兩個詞幾乎一定一起出現。要一次寄幾千封市民通知時，多開幾個 worker 就處理得更快；worker 掛掉，任務會留在佇列裡等它回來，不會憑空不見。上一張「佇列 / 排隊」卡的模擬器裡，畫面上那個 🤖 就是它。",
+    more: {
+      title: "⚠️ 同一個字，三個完全不同的意思",
+      items: [
+        [
+          "① 佇列的 worker（就是上面講的）",
+          "在背景一個一個處理排隊任務的程式。這是這門課用到的意思。",
+        ],
+        [
+          "② Cloudflare Workers（產品名稱）",
+          "Cloudflare 的一項服務：讓你在它的機房裡跑一小段程式，請求送到最近的節點就地處理完。跟①完全沒有關係，只是名字一樣。第 5 關比較表裡「Cloudflare Pages：要自己寫 Functions」講的就是它 —— 它讓純靜態的網站也能掛一小段後端。",
+        ],
+        [
+          "③ Service Worker（瀏覽器裡的）",
+          "前端技術，讓網頁在沒有網路的時候也能打開（做離線網頁、PWA 會用到）。又是另一回事，知道有這個東西就好，這門課不展開。",
+        ],
+      ],
+      warn: "⚠️ 開會時聽到「worker」，先確認是哪一個 —— 三個講的是完全不同的事，聽錯方向整場都會雞同鴨講。",
+    },
+  },
+  {
     id: "cdn",
     emoji: "🌐",
     name: "內容傳遞網路",
@@ -161,7 +191,7 @@ export const TERMS = [
 // 關卡 → 延伸名詞（顯示在關卡下方）
 export const LEVEL_TERMS = {
   "github-pages": ["cdn", "https"],
-  hosting: ["cdn", "env"],
+  hosting: ["cdn", "worker", "env"],
   api: ["cache", "cors"],
   gas: ["idem"],
   "exe-queue": ["logmon", "rollback"],

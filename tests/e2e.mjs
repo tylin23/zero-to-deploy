@@ -782,6 +782,21 @@ await st("名詞小教室：佇列卡帶著模擬器（從第 10 關搬過來的
   if (await card.locator("button", { hasText: "去玩" }).count()) throw new Error("佇列卡還連著關卡");
 });
 
+await st("名詞小教室：Worker 卡把三個同名的意思切開", async () => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${base}/index.html#/terms/worker`, { waitUntil: "networkidle" });
+  const card = p.locator("div.card", { has: p.locator("text=Worker（背景工人）") }).first();
+  await card.waitFor({ state: "visible", timeout: 3000 });
+  // 三個意思都要在，而且要說清楚彼此無關
+  const txt = await card.innerText();
+  for (const t of ["佇列的 worker", "Cloudflare Workers", "Service Worker", "跟①完全沒有關係"]) {
+    if (!txt.includes(t)) throw new Error("Worker 卡少了「" + t + "」");
+  }
+  // 掛在第 5 關底下（那一關的比較表提到 Functions）
+  await card.locator("button", { hasText: "Netlify / Cloudflare Pages" }).first().click();
+  await p.waitForFunction(() => location.hash === "#/level/hosting", null, { timeout: 2500 });
+});
+
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");
 await b.close();
 process.exit(errs.length ? 1 : 0);
