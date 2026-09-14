@@ -194,7 +194,23 @@ await st("名片範本：自己就能跑，不依賴任何外部檔案", async (
   const page = await ctx.newPage();
   const errs2 = [];
   page.on("pageerror", (e) => errs2.push("PAGEERR " + e.message));
+  // 全部往外的連線都擋掉，模擬「機關內網擋外連」或離線 —— 範本在這種情況下
+  // 也必須完整顯示。掛 CDN（Tailwind、Font Awesome、Google Fonts）的版本
+  // 會在這裡退化成沒有樣式的純文字連結。
+  const fetched = [];
+  await page.route("**://*/**", (route) => {
+    fetched.push(route.request().url());
+    route.abort();
+  });
   await page.setContent(STARTER_HTML, { waitUntil: "networkidle" });
+  if (fetched.length) throw new Error("範本去外面抓了東西：" + fetched.slice(0, 3).join(" , "));
+  // 樣式真的有生效（不是只是「沒報錯」）
+  const styled = await page.evaluate(() => {
+    const el = document.querySelector(".links a");
+    const cs = el && getComputedStyle(el);
+    return cs ? { radius: parseFloat(cs.borderTopLeftRadius), bg: cs.backgroundImage !== "none" } : null;
+  });
+  if (!styled || styled.radius < 20) throw new Error("藥丸按鈕的樣式沒生效，CSS 可能依賴外部檔案");
   const r = await page.evaluate(() => ({
     imgs: document.querySelectorAll("img").length,
     links: document.querySelectorAll("a").length,
@@ -204,11 +220,16 @@ await st("名片範本：自己就能跑，不依賴任何外部檔案", async (
     abs: [...document.querySelectorAll("[src],[href]")]
       .map((e) => e.getAttribute("src") || e.getAttribute("href") || "")
       .some((u) => /^(file:\/\/\/|[A-Za-z]:\\)/.test(u)),
+    // 子資源（CSS、JS、圖、iframe）一律不准外連；<a href> 連出去是刻意的，不算
+    ext: [...document.querySelectorAll("link[href],script[src],img[src],iframe[src]")]
+      .map((e) => e.getAttribute("href") || e.getAttribute("src") || "")
+      .filter((u) => /^(https?:)?\/\//.test(u)),
     title: document.title,
   }));
   if (r.imgs !== 0) throw new Error("範本引用了外部圖片 " + r.imgs + " 張");
   if (r.links < 8) throw new Error("連結按鈕只有 " + r.links + " 個");
   if (r.abs) throw new Error("範本裡有本機絕對路徑");
+  if (r.ext.length) throw new Error("範本用了外部資源（CDN／字型／圖片）：" + r.ext.join(" , "));
   if (!r.title.includes("電子名片")) throw new Error("標題是 " + r.title);
   // 手機寬度不能橫向捲動
   await page.setViewportSize({ width: 360, height: 800 });
@@ -939,6 +960,9 @@ await st("名詞小教室：Worker 卡把三個同名的意思切開", async () 
   await p.goto(`${base}/index.html#/terms/worker`, { waitUntil: "networkidle" });
   const card = p.locator("div.card", { has: p.locator("text=Worker（背景工人）") }).first();
   await card.waitFor({ state: "visible", timeout: 3000 });
+  // 卡片外框出現不代表展開的內容已經進 DOM，先等其中一段真的可見再讀 innerText，
+  // 否則偶爾會讀到還沒展開的內容而誤判。
+  await card.locator("text=佇列的 worker").first().waitFor({ state: "visible", timeout: 3000 });
   // 三個意思都要在，而且要說清楚彼此無關
   const txt = await card.innerText();
   for (const t of ["佇列的 worker", "Cloudflare Workers", "Service Worker", "跟①完全沒有關係"]) {
