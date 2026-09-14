@@ -14,6 +14,8 @@ const AI_TOOLS = [
     name: "Claude Artifacts",
     vendor: "Anthropic",
     what: "在對話旁邊直接生出一個可以點、可以互動的網頁。",
+    where: ["左側選單", "Artifacts"],
+    shotAlt: "Claude 左側選單，Artifacts 那一項被框起來",
     share:
       "按「發布」就拿到一個公開網址，對方沒有 Claude 帳號也打得開。每按一次發布就是一個新版本，可以選要給人看哪一版。",
     watch:
@@ -25,6 +27,8 @@ const AI_TOOLS = [
     name: "Gemini Canvas",
     vendor: "Google",
     what: "在 Gemini 的 Canvas 面板裡寫文件或做小網頁，右邊即時預覽改的結果。",
+    where: ["輸入框左邊的 ＋", "Canvas"],
+    shotAlt: "Gemini 輸入框的加號選單，Canvas 那一項被反白",
     share: "面板右上「Share & export」→ 複製 g.co/gemini/share/… 連結，貼到哪裡都能開。",
     watch:
       "分享出去的是公開連結，拿到的人不只看得到畫面 —— 互動型的小工具，對方連裡面的資料都可能動得到。要給誰看，自己先想清楚。",
@@ -35,6 +39,8 @@ const AI_TOOLS = [
     name: "ChatGPT Sites",
     vendor: "OpenAI",
     what: "直接請 ChatGPT 幫你做一個網站或小工具，做完可以預覽、發布、分享。",
+    where: ["左側選單", "網站（Sites）"],
+    shotAlt: "ChatGPT／Codex 左側選單，「網站」那一項",
     share: "發布後拿到網址；也可以設成私人、只分享給指定的人，並支援接上自己的網域。",
     watch:
       "2026 年 7 月才推出、目前仍是公開測試，而且要 Plus／Pro 或工作區方案才有，免費帳號用不到；各地區開放的時間也不一樣（台灣已經可以用，但一開始有些地區是不能發布的）。這提醒了一件事：能不能用、用多久、怎麼收費，是平台說了算，不是你說了算 —— 三家都一樣。",
@@ -200,6 +206,11 @@ function ToolsStep({ onNext }) {
                 <div className="px-4 pb-4 space-y-2.5 border-t-2 border-line pt-3">
                   <p className="text-sm text-ink m-0">{t.what}</p>
                   <div>
+                    <div className="text-xs font-extrabold text-muted mb-1">📍 入口在哪</div>
+                    <WherePath steps={t.where} />
+                    <ToolShot id={t.id} alt={t.shotAlt} />
+                  </div>
+                  <div>
                     <div className="text-xs font-extrabold text-muted mb-1">🔗 分享出去長這樣</div>
                     <p className="text-sm text-ink m-0">{t.share}</p>
                   </div>
@@ -246,6 +257,55 @@ function ToolsStep({ onNext }) {
         {all ? "下一步：那為什麼還要學別的？ →" : `先把三張卡都點開看看（${seen.size} / 3）`}
       </button>
     </div>
+  );
+}
+
+/* 入口路徑：一排麵包屑，例如「左側選單 › Artifacts」。
+   沒有截圖也看得懂要點哪裡，所以這是主要資訊、圖只是輔助。 */
+function WherePath({ steps }) {
+  if (!steps || !steps.length) return null;
+  return (
+    <div className="flex items-center gap-1.5 flex-wrap">
+      {steps.map((sp, i) => (
+        <span key={sp} className="flex items-center gap-1.5">
+          {i > 0 && (
+            <span className="text-muted text-sm" aria-hidden="true">
+              ›
+            </span>
+          )}
+          <span
+            className="text-[13px] font-bold px-2.5 py-1 rounded-lg border-2"
+            style={{
+              borderColor: i === steps.length - 1 ? "var(--accent)" : "var(--border)",
+              background: i === steps.length - 1 ? "var(--accent-soft)" : "var(--surface-2)",
+              color: "var(--ink)",
+            }}
+          >
+            {sp}
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* 介面截圖（老師自己放進 public/images/）。
+   沒放就整塊不顯示 —— 上面的路徑麵包屑本來就講得完整，不會開天窗也不會破圖。 */
+function ToolShot({ id, alt }) {
+  const [broken, setBroken] = useState(false);
+  if (broken) return null;
+  return (
+    <figure className="m-0 mt-2">
+      <img
+        src={import.meta.env.BASE_URL + "images/ai-" + id + ".png"}
+        alt={alt}
+        loading="lazy"
+        onError={() => setBroken(true)}
+        /* 手機靠寬度限制就夠；桌機放寬到 400px，不然截整個視窗的圖會小到看不清選單文字 */
+        className="block max-w-full max-h-[220px] sm:max-h-[400px] w-auto rounded-[12px] border-2 border-line bg-surface2"
+      />
+      <figcaption className="text-xs text-muted mt-1">▲ {alt}</figcaption>
+    </figure>
   );
 }
 

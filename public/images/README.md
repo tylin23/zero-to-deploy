@@ -25,3 +25,38 @@ public/images/service-center.jpg
 
 座標寫在 `src/components/SceneMap.jsx` 的 `SPOTS`，
 `x` / `y` 是「箭頭指到的那一點」在圖上的百分比（左上角為 0,0）。
+
+---
+
+# AI 工具的介面截圖（第 1 關）
+
+第 1 關「上線的方法有哪些？」的三張 AI 工具卡，展開後會顯示「入口在哪」。
+文字路徑一定看得到；**截圖是加分的輔助**，放了更好，沒放也不影響上課。
+
+## 怎麼放
+
+把三張截圖存成這些檔名放進這個資料夾（檔名要完全一致、全小寫）：
+
+```
+public/images/ai-claude.png     ← Claude 左側選單，框出 Artifacts
+public/images/ai-gemini.png     ← Gemini 輸入框的「＋」選單，反白 Canvas
+public/images/ai-chatgpt.png    ← ChatGPT／Codex 左側選單，框出「網站」
+```
+
+- 盡量只截**選單那一塊**，不要整個視窗——卡片裡最高顯示 400px（手機 220px），
+  圖上空白越多，選單文字就被縮得越小。
+- 截圖前先確認畫面上**沒有你的帳號名稱、email、對話內容**——
+  這個網站是完全公開的。
+- 用 `.png`（介面截圖用 PNG 比較清楚）。要改成別的副檔名，
+  請一併改 `src/levels/LandscapeLevel.jsx` 裡 `ToolShot` 的 `src`。
+
+## 沒放會怎樣
+
+那一格圖就不顯示，卡片上仍然有「左側選單 › Artifacts」這種文字路徑，
+不會出現破圖或空白區塊。
+
+## 介面改版了怎麼辦
+
+三家的選單位置變動很快。文字路徑寫在
+`src/levels/LandscapeLevel.jsx` 的 `AI_TOOLS`，每一項的 `where` 欄位，
+例如 `where: ["左側選單", "Artifacts"]`——改這裡就好。

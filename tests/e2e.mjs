@@ -39,9 +39,18 @@ await st("1 方法全景（含 AI 工具）", async () => {
   await go("landscape");
   // 步驟 1：三張 AI 工具卡都要點開
   await p.waitForSelector("text=在 AI 工具裡按下");
-  for (const id of ["claude", "gemini", "chatgpt"]) {
+  // 一次只會展開一張，所以「入口在哪」要在各自展開的當下就檢查
+  for (const [id, last] of [["claude", "Artifacts"], ["gemini", "Canvas"], ["chatgpt", "網站（Sites）"]]) {
     await p.click(`[data-tool=${id}] button`);
     await p.waitForSelector(`[data-tool=${id}] [aria-expanded=true]`, { timeout: 2500 });
+    // 截圖是選配，文字路徑不能少
+    await p.locator(`[data-tool=${id}] >> text=入口在哪`).first().waitFor({ state: "visible", timeout: 2000 });
+    await p.locator(`[data-tool=${id}] >> text=${last}`).first().waitFor({ state: "visible", timeout: 2000 });
+    // 截圖沒放時整塊不顯示，不能留破圖
+    const bad = await p.evaluate(() =>
+      [...document.querySelectorAll("figure img")].filter((i) => i.complete && i.naturalWidth === 0).length
+    );
+    if (bad) throw new Error(id + " 留了破圖");
   }
   await p.waitForSelector("text=三家做的其實是同樣三件事", { timeout: 2500 });
   await B("那為什麼還要學別的").click();
