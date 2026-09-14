@@ -1,6 +1,6 @@
 // 名詞小教室：給剛接觸開發的公務員「看懂就好」的軟工/部署概念卡
 // category: perf 效能·穩定 / ops 部署·維運 / sec 安全·存取
-// demo: 有小互動的卡（cache / idem）
+// demo: 有小互動的卡（cache / idem / queue）
 // goLevel: 有對應可玩關卡就連過去；related: 掛在哪些關卡下方當延伸閱讀
 
 export const TERM_CATS = [
@@ -29,11 +29,11 @@ export const TERMS = [
     name: "佇列 / 排隊",
     en: "Queue",
     cat: "perf",
-    goLevel: "exe-queue",
+    demo: "queue",
     oneLiner: "任務先排隊，背景一個一個慢慢處理，使用者不用站著等。",
     analogy: "郵局抽號碼牌：你抽完就能去做別的，輪到你再處理。",
     relation:
-      "要一次寄幾千封市民講座通知、產各局處月報表時，把任務丟進佇列排隊，使用者馬上得到回應、系統不被瞬間塞爆、失敗還能重試。",
+      "要一次寄幾千封市民講座通知、產各局處月報表時，把任務丟進佇列排隊，使用者馬上得到回應、系統不被瞬間塞爆、失敗還能重試。第 2 關那張市民服務中心的圖裡，抽號碼機就是這件事。",
   },
   {
     id: "cdn",
@@ -163,7 +163,7 @@ export const LEVEL_TERMS = {
   "github-pages": ["cdn", "https"],
   api: ["cache", "cors"],
   gas: ["idem"],
-  "exe-queue": ["queue", "logmon"],
+  "exe-queue": ["logmon", "rollback"],
 };
 
 export const termById = (id) => TERMS.find((t) => t.id === id);

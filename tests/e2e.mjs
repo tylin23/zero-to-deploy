@@ -434,25 +434,41 @@ await st("9 Docker", async () => {
   await p.waitForSelector("text=打包貨櫃達成", { timeout: 3000 });
 });
 
-await st("10 EXE / Queue（全線通關）", async () => {
+await st("10 EXE 執行檔（全線通關）", async () => {
   await go("exe-queue");
-  await p.click("text=玩玩看工作佇列");
-  const sub = B("送出任務");
-  for (let i = 0; i < 4; i++) {
-    await sub.click();
-    await p.waitForTimeout(110);
+  // 步驟 1：四題「做網頁還是做 EXE」
+  for (const [id, pick, expect] of [
+    ["form", "🌐 做成網頁", "🌐 做成網頁"],
+    ["localfile", "🌐 做成網頁", "📦 做成 EXE"],
+    ["offline", "📦 做成 EXE", "📦 做成 EXE"],
+    ["share", "🌐 做成網頁", "🌐 做成網頁"],
+  ]) {
+    await p.locator(`[data-which=${id}] button`, { hasText: pick }).click();
+    await p.locator(`[data-which=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
   }
-  await p.waitForFunction(
-    () => {
-      const x = [...document.querySelectorAll("button")].find((e) => e.textContent.includes("看看 EXE"));
-      return x && !x.disabled;
-    },
-    { timeout: 9000 }
-  );
-  await B("看看 EXE").click();
-  await B("打包成 EXE").click();
+  await B("打包成 EXE →").click();
+
+  // 步驟 2：打包後要冒出防毒那段
+  await B("🔨 打包成 EXE").click();
   await p.waitForSelector("text=打包完成", { timeout: 3000 });
-  await B("讓使用者不用站著等").click();
+  await p.locator("text=然後你會遇到第一道牆：防毒軟體").first().waitFor({ state: "visible", timeout: 2500 });
+  await B("那要怎麼發新版本").click();
+
+  // 步驟 3：版本號 + changelog 分類 + 寫給誰看 + 更新成本
+  await p.waitForSelector("text=先看懂版本號", { timeout: 3000 });
+  // 六個分類要齊 —— 在那個區塊裡面比對，不然「資安」這種字全頁到處都是
+  const kinds = await p.locator("[data-changekinds]").innerText();
+  for (const t of ["新增", "Added", "變更", "Changed", "修正", "Fixed", "移除", "Removed", "即將移除", "Deprecated", "資安", "Security"]) {
+    if (!kinds.includes(t)) throw new Error("changelog 分類少了 " + t);
+  }
+  await p.click("[data-rewrite=null] button");
+  await p.locator("[data-rewrite=null] >> text=承辦人欄位空白").first().waitFor({ state: "visible", timeout: 2500 });
+  // 更新的成本：網頁 vs EXE（修正過的說法 —— EXE 做得到自動更新，只是要自己做）
+  await p.locator("text=PyInstaller 沒有內建").first().waitFor({ state: "visible", timeout: 2000 });
+  await p.locator("text=它不會主動通知使用者").first().waitFor({ state: "visible", timeout: 2000 });
+
+  // 這句話在頁面上出現三次（測驗選項、改寫對照、changelog 範本）——只點測驗那顆按鈕
+  await p.locator("button", { hasText: "修正：承辦人欄位空白時" }).first().click();
   await B("完成整張地圖").click();
   await p.waitForSelector("text=全線通關", { timeout: 3000 });
 });
@@ -689,6 +705,27 @@ await st("第 3 關：金鑰 / .env / .gitignore 與 README", async () => {
   await p.locator("text=README 就是交接文件").first().waitFor({ state: "visible", timeout: 2500 });
   await p.locator("text=可以直接拿去改的範本").first().waitFor({ state: "visible", timeout: 2000 });
   await p.locator("text=README 也是公開的").first().waitFor({ state: "visible", timeout: 2000 });
+});
+
+await st("名詞小教室：佇列卡帶著模擬器（從第 10 關搬過來的）", async () => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${base}/index.html#/terms/queue`, { waitUntil: "networkidle" });
+  const card = p.locator("div.card", { has: p.locator("text=佇列 / 排隊") }).first();
+  await card.locator("text=玩玩看").first().waitFor({ state: "visible", timeout: 3000 });
+  const sub = card.locator("button", { hasText: "送出任務" });
+  for (let i = 0; i < 4; i++) {
+    await sub.click();
+    await p.waitForTimeout(110);
+  }
+  // 背景 worker 會一個一個消化掉
+  await p.waitForFunction(
+    () => /幫你|背景慢慢做完/.test(document.body.innerText) || /已完成/.test(document.body.innerText),
+    null,
+    { timeout: 9000 }
+  );
+  await card.locator("text=這 ").first().waitFor({ state: "visible", timeout: 9000 });
+  // 佇列不再是某一關的內容，所以不該再有「去玩互動關」的按鈕
+  if (await card.locator("button", { hasText: "去玩" }).count()) throw new Error("佇列卡還連著關卡");
 });
 
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");

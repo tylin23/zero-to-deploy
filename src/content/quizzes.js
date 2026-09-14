@@ -100,14 +100,18 @@ export const QUIZZES = {
   },
 
   exeQueue: {
-    question: "什麼情況最適合用「工作佇列（Queue）」？",
+    question: "你把月報表工具修好了一個匯出失敗的錯誤，要發 v1.2.1。更新說明怎麼寫最好？",
     options: [
-      { text: "任務很多或很耗時，想讓使用者不用站著等、系統也不會被塞爆", correct: true },
-      { text: "想讓網站的字變大", correct: false },
-      { text: "只有在部署到 GitHub Pages 時才需要", correct: false },
+      {
+        text: "修正：承辦人欄位空白時，整份月報表會匯出失敗",
+        correct: true,
+      },
+      { text: "fix: null check in exportReport()", correct: false },
+      { text: "修正一些問題，建議更新", correct: false },
     ],
     explainOk:
-      "正解！把耗時或大量的任務丟進佇列、由背景慢慢消化，使用者能馬上得到回應，系統也更穩、可重試。這一關你把 EXE 與 Queue 都學起來了 🎉",
-    explainNo: "回想剛剛的模擬：佇列的重點是『排隊慢慢處理』，讓使用者不用等、系統不被瞬間塞爆。",
+      "正解！changelog 是寫給「使用的人」看的 —— 要讓他回答得出「這關我什麼事、我要不要更新」。同事看到這條，馬上知道上週那次匯不出來就是這個原因。",
+    explainNo:
+      "再想想：看的人是不會寫程式的同事。函式名稱他看不懂，「修正一些問題」則等於什麼都沒說 —— 他無從判斷要不要更新。",
   },
 };
