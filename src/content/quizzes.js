@@ -39,6 +39,20 @@ export const QUIZZES = {
     explainNo: "提示：GitHub Pages 不會幫你跑後端程式，它只負責把「檔案」原封不動送給瀏覽器。",
   },
 
+  hosting: {
+    question:
+      "你把同一個 repo 同時接上 GitHub Pages 和 Netlify，拿到兩個網址。這說明了什麼？",
+    options: [
+      { text: "檔案是你自己的，被綁住的只是那個網址 —— 換平台的成本很低", correct: true },
+      { text: "你的網站現在有兩份，改了要記得改兩次", correct: false },
+      { text: "同一個 repo 不能接兩家，一定會有一邊壞掉", correct: false },
+    ],
+    explainOk:
+      "正解！兩家都是去你的 repo 抓同一份檔案，所以改一次、兩邊都會更新。這也是為什麼「把檔案放在自己的 repo 裡」比「東西留在某個平台裡」更有彈性 —— 第 1 關的全景就是照這條軸排的。",
+    explainNo:
+      "再想想：兩家都是「去你的 GitHub repo 抓檔案」，來源只有一份。所以不會有兩份要各改一次的問題，也不會互相打架。",
+  },
+
   api: {
     question: "你在瀏覽器打開那個 YouBike 即時資訊的網址，看到一大包 JSON。這代表什麼？",
     options: [

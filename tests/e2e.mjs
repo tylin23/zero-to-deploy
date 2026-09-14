@@ -71,7 +71,7 @@ await st("1 方法全景（含 AI 工具）", async () => {
   // 步驟 3：全景清單 + 測驗
   await p.waitForSelector("[data-scope=ai]");
   const n = await p.locator("[data-scope]").count();
-  if (n !== 8) throw new Error("全景清單應該有 8 項，實際 " + n);
+  if (n !== 9) throw new Error("全景清單應該有 9 項，實際 " + n);
   await p.click("[data-scope=github-pages] button");
   await p.waitForSelector("[data-scope=github-pages] >> text=第 3 關會教這個", { timeout: 2500 });
   await p.click("text=拿到那個連結的人都打得開");
@@ -357,7 +357,57 @@ await st("3 GitHub Pages", async () => {
   await p.waitForSelector("text=你把網站部署上線了", { timeout: 4000 });
 });
 
-await st("5 API 基礎", async () => {
+await st("5 Netlify / Cloudflare Pages", async () => {
+  await go("hosting");
+  // 步驟 1：勾起來才會看到「平台幫你做」的那三格
+  await p.waitForSelector("text=同一類，但它會幫你做更多事");
+  const before = await p.locator("[data-flow]").innerText();
+  if (before.includes("自動 build")) throw new Error("沒勾就出現自動建置流程了");
+  await p.locator('input[type=checkbox]').first().check();
+  await p.waitForFunction(
+    () => /自動 build/.test(document.querySelector("[data-flow]").innerText),
+    null,
+    { timeout: 2500 }
+  );
+  await B("三家比一比").click();
+
+  // 步驟 2：三張都要點開才放行
+  await p.waitForSelector("text=三家比一比");
+  for (const id of ["ghp", "netlify", "cfp"]) {
+    await p.click(`[data-host=${id}] button`);
+    await p.waitForSelector(`[data-host=${id}] [aria-expanded=true]`, { timeout: 2500 });
+  }
+  await p.locator("text=被綁住的不是你的檔案").first().waitFor({ state: "visible", timeout: 2500 });
+  await B("真的接一次").click();
+
+  // 步驟 3：網址驗證只收 netlify.app / pages.dev
+  await p.waitForSelector("text=把同一個 repo 再接上一家");
+  for (const c of await p.$$("input[type=checkbox]")) await c.check();
+  await p.fill("input[type=url]", "https://me.github.io/site/");
+  await B("驗證 ✅").click();
+  await p.waitForSelector("text=格式不太對", { timeout: 2500 });
+  await p.fill("input[type=url]", "https://bravo-card.netlify.app");
+  await B("驗證 ✅").click();
+  await p.waitForSelector("text=同一份檔案，你現在有兩個網址了", { timeout: 2500 });
+
+  // 表單那段：能收 ≠ 該收
+  await p.locator("summary", { hasText: "不用後端也能收表單" }).click();
+  for (const [id, pick, expect] of [
+    ["poll", "✅ 可以用", "✅ 可以用"],
+    ["signup", "✅ 可以用", "⛔ 不該這樣做"],
+    ["feedback", "✅ 可以用", "⚠️ 先問資訊單位"],
+  ]) {
+    await p.locator(`[data-form=${id}] button`, { hasText: pick }).click();
+    await p.locator(`[data-form=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
+  }
+  await p.locator("text=自由填寫的欄位，你擋不住別人填個資進去").first().waitFor({ state: "visible", timeout: 2500 });
+
+  await p.locator("button", { hasText: "檔案是你自己的，被綁住的只是那個網址" }).first().click();
+  await B("完成這一關").click();
+  await p.waitForSelector("text=自動上線達成", { timeout: 3000 });
+});
+
+await st("6 API 基礎", async () => {
   await go("api");
   await p.click("text=自己送一個 request");
   // 只有一支端點，不該再有「自己篩」那種選單按鈕
@@ -377,7 +427,7 @@ await st("5 API 基礎", async () => {
   await p.waitForSelector("text=API 入門達成", { timeout: 3000 });
 });
 
-await st("6 GAS 推送", async () => {
+await st("7 GAS 推送", async () => {
   await go("gas");
   await p.click("text=讓它跑一次給你看");
   await p.click("text=定時觸發");
@@ -389,7 +439,7 @@ await st("6 GAS 推送", async () => {
   await p.waitForSelector("text=自動推播達成", { timeout: 3000 });
 });
 
-await st("7 Hugging Face", async () => {
+await st("8 Hugging Face", async () => {
   await go("huggingface");
   await p.click("text=部署一個 AI Demo 來玩");
   await p.click(".gh-btn-green");
@@ -402,7 +452,7 @@ await st("7 Hugging Face", async () => {
   await p.waitForSelector("text=AI 應用上線達成", { timeout: 3000 });
 });
 
-await st("8 自架（內網/對外）", async () => {
+await st("9 自架（內網/對外）", async () => {
   await go("selfhost");
   await p.click("text=試試看誰連得上");
   const sw = await p.$$("[role=switch]");
@@ -416,7 +466,7 @@ await st("8 自架（內網/對外）", async () => {
   await p.waitForSelector("text=內網與對外的差別", { timeout: 3000 });
 });
 
-await st("9 Docker", async () => {
+await st("10 Docker", async () => {
   await go("docker");
   await p.click("text=自己打包一個來跑");
   await B("docker build").click();
@@ -434,7 +484,7 @@ await st("9 Docker", async () => {
   await p.waitForSelector("text=打包貨櫃達成", { timeout: 3000 });
 });
 
-await st("10 EXE 執行檔（全線通關）", async () => {
+await st("11 EXE 執行檔（全線通關）", async () => {
   await go("exe-queue");
   // 步驟 1：四題「做網頁還是做 EXE」
   for (const [id, pick, expect] of [
@@ -481,11 +531,11 @@ await st("「回上一步」可用（新增功能）", async () => {
   await p.waitForSelector("text=API 是什麼", { timeout: 2500 });
 });
 
-await st("地圖：10 關全完成", async () => {
+await st("地圖：11 關全完成", async () => {
   await p.goto(base + "/index.html#/map", { waitUntil: "networkidle" });
   await p.waitForSelector("text=我的徽章");
   const prog = (await p.$eval("[data-testid=progress]", (e) => e.textContent)).trim();
-  if (prog !== "10/10") throw new Error("進度 " + prog);
+  if (prog !== "11/11") throw new Error("進度 " + prog);
   console.log("   進度：", prog);
 });
 
@@ -496,12 +546,16 @@ await st("關卡順序：全景 → 觀念 → 動手 → 界線", async () => {
     ["intro", 2],
     ["github-pages", 3],
     ["boundary", 4],
-    ["api", 5],
-    ["gas", 6],
-    ["huggingface", 7],
+    ["hosting", 5],
+    ["api", 6],
+    ["gas", 7],
+    ["huggingface", 8],
+    ["selfhost", 9],
+    ["docker", 10],
+    ["exe-queue", 11],
   ]) {
     await go(id);
-    await p.waitForSelector(`text=第 ${no} / 10 關`);
+    await p.waitForSelector(`text=第 ${no} / 11 關`);
   }
 });
 

@@ -41,6 +41,16 @@ export const mapOrder = [
     status: "ready",
     phase: "pre",
   },
+  {
+    // 排在界線之後：這一關會教「不用後端也能收表單」，正好要用剛學的界線去判斷。
+    id: "hosting",
+    emoji: "🚀",
+    title: "Netlify / Cloudflare Pages",
+    short: "自動建置上線",
+    tagline: "推上去就自動建置，還能收表單",
+    status: "ready",
+    phase: "pre",
+  },
   { id: "api", emoji: "🔌", title: "API 基礎", tagline: "前後端怎麼對話", status: "ready", phase: "pre" },
   {
     id: "gas",
@@ -138,6 +148,18 @@ export const EVAL = {
     maintain: "免顧",
     scenario: "市民講座公告、單頁看板",
   },
+  hosting: {
+    phase: "pre",
+    difficulty: 2,
+    kind: "靜態＋自動建置",
+    diy: "red",
+    diyLabel: "完全公開",
+    risk: "內容全公開；表單資料存在境外平台",
+    openness: "對外公開",
+    cost: "免費（有額度）",
+    maintain: "免顧",
+    scenario: "改完自動上線、框架做的網站、簡單表單",
+  },
   api: {
     phase: "pre",
     difficulty: 3,
@@ -220,6 +242,11 @@ export const PICKER = [
     why: "五分鐘就有一個能點的成品；但記得那個連結是「拿到的人都能開」",
   },
   { q: "只是想放一頁可公開的市府活動公告或看板", to: "github-pages", why: "靜態、免費、免顧，最快上線" },
+  {
+    q: "網站想改完就自動上線，或它是用 React 這類框架做的",
+    to: "hosting",
+    why: "Netlify / Cloudflare Pages 會自動建置，推上去就更新",
+  },
   { q: "想把市府開放資料變成一張看板給同仁看", to: "api", why: "讀開放資料、不碰個資，最安全" },
   { q: "要收市民報名／陳情，並自動通知承辦科室", to: "gas", why: "表單＋GAS 自動化，貼近日常" },
   {
@@ -270,6 +297,14 @@ export const RISKS = {
       "GitHub Pages 內容會「完全公開」到網際網路，任何人都看得到，還會被搜尋引擎索引、被第三方存檔；日後刪除也可能已被備份。",
       "只放「可對外公開」的資訊（如市府活動公告、開放資料）。切勿放市民個資、內部檔案、未公開公文。",
       "Repository 設為 Public 等於連原始檔一起公開。上傳前請確認符合機關資訊公開規範。",
+    ],
+  },
+  hosting: {
+    level: "高（完全公開）",
+    points: [
+      "跟 GitHub Pages 一樣，放上去的內容會完全公開到網際網路，還會被搜尋引擎索引。",
+      "平台內建的表單很方便，但送出的資料會存在平台（多為境外）的伺服器上 —— 收市民個資請走機關既有、經過核可的管道。",
+      "自由填寫的欄位擋不住別人把姓名電話寫進去；設計表單時能少開一個就少一個。",
     ],
   },
   api: {
@@ -324,6 +359,7 @@ export const BADGES = {
   landscape: { id: "landscape", icon: "🔭", name: "全景視野", desc: "知道上線有哪些選項、各自差在哪" },
   concept: { id: "concept", icon: "🧭", name: "概念啟航", desc: "看懂前端、伺服器與部署" },
   firstDeploy: { id: "first-deploy", icon: "🚀", name: "首次部署", desc: "把第一個網站放上 GitHub Pages" },
+  hosting: { id: "hosting", icon: "🚀", name: "自動上線", desc: "推上去就自動建置，同一個 repo 兩個網址" },
   apiBasics: { id: "api-basics", icon: "🔌", name: "API 入門", desc: "看懂 request / response 與 JSON" },
   gasPush: { id: "gas-push", icon: "📬", name: "自動推播", desc: "用 GAS 呼叫 API 自動送通知" },
   hfSpace: { id: "hf-space", icon: "🤗", name: "AI 上線", desc: "用 Hugging Face Spaces 部署 AI 應用" },

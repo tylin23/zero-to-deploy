@@ -19,6 +19,7 @@ const LEVELS = {
   intro: lazy(() => import("./levels/IntroLevel.jsx")),
   "github-pages": lazy(() => import("./levels/GitHubPagesLevel.jsx")),
   boundary: lazy(() => import("./levels/BoundaryLevel.jsx")),
+  hosting: lazy(() => import("./levels/HostingLevel.jsx")),
   api: lazy(() => import("./levels/ApiLevel.jsx")),
   gas: lazy(() => import("./levels/GasLevel.jsx")),
   huggingface: lazy(() => import("./levels/HuggingFaceLevel.jsx")),

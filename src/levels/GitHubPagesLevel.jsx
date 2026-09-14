@@ -342,7 +342,7 @@ function RealStep({ onFinish }) {
             <div className="flex-1">
               <div className="font-bold">
                 {it.href ? (
-                  <a href={it.href} target="_blank" rel="noopener noreferrer" className="text-primary">
+                  <a href={it.href} target="_blank" rel="noopener noreferrer" className="text-accentText">
                     {it.t} ↗
                   </a>
                 ) : (
