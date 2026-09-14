@@ -134,6 +134,7 @@ function TermCard({ t, isOpen, onToggle, navigate, innerRef }) {
 
           {t.demo === "cache" && <CacheDemo />}
           {t.demo === "idem" && <IdemDemo />}
+          {t.demo === "queue" && <QueueDemo />}
 
           {(t.goLevel || t.related) && (
             <div className="flex flex-wrap gap-2 pt-1">
@@ -221,6 +222,104 @@ function CacheDemo() {
         )}
       </div>
       {saved > 0 && <div className="text-xs text-muted mt-1">👍 快取已幫你省下 {saved} 次重抓資料源</div>}
+    </div>
+  );
+}
+
+/* ---------- 佇列小互動：任務排隊，背景一個一個消化 ----------
+   原本放在「EXE / Queue」那一關，但佇列跟 EXE 其實是兩件事；
+   這裡才是它該待的地方（第 2 關場景圖的抽號碼機也是在講這個）。 */
+const PROCESS_MS = 900;
+
+function QueueDemo() {
+  const [tasks, setTasks] = useState([]);
+  const counter = useRef(0);
+
+  // 單一 worker：每 200ms 檢查一次；處理中的任務滿 PROCESS_MS 就完成，否則抓下一個排隊的來處理
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setTasks((ts) => {
+        const proc = ts.find((t) => t.status === "processing");
+        if (proc) {
+          if (Date.now() - proc.startedAt >= PROCESS_MS)
+            return ts.map((t) => (t.id === proc.id ? { ...t, status: "done" } : t));
+          return ts;
+        }
+        const wi = ts.findIndex((t) => t.status === "waiting");
+        if (wi >= 0)
+          return ts.map((t, i) => (i === wi ? { ...t, status: "processing", startedAt: Date.now() } : t));
+        return ts;
+      });
+    }, 200);
+    return () => clearInterval(iv);
+  }, []);
+
+  const submit = () => {
+    counter.current += 1;
+    setTasks((ts) => [...ts, { id: counter.current, label: "#" + counter.current, status: "waiting" }]);
+  };
+
+  const waiting = tasks.filter((t) => t.status === "waiting").length;
+  const processing = tasks.filter((t) => t.status === "processing").length;
+  const done = tasks.filter((t) => t.status === "done").length;
+
+  const chip = (t) => {
+    if (t.status === "done") return "border-mint bg-successSoft text-success";
+    if (t.status === "processing") return "border-primary bg-primarySoft text-primary animate-pulseRing";
+    return "border-line bg-surface text-muted";
+  };
+
+  return (
+    <div className="border-2 border-line rounded-[14px] bg-surface2 p-3.5">
+      <div className="text-xs font-extrabold text-muted mb-2">
+        🧪 玩玩看：想像要一次寄出幾千封市民通知，狂按「送出任務」
+      </div>
+      <button type="button" className="btn btn-accent btn-sm" onClick={submit}>
+        ➕ 送出任務
+      </button>
+
+      <div className="grid grid-cols-3 gap-2 text-center mt-2.5">
+        {[
+          ["排隊中", waiting, "var(--muted)"],
+          ["處理中", processing, "var(--primary)"],
+          ["已完成", done, "var(--success)"],
+        ].map(([label, n, c]) => (
+          <div key={label} className="border-2 border-line rounded-xl bg-surface py-1.5">
+            <div className="text-xl font-extrabold" style={{ color: c }}>
+              {n}
+            </div>
+            <div className="text-xs text-muted">{label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center gap-2 text-sm text-muted mt-2">
+        <span className="text-lg">🤖</span> Worker：
+        {processing > 0 ? "處理中…" : waiting > 0 ? "準備抓下一個" : "閒著（沒任務）"}
+      </div>
+
+      <div className="border-2 border-line rounded-[12px] bg-surface p-2.5 min-h-[56px] mt-2">
+        {tasks.length === 0 ? (
+          <div className="text-muted text-sm text-center py-1">佇列是空的 —— 按上面的按鈕送出任務</div>
+        ) : (
+          <div className="flex flex-wrap gap-1.5">
+            {tasks.map((t) => (
+              <span
+                key={t.id}
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg border-2 text-xs font-bold ${chip(t)}`}
+              >
+                {t.status === "done" ? "✓" : t.status === "processing" ? "⏳" : "•"} {t.label}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {done > 0 && (
+        <div className="text-xs text-muted mt-2">
+          👍 使用者按完送出就能去做別的事了 —— 這 {done} 個任務是背景慢慢做完的
+        </div>
+      )}
     </div>
   );
 }
