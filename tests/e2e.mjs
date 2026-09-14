@@ -358,6 +358,10 @@ await st("5 API 基礎", async () => {
   // 回傳要是 YouBike 的真實欄位
   await p.waitForSelector("text=available_rent_bikes");
   await p.waitForSelector("text=sarea");
+  // key / value 這兩個詞在這裡第一次出現，要有解釋 —— 而且要切乾淨跟「API 金鑰」的關係
+  await p.locator("text=key（鍵 / 欄位名）").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("text=value（值）").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("text=跟「API 金鑰（API key）」沒有關係").first().waitFor({ state: "visible", timeout: 2500 });
   await p.click("text=試試真的 API");
   await p.click("text=你送了一個 GET 請求");
   await B("完成這一關").click();

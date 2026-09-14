@@ -136,6 +136,62 @@ function ConceptStep({ onNext }) {
   );
 }
 
+/* JSON 的 key / value。上面的畫面已經在給學生看 "sarea": "大安區" 了，
+   但「key」「value」這兩個詞一直沒解釋過就在用 —— 在這裡補掉。
+   另外一定要切割：這個 key 跟「API 金鑰」的 key 只是剛好同名。 */
+function JsonShape() {
+  return (
+    <div className="border-2 border-line rounded-[16px] bg-surface2 p-4 space-y-3">
+      <div className="text-[13px] font-extrabold text-muted">🔎 怎麼看懂這包資料</div>
+
+      <p className="text-sm text-ink m-0">
+        JSON 就是一堆「<b className="text-ink">欄位名：內容</b>」湊起來的。每一組長這樣：
+      </p>
+
+      <pre className="font-mono text-[13px] bg-surface border border-line rounded-[10px] p-3 overflow-x-auto whitespace-pre m-0">
+        {'"sarea": "大安區"'}
+      </pre>
+
+      <div className="grid gap-2">
+        {[
+          ["key（鍵 / 欄位名）", "sarea", "這一格「是什麼」—— 行政區", "var(--frontend-text)"],
+          ["value（值）", '"大安區"', "這一格「內容是什麼」—— 大安區", "var(--backend-text)"],
+        ].map(([label, code, desc, color]) => (
+          <div key={label} className="flex gap-2.5 items-baseline flex-wrap">
+            <span className="text-sm font-extrabold shrink-0" style={{ color }}>
+              {label}
+            </span>
+            <code className="font-mono text-[13px] bg-surface px-2 py-0.5 rounded border border-line">
+              {code}
+            </code>
+            <span className="text-sm text-muted">{desc}</span>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-sm text-muted m-0">
+        再往外一層看：一組大括號 <code className="font-mono text-xs">{"{ }"}</code> 是
+        <b className="text-ink">一筆</b>（一個站），外面的中括號{" "}
+        <code className="font-mono text-xs">[ ]</code> 把很多筆<b className="text-ink">串成一串</b>
+        。所以上面那包的意思是「四個站，每個站有站名、行政區、可借幾台……」。
+        看懂這個，你就看得懂絕大多數 API 回的東西了。
+      </p>
+
+      <div
+        className="callout m-0"
+        style={{
+          borderLeftColor: "var(--sun)",
+          background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
+        }}
+      >
+        <b className="text-ink">⚠️ 這個 key 跟「API 金鑰（API key）」沒有關係。</b>
+        只是剛好都叫 key：這裡的 key 是<b className="text-ink">資料的欄位名</b>，誰都看得到也該看得到；
+        API 金鑰則是<b className="text-ink">一串密碼</b>，絕對不能給別人看（GitHub Pages 那一關有講）。
+      </div>
+    </div>
+  );
+}
+
 /* ---------- 步驟 2：站內 API 測試器 ---------- */
 function TesterStep({ onNext }) {
   const [status, setStatus] = useState("idle"); // idle | loading | done
@@ -207,6 +263,8 @@ function TesterStep({ onNext }) {
           <b className="text-ink">拿到之後自己在前端篩</b> —— 等一下的看板就是這樣做的。
         </div>
       </div>
+
+      <JsonShape />
 
       <button type="button" className="btn btn-primary" disabled={!sentOnce} onClick={onNext}>
         {sentOnce ? "下一步：試試真的 API →" : "先送出一次再繼續"}
