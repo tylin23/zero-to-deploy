@@ -496,7 +496,75 @@ await st("9 Firebase（資料庫與安全規則）", async () => {
   await p.waitForSelector("text=資料庫入門達成", { timeout: 3000 });
 });
 
-await st("10 自架（內網/對外）", async () => {
+await st("10 Flask（自己的後端與「誰連得到」）", async () => {
+  await go("flask");
+  // 步驟 1：勾起來，六步變兩步
+  await p.waitForSelector("text=你已經會寫 Python 了");
+  const usage = () => p.$eval("[data-usage]", (el) => el.querySelectorAll("li").length);
+  if ((await usage()) !== 6) throw new Error("純腳本應該是六步");
+  await p.locator("input[type=checkbox]").first().check();
+  if ((await usage()) !== 2) throw new Error("包成 Flask 之後應該剩兩步");
+  await B("先在模擬介面跑一次").click();
+
+  // 步驟 2：跑起來，然後 404 與新 route
+  await p.waitForSelector("text=跑起來，然後打開那個網址");
+  await B("python app.py").click();
+  await p.locator("[data-term]").first().waitFor({ state: "visible", timeout: 2500 });
+  const term = await p.$eval("[data-term]", (el) => el.innerText);
+  if (!term.includes("127.0.0.1:5000")) throw new Error("終端機要印出 127.0.0.1:5000");
+  // 沒定義的網址 → 404，而且要說清楚「不是壞掉」
+  await p.locator("[data-urls] button", { hasText: "/統計" }).click();
+  await p.locator("[data-page] >> text=這不是壞掉，是 404").first().waitFor({ state: "visible", timeout: 2500 });
+  // /報表 還沒寫，也是 404；勾起來之後才有東西
+  await p.locator("[data-urls] button", { hasText: "/報表" }).click();
+  await p.locator("[data-page] >> text=Not Found").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("text=多加一個 /報表 的 route").click();
+  await B("python app.py").click();
+  await p.locator("[data-urls] button", { hasText: "/報表" }).click();
+  await p.locator("[data-page] >> text=今天共 128 筆").first().waitFor({ state: "visible", timeout: 2500 });
+  await B("誰連得到").click();
+
+  // 步驟 3：四種位址都要查得到，重點是 127.0.0.1 / 192.168 / 0.0.0.0 的差別
+  await p.waitForSelector("text=這個網址，到底誰連得到");
+  for (const [id, expect] of [
+    ["loopback", "只有這台電腦"],
+    ["lan", "同一個網路裡的人"],
+    ["any", "所有網卡我都聽"],
+    ["public", "全世界"],
+  ]) {
+    await p.click(`[data-addr=${id}] button`);
+    await p.locator(`[data-addr=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
+    await p.click(`[data-addr=${id}] button`);
+  }
+
+  // 「誰連得到」四題：第一題就是最常見的誤會
+  for (const [id, pick, expect] of [
+    ["self", "只有我自己", "只有我自己"],
+    ["office", "只有我自己", "同辦公室的同仁"],
+    // 位址沒改 → 答案跟上一題一樣，這是這四題要打的點
+    ["citizen", "全世界", "同辦公室的同仁"],
+    ["public", "全世界", "全世界"],
+  ]) {
+    await p.locator(`[data-reach=${id}] button`, { hasText: pick }).click();
+    await p.locator(`[data-reach=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
+  }
+  // port：位址只答了一半，防火牆是另一半
+  const portTxt = await p.$eval("[data-port]", (el) => el.innerText);
+  for (const t of ["Address already in use", "防火牆", "http 預設 80"]) {
+    if (!portTxt.includes(t)) throw new Error("port 區塊少了：" + t);
+  }
+  // debug=True 的那段警告要在
+  await p.locator("text=互動式除錯主控台").first().waitFor({ state: "visible", timeout: 2500 });
+
+  // 檢查清單五項 + 測驗
+  const boxes = await p.$$("input[type=checkbox]");
+  for (const b of boxes.slice(-5)) await b.check();
+  await p.locator("button", { hasText: "127.0.0.1 的意思是" }).first().click();
+  await B("完成這一關").click();
+  await p.waitForSelector("text=你有自己的後端了", { timeout: 3000 });
+});
+
+await st("11 自架（內網/對外）", async () => {
   await go("selfhost");
   await p.click("text=試試看誰連得上");
   const sw = await p.$$("[role=switch]");
@@ -510,7 +578,7 @@ await st("10 自架（內網/對外）", async () => {
   await p.waitForSelector("text=內網與對外的差別", { timeout: 3000 });
 });
 
-await st("11 Docker", async () => {
+await st("12 Docker", async () => {
   await go("docker");
   await p.click("text=自己打包一個來跑");
   await B("docker build").click();
@@ -528,7 +596,7 @@ await st("11 Docker", async () => {
   await p.waitForSelector("text=打包貨櫃達成", { timeout: 3000 });
 });
 
-await st("12 EXE 執行檔（全線通關）", async () => {
+await st("13 EXE 執行檔（全線通關）", async () => {
   await go("exe-queue");
   // 步驟 1：四題「做網頁還是做 EXE」
   for (const [id, pick, expect] of [
@@ -575,11 +643,11 @@ await st("「回上一步」可用（新增功能）", async () => {
   await p.waitForSelector("text=API 是什麼", { timeout: 2500 });
 });
 
-await st("地圖：12 關全完成", async () => {
+await st("地圖：13 關全完成", async () => {
   await p.goto(base + "/index.html#/map", { waitUntil: "networkidle" });
   await p.waitForSelector("text=我的徽章");
   const prog = (await p.$eval("[data-testid=progress]", (e) => e.textContent)).trim();
-  if (prog !== "12/12") throw new Error("進度 " + prog);
+  if (prog !== "13/13") throw new Error("進度 " + prog);
   console.log("   進度：", prog);
 });
 
@@ -595,12 +663,13 @@ await st("關卡順序：全景 → 觀念 → 動手 → 界線", async () => {
     ["gas", 7],
     ["huggingface", 8],
     ["firebase", 9],
-    ["selfhost", 10],
-    ["docker", 11],
-    ["exe-queue", 12],
+    ["flask", 10],
+    ["selfhost", 11],
+    ["docker", 12],
+    ["exe-queue", 13],
   ]) {
     await go(id);
-    await p.waitForSelector(`text=第 ${no} / 12 關`);
+    await p.waitForSelector(`text=第 ${no} / 13 關`);
   }
 });
 
@@ -808,7 +877,7 @@ await st("第 3 關：金鑰 / .env / .gitignore 與 README", async () => {
   await p.locator("text=README 也是公開的").first().waitFor({ state: "visible", timeout: 2000 });
 });
 
-await st("名詞小教室：佇列卡帶著模擬器（從第 10 關搬過來的）", async () => {
+await st("名詞小教室：佇列卡帶著模擬器（從 EXE 那一關搬過來的）", async () => {
   await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
   await p.goto(`${base}/index.html#/terms/queue`, { waitUntil: "networkidle" });
   const card = p.locator("div.card", { has: p.locator("text=佇列 / 排隊") }).first();
@@ -827,6 +896,20 @@ await st("名詞小教室：佇列卡帶著模擬器（從第 10 關搬過來的
   await card.locator("text=這 ").first().waitFor({ state: "visible", timeout: 9000 });
   // 佇列不再是某一關的內容，所以不該再有「去玩互動關」的按鈕
   if (await card.locator("button", { hasText: "去玩" }).count()) throw new Error("佇列卡還連著關卡");
+});
+
+await st("名詞小教室：Port 卡把「連不到」的兩個原因分開", async () => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${base}/index.html#/terms/port`, { waitUntil: "networkidle" });
+  const card = p.locator("div.card", { has: p.locator("text=Port（埠號 / 連接埠）") }).first();
+  await card.waitFor({ state: "visible", timeout: 3000 });
+  // 三個場合都要在：換號碼、防火牆、Docker 的 -p 對應
+  const txt = await card.innerText();
+  for (const t of ["Address already in use", "防火牆要開那個 port", "-p 3000:3000"]) {
+    if (!txt.includes(t)) throw new Error("Port 卡少了「" + t + "」");
+  }
+  // 連不到的兩個原因要分開講
+  if (!txt.includes("位址錯＝找錯機器")) throw new Error("Port 卡少了「位址 vs port」的區分");
 });
 
 await st("名詞小教室：Worker 卡把三個同名的意思切開", async () => {

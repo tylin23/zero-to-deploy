@@ -66,6 +66,37 @@ export const TERMS = [
     },
   },
   {
+    id: "port",
+    emoji: "🔌",
+    name: "Port（埠號 / 連接埠）",
+    en: "Port",
+    cat: "ops",
+    related: ["flask", "selfhost", "docker"],
+    oneLiner: "位址是「哪一台機器」，port 是「那台機器上的哪一個服務」。",
+    analogy:
+      "位址像是一棟大樓的地址，port 是裡面的分機號碼。找對大樓還不夠，要轉對分機才會有人接。",
+    relation:
+      "一台機器可以同時跑很多個服務，靠號碼分開：Flask 預設 5000、另一個工具可能用 8000，彼此不會打架。你平常上網的網址看不到 port，是因為 http 預設 80、https 預設 443，瀏覽器自動幫你補上了；Flask 的 5000 不是預設值，所以要寫出來。",
+    more: {
+      title: "會碰到它的三個場合",
+      items: [
+        [
+          "① Address already in use（這個號碼有人在用）",
+          "跑起來直接噴這句，代表 5000 已經被別的程式佔走了（在 Mac 上常被系統的 AirPlay 佔用）。這不是壞掉 —— app.run(port=5001) 換一個號碼就好。",
+        ],
+        [
+          "② 防火牆要開那個 port",
+          "這是「同事還是連不到」的第二個原因。位址改成 0.0.0.0 只是你的程式願意聽，機器的防火牆預設還是會擋掉外來連線，要放行那個號碼才通。在市府的機器上，這件事通常不是你自己能決定的 —— 要問資訊單位。",
+        ],
+        [
+          "③ Docker 的 -p 3000:3000",
+          "第 12 關那行指令裡的 -p，就是把「容器裡的 port」對應到「機器上的 port」。冒號左邊是外面、右邊是裡面 —— 容器自己是一個封閉的小空間，不做這個對應，外面就進不去。",
+        ],
+      ],
+      warn: "⚠️ 連不到的時候，位址和 port 要分開查：位址錯＝找錯機器，port 沒開＝找對機器但門關著。兩個原因、兩種解法。",
+    },
+  },
+  {
     id: "cdn",
     emoji: "🌐",
     name: "內容傳遞網路",
@@ -195,6 +226,9 @@ export const LEVEL_TERMS = {
   api: ["cache", "cors"],
   gas: ["idem"],
   firebase: ["authz", "backup"],
+  flask: ["port", "env", "logmon"],
+  selfhost: ["port"],
+  docker: ["port"],
   "exe-queue": ["logmon", "rollback"],
 };
 
