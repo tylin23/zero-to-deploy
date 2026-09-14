@@ -124,7 +124,7 @@ function ConceptStep({ onNext }) {
       <h2 className="text-2xl font-bold text-ink">EXE：不上網的那一種「給別人用」📦</h2>
 
       <div className="callout callout-info">
-        前面十關都在講「<b className="text-ink">放到網路上，給你一個網址</b>」。但有些東西不適合上網 ——
+        前面十一關都在講「<b className="text-ink">放到網路上，給你一個網址</b>」。但有些東西不適合上網 ——
         它要動使用者自己電腦裡的檔案、或要在沒網路的地方用。這時候就把程式和它需要的環境
         <b className="text-ink">打包成一個檔案</b>，同事雙擊就能跑，不必安裝任何東西。這就是 EXE（執行檔）。
       </div>

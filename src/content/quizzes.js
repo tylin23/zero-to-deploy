@@ -89,6 +89,20 @@ export const QUIZZES = {
     explainNo: "回想第 3 關：GitHub Pages 只送靜態檔案、不跑後端；而 AI 需要跑模型（運算）。",
   },
 
+  firebase: {
+    question:
+      "有人把 Firebase 的規則設成 allow read, write: if request.auth != null。這樣安全嗎？",
+    options: [
+      { text: "不安全 —— 任何人辦一個帳號登入，就能讀寫所有人的資料", correct: true },
+      { text: "安全 —— 要登入才能用，等於只有自己人進得來", correct: false },
+      { text: "安全 —— 因為 apiKey 沒有公開", correct: false },
+    ],
+    explainOk:
+      "正解！它只檢查「有沒有登入」，沒檢查「是不是你的資料」。這是最常見的錯誤設定 —— 要連 request.auth.uid 和資料的擁有者一起比對才行。「你是誰」和「你能做什麼」是兩件事。",
+    explainNo:
+      "再想想：登入這件事誰都能做，辦個帳號就有。而且 Firebase 的 apiKey 本來就是公開放在網頁裡的，它是門牌不是鑰匙 —— 真正的門鎖只有安全規則那一道。",
+  },
+
   selfhost: {
     question: "你的內部小工具在市府內網跑得好好的，長官說「乾脆開放給市民用」。你該怎麼回應？",
     options: [
