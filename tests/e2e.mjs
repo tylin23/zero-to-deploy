@@ -71,7 +71,7 @@ await st("1 方法全景（含 AI 工具）", async () => {
   // 步驟 3：全景清單 + 測驗
   await p.waitForSelector("[data-scope=ai]");
   const n = await p.locator("[data-scope]").count();
-  if (n !== 9) throw new Error("全景清單應該有 9 項，實際 " + n);
+  if (n !== 10) throw new Error("全景清單應該有 10 項，實際 " + n);
   await p.click("[data-scope=github-pages] button");
   await p.waitForSelector("[data-scope=github-pages] >> text=第 3 關會教這個", { timeout: 2500 });
   await p.click("text=拿到那個連結的人都打得開");
@@ -452,7 +452,51 @@ await st("8 Hugging Face", async () => {
   await p.waitForSelector("text=AI 應用上線達成", { timeout: 3000 });
 });
 
-await st("9 自架（內網/對外）", async () => {
+await st("9 Firebase（資料庫與安全規則）", async () => {
+  await go("firebase");
+  // 步驟 1：勾起來才會出現「後端沒有消失，只是變成安全規則」
+  await p.waitForSelector("text=第一次，你的網頁有了資料庫");
+  await p.locator("input[type=checkbox]").first().check();
+  await p.locator("text=它不是「沒有後端」，是後端別人幫你寫好了").first().waitFor({ state: "visible", timeout: 2500 });
+  // apiKey 是門牌不是鑰匙 —— 這段要解掉「第 3 關說金鑰不能放前端」的矛盾
+  await p.locator("text=第 3 關不是說金鑰不能放在前端嗎").first().waitFor({ state: "visible", timeout: 2000 });
+  await B("那把鎖怎麼設").click();
+
+  // 步驟 2：三種規則，看誰進得來
+  await p.waitForSelector("text=安全規則：誰能讀，誰能寫");
+  const canEnter = async () =>
+    p.$$eval("[data-visitor]", (els) =>
+      Object.fromEntries(els.map((e) => [e.dataset.visitor, /能讀/.test(e.innerText)]))
+    );
+  await p.click("[data-rule=open]");
+  let who = await canEnter();
+  if (!(who.guest && who.other && who.owner)) throw new Error("if true 應該是誰都進得來");
+  await p.click("[data-rule=loggedin]");
+  who = await canEnter();
+  if (who.guest || !who.other) throw new Error("只檢查登入時，路人進不來但其他登入者要進得來");
+  await p.click("[data-rule=owner]");
+  who = await canEnter();
+  if (who.guest || who.other || !who.owner) throw new Error("比對 owner 後應該只剩主人進得來");
+  await p.locator("text=將近四分之一把資料庫留在全世界都讀得到的狀態").first().waitFor({ state: "visible", timeout: 2500 });
+  await B("那我到底能不能用").click();
+
+  // 步驟 3：四題界線 + 檢查清單 + 測驗
+  for (const [id, pick, expect] of [
+    ["proto", "✅ 可以自己做", "✅ 可以自己做"],
+    ["citizen", "✅ 可以自己做", "⛔ 不該這樣做"],
+    ["internal", "✅ 可以自己做", "⚠️ 先問資訊單位"],
+    ["public", "✅ 可以自己做", "✅ 可以自己做"],
+  ]) {
+    await p.locator(`[data-fb=${id}] button`, { hasText: pick }).click();
+    await p.locator(`[data-fb=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
+  }
+  await p.locator("text=上線前把這五件事確認過").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("button", { hasText: "任何人辦一個帳號登入" }).first().click();
+  await B("完成這一關").click();
+  await p.waitForSelector("text=資料庫入門達成", { timeout: 3000 });
+});
+
+await st("10 自架（內網/對外）", async () => {
   await go("selfhost");
   await p.click("text=試試看誰連得上");
   const sw = await p.$$("[role=switch]");
@@ -466,7 +510,7 @@ await st("9 自架（內網/對外）", async () => {
   await p.waitForSelector("text=內網與對外的差別", { timeout: 3000 });
 });
 
-await st("10 Docker", async () => {
+await st("11 Docker", async () => {
   await go("docker");
   await p.click("text=自己打包一個來跑");
   await B("docker build").click();
@@ -484,7 +528,7 @@ await st("10 Docker", async () => {
   await p.waitForSelector("text=打包貨櫃達成", { timeout: 3000 });
 });
 
-await st("11 EXE 執行檔（全線通關）", async () => {
+await st("12 EXE 執行檔（全線通關）", async () => {
   await go("exe-queue");
   // 步驟 1：四題「做網頁還是做 EXE」
   for (const [id, pick, expect] of [
@@ -531,11 +575,11 @@ await st("「回上一步」可用（新增功能）", async () => {
   await p.waitForSelector("text=API 是什麼", { timeout: 2500 });
 });
 
-await st("地圖：11 關全完成", async () => {
+await st("地圖：12 關全完成", async () => {
   await p.goto(base + "/index.html#/map", { waitUntil: "networkidle" });
   await p.waitForSelector("text=我的徽章");
   const prog = (await p.$eval("[data-testid=progress]", (e) => e.textContent)).trim();
-  if (prog !== "11/11") throw new Error("進度 " + prog);
+  if (prog !== "12/12") throw new Error("進度 " + prog);
   console.log("   進度：", prog);
 });
 
@@ -550,12 +594,13 @@ await st("關卡順序：全景 → 觀念 → 動手 → 界線", async () => {
     ["api", 6],
     ["gas", 7],
     ["huggingface", 8],
-    ["selfhost", 9],
-    ["docker", 10],
-    ["exe-queue", 11],
+    ["firebase", 9],
+    ["selfhost", 10],
+    ["docker", 11],
+    ["exe-queue", 12],
   ]) {
     await go(id);
-    await p.waitForSelector(`text=第 ${no} / 11 關`);
+    await p.waitForSelector(`text=第 ${no} / 12 關`);
   }
 });
 
@@ -780,6 +825,21 @@ await st("名詞小教室：佇列卡帶著模擬器（從第 10 關搬過來的
   await card.locator("text=這 ").first().waitFor({ state: "visible", timeout: 9000 });
   // 佇列不再是某一關的內容，所以不該再有「去玩互動關」的按鈕
   if (await card.locator("button", { hasText: "去玩" }).count()) throw new Error("佇列卡還連著關卡");
+});
+
+await st("名詞小教室：Worker 卡把三個同名的意思切開", async () => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${base}/index.html#/terms/worker`, { waitUntil: "networkidle" });
+  const card = p.locator("div.card", { has: p.locator("text=Worker（背景工人）") }).first();
+  await card.waitFor({ state: "visible", timeout: 3000 });
+  // 三個意思都要在，而且要說清楚彼此無關
+  const txt = await card.innerText();
+  for (const t of ["佇列的 worker", "Cloudflare Workers", "Service Worker", "跟①完全沒有關係"]) {
+    if (!txt.includes(t)) throw new Error("Worker 卡少了「" + t + "」");
+  }
+  // 掛在第 5 關底下（那一關的比較表提到 Functions）
+  await card.locator("button", { hasText: "Netlify / Cloudflare Pages" }).first().click();
+  await p.waitForFunction(() => location.hash === "#/level/hosting", null, { timeout: 2500 });
 });
 
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");

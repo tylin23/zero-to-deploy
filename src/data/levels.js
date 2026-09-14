@@ -71,6 +71,16 @@ export const mapOrder = [
     phase: "pre",
   },
   {
+    // 納管前的最後一關：第一次有真的資料庫和登入，也是界線最吃緊的一關。
+    id: "firebase",
+    emoji: "🔥",
+    title: "Firebase",
+    short: "資料庫與登入",
+    tagline: "第一次有真的資料庫 —— 也是界線最吃緊的一關",
+    status: "ready",
+    phase: "pre",
+  },
+  {
     id: "selfhost",
     emoji: "🖥️",
     title: "Windows / Linux 自架",
@@ -196,6 +206,18 @@ export const EVAL = {
     maintain: "低",
     scenario: "市民問答小幫手、民意分析",
   },
+  firebase: {
+    phase: "pre",
+    difficulty: 4,
+    kind: "動態（資料庫＋登入）",
+    diy: "red",
+    diyLabel: "接近紅線",
+    risk: "規則沒設好＝資料庫全世界可讀寫；碰個資先問資訊單位",
+    openness: "看安全規則怎麼設",
+    cost: "免費（有額度）",
+    maintain: "中",
+    scenario: "內部小工具原型、假資料展示",
+  },
   selfhost: {
     phase: "post",
     difficulty: 5,
@@ -249,6 +271,11 @@ export const PICKER = [
   },
   { q: "想把市府開放資料變成一張看板給同仁看", to: "api", why: "讀開放資料、不碰個資，最安全" },
   { q: "要收市民報名／陳情，並自動通知承辦科室", to: "gas", why: "表單＋GAS 自動化，貼近日常" },
+  {
+    q: "想做一個要登入、還要存資料的小工具（先用假資料試）",
+    to: "firebase",
+    why: "不用自己寫後端就有資料庫和登入；但安全規則一定要設對",
+  },
   {
     q: "想用 AI 幫忙看文字（市民問答、民意分析）",
     to: "huggingface",
@@ -330,6 +357,15 @@ export const RISKS = {
       "正式導入 AI 服務前，應先確認符合機關個資與資安規範並取得核准。",
     ],
   },
+  firebase: {
+    level: "高（資料庫直接對外）",
+    points: [
+      "Firebase 的資料庫是「從網頁直接連」的，門鎖只有一道：安全規則。規則設錯（例如 allow read, write: if true）等於把整個資料庫公開，任何人都能讀走或清空。",
+      "只檢查「有沒有登入」是不夠的 —— 任何人都能辦帳號。要連「是不是這筆資料的主人」一起比對。",
+      "切勿存放真實市民個資；練習一律用假資料。要做會持續使用的系統，先問資訊單位。",
+      "上線前去 Console 的「規則」頁親眼確認一次 —— 很多外洩不是不知道要設，是以為自己設過了。",
+    ],
+  },
   selfhost: {
     level: "中（自行負責）",
     points: [
@@ -363,6 +399,7 @@ export const BADGES = {
   apiBasics: { id: "api-basics", icon: "🔌", name: "API 入門", desc: "看懂 request / response 與 JSON" },
   gasPush: { id: "gas-push", icon: "📬", name: "自動推播", desc: "用 GAS 呼叫 API 自動送通知" },
   hfSpace: { id: "hf-space", icon: "🤗", name: "AI 上線", desc: "用 Hugging Face Spaces 部署 AI 應用" },
+  firebase: { id: "firebase", icon: "🔥", name: "資料庫入門", desc: "看懂安全規則：誰能讀、誰能寫" },
   selfHost: { id: "self-host", icon: "🖥️", name: "自架伺服器", desc: "分得清內網自用與對外服務" },
   docker: { id: "docker", icon: "🐳", name: "打包貨櫃", desc: "用 Docker 把 App 和環境一起帶著走" },
   exeQueue: { id: "exe-queue", icon: "📦", name: "打包發版", desc: "把工具打包成 EXE，並發出有版本號的新版" },
