@@ -194,7 +194,7 @@ export const LEVEL_TERMS = {
   hosting: ["cdn", "worker", "env"],
   api: ["cache", "cors"],
   gas: ["idem"],
-  firebase: ["authz", "backup"],
+  firebase: ["authz", "backup"], flask: ["env", "logmon"],
   "exe-queue": ["logmon", "rollback"],
 };
 

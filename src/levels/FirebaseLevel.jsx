@@ -162,7 +162,7 @@ function ConceptStep({ onNext }) {
               <b className="text-ink">安全規則</b>。下一步就是這個。
             </>
           ) : (
-            <>沒有 Firebase 的話，要存資料就得自己架一台後端 —— 那是第 10 關「自架」的範圍。</>
+            <>沒有 Firebase 的話，要存資料就得自己寫一台後端、再自己找地方跑 —— 那是第 10 關「Flask」和第 11 關「自架」的範圍。</>
           )}
         </p>
       </div>

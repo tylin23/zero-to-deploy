@@ -24,6 +24,7 @@ const LEVELS = {
   gas: lazy(() => import("./levels/GasLevel.jsx")),
   huggingface: lazy(() => import("./levels/HuggingFaceLevel.jsx")),
   firebase: lazy(() => import("./levels/FirebaseLevel.jsx")),
+  flask: lazy(() => import("./levels/FlaskLevel.jsx")),
   selfhost: lazy(() => import("./levels/SelfHostLevel.jsx")),
   docker: lazy(() => import("./levels/DockerLevel.jsx")),
   "exe-queue": lazy(() => import("./levels/ExeQueueLevel.jsx")),

@@ -81,6 +81,17 @@ export const mapOrder = [
     phase: "pre",
   },
   {
+    // 前面九關的後端都是「借別人的」（GAS 是 Google 跑、HF 是 HF 跑、Firebase 是 Google 顧資料庫）。
+    // 這一關是第一次「你自己寫一個後端」—— 也讓後面的自架／Docker 終於有具體的對象。
+    id: "flask",
+    emoji: "🐍",
+    title: "Flask：換你自己寫後端",
+    short: "Flask",
+    tagline: "你會的 Python，變成別人打得開的網址",
+    status: "ready",
+    phase: "post",
+  },
+  {
     id: "selfhost",
     emoji: "🖥️",
     title: "Windows / Linux 自架",
@@ -218,6 +229,18 @@ export const EVAL = {
     maintain: "中",
     scenario: "內部小工具原型、假資料展示",
   },
+  flask: {
+    phase: "post",
+    difficulty: 4,
+    kind: "動態（你自己寫）",
+    diy: "yellow",
+    diyLabel: "本機自用可以",
+    risk: "自己寫的後端，資安責任就在你身上；對外要先問資訊單位",
+    openness: "看你綁哪個位址",
+    cost: "免費",
+    maintain: "中（要自己顧）",
+    scenario: "把已經寫好的 Python 腳本，變成同仁點得動的介面",
+  },
   selfhost: {
     phase: "post",
     difficulty: 5,
@@ -275,6 +298,11 @@ export const PICKER = [
     q: "想做一個要登入、還要存資料的小工具（先用假資料試）",
     to: "firebase",
     why: "不用自己寫後端就有資料庫和登入；但安全規則一定要設對",
+  },
+  {
+    q: "我已經有一支會跑的 Python 腳本，想讓同仁自己點一點就能用",
+    to: "flask",
+    why: "Flask 把你那段 Python 掛在一個網址後面；但先搞清楚那個網址「誰連得到」",
   },
   {
     q: "想用 AI 幫忙看文字（市民問答、民意分析）",
@@ -400,6 +428,7 @@ export const BADGES = {
   gasPush: { id: "gas-push", icon: "📬", name: "自動推播", desc: "用 GAS 呼叫 API 自動送通知" },
   hfSpace: { id: "hf-space", icon: "🤗", name: "AI 上線", desc: "用 Hugging Face Spaces 部署 AI 應用" },
   firebase: { id: "firebase", icon: "🔥", name: "資料庫入門", desc: "看懂安全規則：誰能讀、誰能寫" },
+  flask: { id: "flask", icon: "🐍", name: "自己的後端", desc: "用 Flask 把 Python 變成網址，並分得清誰連得到" },
   selfHost: { id: "self-host", icon: "🖥️", name: "自架伺服器", desc: "分得清內網自用與對外服務" },
   docker: { id: "docker", icon: "🐳", name: "打包貨櫃", desc: "用 Docker 把 App 和環境一起帶著走" },
   exeQueue: { id: "exe-queue", icon: "📦", name: "打包發版", desc: "把工具打包成 EXE，並發出有版本號的新版" },
