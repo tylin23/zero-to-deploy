@@ -486,6 +486,40 @@ function AddrStep({ onFinish }) {
         })}
       </div>
 
+      {/* Port：位址只答了一半，另一半是門有沒有開 */}
+      <div className="border-2 border-line rounded-[18px] bg-surface p-4 space-y-2" data-port>
+        <div className="text-sm font-extrabold text-ink">
+          🔌 那位址後面的 <code className="font-mono">:5000</code> 又是什麼？
+        </div>
+        <p className="text-sm text-ink m-0">
+          位址是<b>「哪一台機器」</b>，port（埠號）是<b>「那台機器上的哪一個服務」</b>
+          。 一台機器可以同時跑很多個服務，靠號碼分開 —— 像大樓地址之後還要轉分機。
+        </p>
+        <p className="text-sm text-muted m-0">
+          你平常上網的網址看不到 port，是因為 http 預設 80、https 預設 443，
+          <b className="text-ink">瀏覽器自動幫你補上了</b>；Flask 的 5000 不是預設值，所以要寫出來。
+        </p>
+        <div className="text-sm text-ink">
+          跑起來如果噴 <code className="font-mono text-xs">Address already in use</code>，代表這個號碼已經有人在用
+          （5000 在 Mac 上常被系統佔走）。這不是壞掉，
+          <code className="font-mono text-xs">app.run(port=5001)</code> 換一個號碼就好。
+        </div>
+        <div
+          className="rounded-[10px] px-3 py-2.5 text-sm text-ink"
+          style={{ background: "color-mix(in srgb, var(--sun) 16%, var(--surface))" }}
+        >
+          <b>⚠️ 位址對了還不夠 —— 這是「同事還是連不到」的第二個原因。</b>
+          <div className="mt-1">
+            <code className="font-mono text-xs">host=&quot;0.0.0.0&quot;</code>{" "}
+            只是<b>你的程式願意聽</b>，機器的<b>防火牆</b>預設還是會擋掉外來連線，要放行 5000 這個號碼才通得了。
+            而在市府的機器上，<b>這件事通常不是你自己能決定的</b> —— 要問資訊單位。
+          </div>
+          <div className="mt-1.5">
+            所以連不到時，兩個原因要分開查：<b className="text-ink">位址錯＝找錯機器；port 沒開＝找對機器但門關著。</b>
+          </div>
+        </div>
+      </div>
+
       {/* 誰連得到 練習 */}
       <div className="border-2 border-line rounded-[18px] bg-surface2 p-4 space-y-3">
         <div className="text-sm font-extrabold text-ink">🧪 練習：這四種情況，誰連得到？</div>

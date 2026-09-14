@@ -548,6 +548,11 @@ await st("10 Flask（自己的後端與「誰連得到」）", async () => {
     await p.locator(`[data-reach=${id}] button`, { hasText: pick }).click();
     await p.locator(`[data-reach=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
   }
+  // port：位址只答了一半，防火牆是另一半
+  const portTxt = await p.$eval("[data-port]", (el) => el.innerText);
+  for (const t of ["Address already in use", "防火牆", "http 預設 80"]) {
+    if (!portTxt.includes(t)) throw new Error("port 區塊少了：" + t);
+  }
   // debug=True 的那段警告要在
   await p.locator("text=互動式除錯主控台").first().waitFor({ state: "visible", timeout: 2500 });
 
@@ -891,6 +896,20 @@ await st("名詞小教室：佇列卡帶著模擬器（從 EXE 那一關搬過�
   await card.locator("text=這 ").first().waitFor({ state: "visible", timeout: 9000 });
   // 佇列不再是某一關的內容，所以不該再有「去玩互動關」的按鈕
   if (await card.locator("button", { hasText: "去玩" }).count()) throw new Error("佇列卡還連著關卡");
+});
+
+await st("名詞小教室：Port 卡把「連不到」的兩個原因分開", async () => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${base}/index.html#/terms/port`, { waitUntil: "networkidle" });
+  const card = p.locator("div.card", { has: p.locator("text=Port（埠號 / 連接埠）") }).first();
+  await card.waitFor({ state: "visible", timeout: 3000 });
+  // 三個場合都要在：換號碼、防火牆、Docker 的 -p 對應
+  const txt = await card.innerText();
+  for (const t of ["Address already in use", "防火牆要開那個 port", "-p 3000:3000"]) {
+    if (!txt.includes(t)) throw new Error("Port 卡少了「" + t + "」");
+  }
+  // 連不到的兩個原因要分開講
+  if (!txt.includes("位址錯＝找錯機器")) throw new Error("Port 卡少了「位址 vs port」的區分");
 });
 
 await st("名詞小教室：Worker 卡把三個同名的意思切開", async () => {
