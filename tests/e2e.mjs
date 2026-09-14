@@ -295,14 +295,18 @@ await st("儀表板範本：API 通的時候顯示即時資料", async () => {
   await page.close();
 });
 
-await st("第 3 關：自己做的檔案有 5 個雷的提醒", async () => {
+await st("第 3 關：自己做的檔案有 6 個雷的提醒", async () => {
   await go("github-pages");
   await p.click("text=靜態網站：HTML");
   await B("先在模擬介面練一次").click();
   await B("我真的做一次").click();
-  await p.waitForSelector("text=要傳自己做的檔案？先看這 5 個雷");
-  await p.click("text=要傳自己做的檔案？先看這 5 個雷");
+  await p.waitForSelector("text=要傳自己做的檔案？先看這 6 個雷");
+  await p.click("text=要傳自己做的檔案？先看這 6 個雷");
   await p.waitForSelector("text=首頁檔名一定要是 index.html");
+  // 雷的數量寫在標題裡，清單長度變了標題就得跟著改
+  const n = await p.locator("details", { hasText: "先看這 6 個雷" }).locator("ol > li").count();
+  if (n !== 6) throw new Error("標題說 6 個雷，清單其實有 " + n + " 個");
+  await p.waitForSelector("text=金鑰、密碼、.env 一個都不能傳");
 });
 
 await st("第 2 關動畫：三個階段可以自己點、方向箭頭會跟著換", async () => {
@@ -630,6 +634,48 @@ await st("名片範本：頭像換成 <img> 照片時不會被拉扁", async () 
   if (r.w !== r.h) throw new Error(`頭像不是正方形 ${r.w}x${r.h}`);
   if (r.fit !== "cover") throw new Error("object-fit 是 " + r.fit + "，3:2 的照片會被拉扁");
   await page.close();
+});
+
+await st("第 3 關：金鑰 / .env / .gitignore 與 README", async () => {
+  await go("github-pages");
+  await p.click("text=靜態網站：HTML");
+  await B("先在模擬介面練一次").click();
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Create a new repository");
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=拖曳檔案到這裡上傳");
+  await p.click("text=📄 index.html");
+  await p.click("text=拖曳檔案到這裡上傳");
+  await p.waitForFunction(() => {
+    const x = document.querySelector(".gh-btn-green");
+    return x && !x.disabled;
+  });
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Branch");
+  await p.click(".gh-btn-green");
+  await p.waitForSelector("text=Your site is live");
+  await p.click("text=我真的做一次");
+
+  // 金鑰：四個檔案的判斷（含最容易漏的「截圖也算外洩」）
+  await p.locator("summary", { hasText: "金鑰、.env 與 .gitignore" }).click();
+  for (const [id, pick, expect] of [
+    ["html", "✅ 可以上傳", "✅ 可以上傳"],
+    ["env", "✅ 可以上傳", "🚫 不能上傳"],
+    ["example", "✅ 可以上傳", "✅ 可以上傳"],
+    ["shot", "✅ 可以上傳", "🚫 不能上傳"],
+  ]) {
+    await p.locator(`[data-sec=${id}] button`, { hasText: pick }).click();
+    await p.locator(`[data-sec=${id}] >> text=${expect}`).first().waitFor({ state: "visible", timeout: 2500 });
+  }
+  // 外洩後的正確動作是撤銷重發，不是刪掉那一行
+  await p.locator("text=撤銷／重新產生").first().waitFor({ state: "visible", timeout: 2000 });
+  await p.locator("text=前端藏不住金鑰").first().waitFor({ state: "visible", timeout: 2000 });
+
+  // README：交接觀點 + 可複製範本 + 「也是公開的」提醒
+  await p.locator("summary", { hasText: "幫你的 repo 寫一份 README" }).click();
+  await p.locator("text=README 就是交接文件").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("text=可以直接拿去改的範本").first().waitFor({ state: "visible", timeout: 2000 });
+  await p.locator("text=README 也是公開的").first().waitFor({ state: "visible", timeout: 2000 });
 });
 
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");

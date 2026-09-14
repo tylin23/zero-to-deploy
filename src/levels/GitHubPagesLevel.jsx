@@ -318,8 +318,13 @@ function RealStep({ onFinish }) {
         ⬇ 下載範本 index.html（電子名片）
       </button>
 
+      <div className="text-[13px] font-extrabold text-muted pt-1">
+        ⬇ 下面四段是延伸主題，需要時再展開
+      </div>
       <OwnFileChecklist />
+      <SecretsHowTo />
       <ImageHowTo />
+      <ReadmeHowTo />
 
       <ul className="list-none p-0 m-0 grid gap-2.5">
         {ITEMS.map((it, i) => (
@@ -403,6 +408,10 @@ const PITFALLS = [
     d: "中文檔名和空白在網址裡會被轉成一長串亂碼，容易連不到。用英文小寫，空白改成 -。",
   },
   {
+    t: "金鑰、密碼、.env 一個都不能傳",
+    d: "AI 寫的專案常有一個 .env 檔，裡面是 API 金鑰之類的密碼。傳到 Public repo 等於公開貼出密碼，而且事後刪掉那一行也沒用（git 會留版本紀錄）。下面「🔑 金鑰、.env 與 .gitignore」那一段會講怎麼處理。",
+  },
+  {
     t: "如果它需要「後端」，這一關放不了",
     d: "程式裡如果出現 python app.py、node server.js、pip install、npm start，或要連資料庫，那就是有後端。GitHub Pages 只會把檔案原封不動送出去、不會幫你跑程式 —— 那種要用後面幾關的方式。",
   },
@@ -440,6 +449,319 @@ const IMG_CASES = [
     why: "圖片多的時候可以開資料夾收好，路徑就寫「資料夾名／檔名」。上傳時把整個資料夾拖進 GitHub，結構會被保留。",
   },
 ];
+
+/* 金鑰。學生在這一關第一次把東西「公開」出去，是講這件事最好的時機。
+   四個檔案的判斷刻意包含「截圖」—— 截圖外洩是最常被忽略的一種。 */
+const SECRET_FILES = [
+  {
+    id: "html",
+    name: "index.html",
+    note: "你的網頁",
+    ok: true,
+    why: "這就是要給大家看的東西，當然可以上傳。",
+  },
+  {
+    id: "env",
+    name: ".env",
+    note: "裡面寫著 API_KEY=sk-a1b2c3...",
+    ok: false,
+    why: "這是密碼檔。傳上 Public repo 等於把密碼貼在公佈欄 —— 而且網路上有程式專門在掃 GitHub 上的金鑰，幾分鐘內就會被撿走。",
+  },
+  {
+    id: "example",
+    name: ".env.example",
+    note: "只有 API_KEY= 這個欄位名，沒有值",
+    ok: true,
+    why: "這是給同事看的「需要填哪些設定」清單，本身沒有秘密。實務上很常見：真的值放 .env（不上傳），欄位名放 .env.example（上傳）。",
+  },
+  {
+    id: "shot",
+    name: "screenshot.png",
+    note: "操作畫面截圖，網址列剛好照到 Webhook 網址",
+    ok: false,
+    why: "最容易被忽略的一種。金鑰不是只有寫在程式碼裡才會外洩 —— 截圖、投影片、貼到群組裡問問題，都算。上傳前先把畫面上的網址和權杖塗掉。",
+  },
+];
+
+const GITIGNORE = `# .gitignore：告訴 git「這些檔案不用管，也不要上傳」
+.env
+.env.local
+node_modules/
+*.log`;
+
+function SecretsHowTo() {
+  const [picked, setPicked] = useState({});
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(GITIGNORE);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* 忽略 */
+    }
+  };
+
+  return (
+    <details
+      className="rounded-[14px] border-2 overflow-hidden"
+      style={{
+        borderColor: "color-mix(in srgb, var(--danger) 45%, var(--border))",
+        background: "color-mix(in srgb, var(--danger) 7%, var(--surface))",
+      }}
+    >
+      <summary className="cursor-pointer select-none list-none px-4 py-3 font-extrabold text-ink flex items-center gap-2 flex-wrap">
+        <span className="text-lg" aria-hidden="true">
+          🔑
+        </span>
+        <span>金鑰、.env 與 .gitignore</span>
+        <span className="ml-auto text-muted text-xs font-normal hidden sm:inline">點此展開／收合</span>
+      </summary>
+
+      <div className="px-4 pb-4 space-y-3.5">
+        <p className="text-sm text-ink mt-0 mb-0">
+          <b className="text-ink">API 金鑰、Webhook 網址、存取權杖（token）</b>—— 名字很多，但都是同一件事：
+          <b className="text-ink">一串等同帳號密碼的文字</b>
+          。誰拿到它，就能用你的身分去做事、花你的額度。它不是設定，是密碼。
+        </p>
+
+        <div className="grid gap-2.5">
+          {[
+            [
+              "1",
+              "網頁前端藏不住金鑰",
+              "你寫在 HTML／JS 裡的東西，會原封不動送到每一位訪客的瀏覽器 —— 按 F12 就看得到，「藏在程式碼深處」完全沒有用。所以需要金鑰的服務，不能從靜態網頁直接呼叫。（這也是為什麼 API 那一關特地挑一份不用金鑰的開放資料。）",
+            ],
+            [
+              "2",
+              "傳上去之後，刪掉那一行沒有用",
+              "Public repo 是公開的，而且 git 會留下每一次的版本紀錄 —— 你把那行刪掉，舊版本裡還在。正確動作是：立刻回到那個平台把金鑰「撤銷／重新產生」，讓外洩的那一把失效。刪 commit 是其次。",
+            ],
+            [
+              "3",
+              "所以金鑰要放在「程式碼以外」的地方",
+              "在自己電腦上開發 → 放進 .env 檔，程式從那裡讀；要在平台上跑 → 用平台自己的保險箱：GitHub Actions 的 Secrets、Google Apps Script 的「指令碼屬性」、Hugging Face Spaces 的 Secrets。",
+            ],
+          ].map(([n, t, d]) => (
+            <div key={n} className="flex gap-2.5">
+              <span
+                className="shrink-0 w-[22px] h-[22px] rounded-full grid place-items-center text-xs font-extrabold mt-0.5"
+                style={{ background: "var(--danger-soft)", color: "var(--danger)" }}
+              >
+                {n}
+              </span>
+              <div>
+                <div className="text-sm font-extrabold text-ink">{t}</div>
+                <p className="text-sm text-muted m-0">{d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-sm font-extrabold text-muted pt-1">
+          🧪 練習：這四個檔案，哪些可以傳到 Public repo？
+        </div>
+
+        <div className="grid gap-2.5">
+          {SECRET_FILES.map((f) => {
+            const my = picked[f.id];
+            const right = my === (f.ok ? "ok" : "no");
+            return (
+              <div key={f.id} data-sec={f.id} className="border-2 border-line rounded-[14px] bg-surface p-3">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <code className="font-mono text-[13px] bg-surface2 px-2 py-0.5 rounded border border-line">
+                    {f.name}
+                  </code>
+                  <span className="text-xs text-muted">{f.note}</span>
+                </div>
+                {!my ? (
+                  <div className="flex flex-wrap gap-2 mt-2.5">
+                    <button
+                      type="button"
+                      className="gh-btn gh-btn-sm"
+                      onClick={() => setPicked((s2) => ({ ...s2, [f.id]: "ok" }))}
+                    >
+                      ✅ 可以上傳
+                    </button>
+                    <button
+                      type="button"
+                      className="gh-btn gh-btn-sm"
+                      onClick={() => setPicked((s2) => ({ ...s2, [f.id]: "no" }))}
+                    >
+                      🚫 不能上傳
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    className="mt-2.5 rounded-[10px] p-2.5 border-2"
+                    style={{
+                      borderColor: "var(--border)",
+                      background: f.ok ? "var(--success-soft)" : "var(--danger-soft)",
+                    }}
+                  >
+                    <div
+                      className="text-sm font-extrabold mb-1"
+                      style={{ color: f.ok ? "var(--diy-green-text)" : "var(--danger)" }}
+                    >
+                      {right ? "答對了 —— " : "正解是 —— "}
+                      {f.ok ? "✅ 可以上傳" : "🚫 不能上傳"}
+                    </div>
+                    <p className="text-sm text-ink m-0">{f.why}</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="border-t-2 border-line pt-3">
+          <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
+            <span className="text-[13px] font-bold text-ink">
+              在本機開發時：放一個 <code className="font-mono text-xs">.gitignore</code> 在專案根目錄
+            </span>
+            <button type="button" className="gh-btn gh-btn-sm" onClick={copy}>
+              {copied ? "✓ 已複製" : "📋 複製"}
+            </button>
+          </div>
+          <pre className="font-mono text-[12.5px] bg-surface2 border border-line rounded-[10px] p-3 overflow-x-auto whitespace-pre m-0">
+            {GITIGNORE}
+          </pre>
+          <p className="text-sm text-muted mt-2 mb-0">
+            寫進 <code className="font-mono text-xs">.gitignore</code> 的檔案，git
+            就會當作沒看到，上傳的時候也不會把它們送上去。
+            <b className="text-ink">
+              　純用網頁上傳的話用不到這個檔案 —— 但你回去用 AI 在自己電腦上寫程式時一定會遇到。
+            </b>
+          </p>
+        </div>
+      </div>
+    </details>
+  );
+}
+
+/* README：對公務機關來說，這其實就是交接文件。 */
+const README_TPL = `# 熊讚電子名片
+
+臺北市吉祥物熊讚的一頁式電子名片，Zero to Deploy 課程練習用。
+
+## 線上網址
+
+https://你的帳號.github.io/你的repo名稱/
+
+## 這個 repo 有什麼
+
+- \`index.html\`：整個網頁，只有這一個檔案
+- \`avatar.jpg\`：頭像圖片
+
+## 想改什麼
+
+- 名字、頭銜、簡介 → 打開 \`index.html\`，搜尋「改這裡」
+- 連結按鈕 → 同上，改 \`<a href="...">\` 裡的網址
+- 換頭像 → 換掉 \`avatar.jpg\`，檔名維持一樣就好
+
+## 改完怎麼重新上線
+
+在 GitHub 網頁上直接編輯或重新上傳檔案，按 Commit changes，
+等 1～2 分鐘網站就會更新。
+
+## 維護
+
+臺北市政府○○局○○科 ・ 2026-09`;
+
+function ReadmeHowTo() {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(README_TPL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* 忽略 */
+    }
+  };
+
+  return (
+    <details
+      className="rounded-[14px] border-2 overflow-hidden"
+      style={{
+        borderColor: "color-mix(in srgb, var(--mint) 50%, var(--border))",
+        background: "color-mix(in srgb, var(--mint) 8%, var(--surface))",
+      }}
+    >
+      <summary className="cursor-pointer select-none list-none px-4 py-3 font-extrabold text-ink flex items-center gap-2 flex-wrap">
+        <span className="text-lg" aria-hidden="true">
+          📄
+        </span>
+        <span>幫你的 repo 寫一份 README</span>
+        <span className="ml-auto text-muted text-xs font-normal hidden sm:inline">點此展開／收合</span>
+      </summary>
+
+      <div className="px-4 pb-4 space-y-3.5">
+        <p className="text-sm text-ink mt-0 mb-0">
+          上傳完之後，repo 首頁就是一排檔名。三個月後的你、或接手的同仁點進來，不知道這是什麼、網址在哪、該改哪裡。
+          在 repo 根目錄放一個叫{" "}
+          <code className="font-mono text-xs bg-surface2 px-1.5 py-0.5 rounded border border-line">
+            README.md
+          </code>{" "}
+          的檔案，<b className="text-ink">GitHub 會自動把它顯示在檔案列表下面</b> —— 等於這個專案的封面。
+        </p>
+
+        <div
+          className="callout"
+          style={{
+            borderLeftColor: "var(--mint)",
+            background: "color-mix(in srgb, var(--mint) 12%, var(--surface))",
+          }}
+        >
+          <b className="text-ink">對公務來說，README 就是交接文件。</b>
+          承辦換人的時候，它決定了接手的人是「能接著改」，還是「只能整個重做」。這也是後面「交給資訊單位納管」會一直提到的事
+          —— 交接不是交檔案，是交「別人看得懂的檔案」。
+        </div>
+
+        <div>
+          <div className="text-[13px] font-extrabold text-muted mb-1.5">五件一定要寫的事</div>
+          <ol className="list-decimal pl-5 m-0 grid gap-1 text-sm text-ink">
+            <li>這是什麼、給誰用</li>
+            <li>線上網址在哪</li>
+            <li>要改內容的話，改哪一個檔案</li>
+            <li>改完怎麼重新上線</li>
+            <li>誰維護、什麼時候做的</li>
+          </ol>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
+            <span className="text-[13px] font-bold text-ink">可以直接拿去改的範本</span>
+            <button type="button" className="gh-btn gh-btn-sm" onClick={copy}>
+              {copied ? "✓ 已複製" : "📋 複製"}
+            </button>
+          </div>
+          <pre className="font-mono text-[12.5px] bg-surface2 border border-line rounded-[10px] p-3 overflow-x-auto whitespace-pre m-0 max-h-[280px]">
+            {README_TPL}
+          </pre>
+          <p className="text-sm text-muted mt-2 mb-0">
+            <code className="font-mono text-xs">#</code> 是大標題、
+            <code className="font-mono text-xs">##</code> 是小標題、
+            <code className="font-mono text-xs">-</code> 是項目符號 —— 這種寫法叫{" "}
+            <b className="text-ink">Markdown</b>，GitHub 會自動幫你排版好。
+          </p>
+        </div>
+
+        <div
+          className="callout"
+          style={{
+            borderLeftColor: "var(--sun)",
+            background: "color-mix(in srgb, var(--sun) 14%, var(--surface))",
+          }}
+        >
+          <b className="text-ink">⚠️ README 也是公開的。</b>
+          不要在裡面寫內部系統網址、帳號密碼、金鑰，或個人手機 —— 它跟網頁一樣，全世界都看得到。
+        </div>
+      </div>
+    </details>
+  );
+}
 
 function ImageHowTo() {
   const [picked, setPicked] = useState({});
@@ -594,7 +916,7 @@ function OwnFileChecklist() {
         <span className="text-lg" aria-hidden="true">
           🩹
         </span>
-        <span>要傳自己做的檔案？先看這 5 個雷</span>
+        <span>要傳自己做的檔案？先看這 6 個雷</span>
         <span className="ml-auto text-muted text-xs font-normal hidden sm:inline">點此展開／收合</span>
       </summary>
       <div className="px-4 pb-4">
