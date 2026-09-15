@@ -591,16 +591,6 @@ function FrontBackStep({ onNext, navigate }) {
           假設你要做一個「市民健康講座線上報名」。下面每件事，是前端還是後端負責？（六題都答對才能繼續）
         </p>
 
-        {/* 六題的示意圖。圖上的 ①~⑥ 跟下面六張卡片同順序、文字一字不差。
-            圖檔沒放的話整塊不顯示，下面的題目本來就完整，不會開天窗。 */}
-        <div className="mb-3">
-          <ZoomFigure
-            src={import.meta.env.BASE_URL + "images/frontback-signup.jpg"}
-            alt="市民健康講座線上報名的前後端分工示意圖：左邊是市民看得到的畫面，右邊是伺服器在背後做的事，中間標示資料往返"
-            caption="圖上的編號和下面六題一一對應"
-          />
-        </div>
-
         <div className="grid gap-2.5">
           {PARTS.map((p, i) => {
             const picked = ans[i];
@@ -665,6 +655,26 @@ function FrontBackStep({ onNext, navigate }) {
             );
           })}
         </div>
+
+        {/* 六題的示意圖收在這裡：圖上的 ①~⑥ 跟上面六張卡片同順序、文字一字不差，
+            收合放在題目下方，答完題目回頭對照架構圖。
+            圖檔沒放的話整塊不顯示，上面的題目本來就完整，不會開天窗。 */}
+        <details className="mt-3 rounded-[14px] border-2 border-line bg-surface overflow-hidden">
+          <summary className="cursor-pointer select-none list-none px-4 py-3 font-extrabold text-ink flex items-center gap-2 flex-wrap">
+            <span className="text-lg" aria-hidden="true">
+              🗺️
+            </span>
+            <span>看看架構解說圖</span>
+            <span className="ml-auto text-muted text-xs font-normal hidden sm:inline">點此展開／收合</span>
+          </summary>
+          <div className="px-4 pb-4">
+            <ZoomFigure
+              src={import.meta.env.BASE_URL + "images/frontback-signup.jpg"}
+              alt="市民健康講座線上報名的前後端分工示意圖：左邊是市民看得到的畫面，右邊是伺服器在背後做的事，中間標示資料往返"
+              caption="圖上的編號和上面六題一一對應"
+            />
+          </div>
+        </details>
       </div>
 
       {done && (

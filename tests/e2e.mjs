@@ -870,6 +870,11 @@ await st("第 2 關：分分看的示意圖可點擊放大（圖沒放也不能�
   await B("我懂了，下一步").click();
   await p.waitForSelector("text=換你分分看", { timeout: 4000 });
 
+  // 圖現在收在六題下方的收合區塊，要先展開
+  const sum = p.locator("summary", { hasText: "看看架構解說圖" });
+  await sum.waitFor({ state: "visible", timeout: 2500 });
+  await sum.click();
+
   const fig = p.locator("[data-zoomfig]");
   const n = await fig.count();
 
