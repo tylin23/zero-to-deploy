@@ -311,14 +311,23 @@ function ToolShot({ id, alt }) {
   if (broken) return null;
   return (
     <figure className="m-0 mt-2">
-      <img
-        src={import.meta.env.BASE_URL + "images/ai-" + id + ".png"}
-        alt={alt}
-        loading="lazy"
-        onError={() => setBroken(true)}
-        /* 手機靠寬度限制就夠；桌機放寬到 400px，不然截整個視窗的圖會小到看不清選單文字 */
-        className="block max-w-full max-h-[220px] sm:max-h-[400px] w-auto rounded-[12px] border-2 border-line bg-surface2"
-      />
+      {/* 固定高度（不是上限）：三張截圖的原始尺寸差很多（Claude 只有 239×161，
+          Gemini/ChatGPT 是它的 2~3 倍），用 max-h 的話小圖就撐不大。
+          改成固定 height，三張圖統一撐到同樣高，寬度依各自比例自動算 ——
+          外層用 overflow-x-auto 而不是 max-w-full，避免手機上寬度不夠時
+          瀏覽器把圖「壓扁」（max-width 會強制縮寬但不會跟著縮高，圖就變形了）。 */}
+      <div className="overflow-x-auto rounded-[12px] border-2 border-line bg-surface2">
+        <img
+          src={import.meta.env.BASE_URL + "images/ai-" + id + ".png"}
+          alt={alt}
+          loading="lazy"
+          onError={() => setBroken(true)}
+          /* max-w-none 是必要的：Tailwind 的 preflight 幫所有 <img> 預設加了
+             max-width:100%，不特別取消掉的話，圖還是會被壓回容器寬度、
+             變成寬高比走樣（外層 overflow-x-auto 才是負責「太寬就捲動」的那層）。 */
+          className="block h-[220px] sm:h-[400px] w-auto max-w-none"
+        />
+      </div>
       <figcaption className="text-xs text-muted mt-1">▲ {alt}</figcaption>
     </figure>
   );

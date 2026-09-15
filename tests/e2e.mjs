@@ -51,6 +51,13 @@ await st("1 方法全景（含 AI 工具）", async () => {
       [...document.querySelectorAll("figure img")].filter((i) => i.complete && i.naturalWidth === 0).length
     );
     if (bad) throw new Error(id + " 留了破圖");
+    // 三張截圖原始尺寸差很多（Claude 只有 239×161），圖用固定高度撐大時
+    // 寬度不能被壓扁走樣 —— 顯示比例要跟原始比例一致，容器不夠寬就該用捲動，不是硬擠
+    const ratio = await p.$eval(`[data-tool=${id}] img`, (img) => {
+      const b = img.getBoundingClientRect();
+      return (b.width / b.height) / (img.naturalWidth / img.naturalHeight);
+    });
+    if (Math.abs(ratio - 1) > 0.03) throw new Error(id + " 的圖顯示比例走樣，實際/原始比 = " + ratio.toFixed(2));
   }
   await p.waitForSelector("text=三家做的其實是同樣三件事", { timeout: 2500 });
   await B("那為什麼還要學別的").click();
