@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Level, { Eyebrow } from "../components/Level.jsx";
+import BrandLogo from "../components/BrandLogo.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES, mapOrder } from "../data/levels.js";
@@ -10,7 +11,7 @@ import { DONE } from "../content/levelCopy.js";
 const AI_TOOLS = [
   {
     id: "claude",
-    emoji: "🧩",
+    brand: "anthropic",
     name: "Claude Artifacts",
     vendor: "Anthropic",
     what: "在對話旁邊直接生出一個可以點、可以互動的網頁。",
@@ -23,7 +24,7 @@ const AI_TOOLS = [
   },
   {
     id: "gemini",
-    emoji: "🎨",
+    brand: "gemini",
     name: "Gemini Canvas",
     vendor: "Google",
     what: "在 Gemini 的 Canvas 面板裡寫文件或做小網頁，右邊即時預覽改的結果。",
@@ -35,7 +36,7 @@ const AI_TOOLS = [
   },
   {
     id: "chatgpt",
-    emoji: "🏗️",
+    brand: "openai",
     name: "ChatGPT Sites",
     vendor: "OpenAI",
     what: "直接請 ChatGPT 幫你做一個網站或小工具，做完可以預覽、發布、分享。",
@@ -209,7 +210,7 @@ function ToolsStep({ onNext }) {
                 className="w-full text-left p-4 flex items-center gap-3"
                 aria-expanded={isOpen}
               >
-                <span className="text-3xl leading-none">{t.emoji}</span>
+                <BrandLogo brand={t.brand} size={32} />
                 <div className="flex-1">
                   <div className="font-extrabold text-ink">{t.name}</div>
                   <div className="text-xs text-muted font-bold">{t.vendor}</div>

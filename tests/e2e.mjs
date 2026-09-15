@@ -1222,6 +1222,41 @@ await st("第 5 關：四家的品牌 logo 是內嵌 SVG，沒有去外面抓圖
   await page.close();
 });
 
+await st("第 1 關：AI 工具卡的品牌 logo 是內嵌 SVG，沒有去外面抓圖", async () => {
+  // 同一個道理套用在第 1 關的三張 AI 工具卡（Claude／Gemini／ChatGPT）：
+  // logo 換成品牌圖示後，一樣要在「所有外連被擋」的情況下完整顯示。
+  const page = await ctx.newPage();
+  await page.route("**://*/**", (route) =>
+    route.request().url().includes("localhost:4173") ? route.continue() : route.abort()
+  );
+  await page.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${base}/index.html#/level/landscape`, { waitUntil: "networkidle" });
+  await page.waitForSelector("[data-tool=claude]");
+
+  const logos = await page.$$eval("[data-tool] button", (btns) =>
+    btns.map((btn) => {
+      const tool = btn.closest("[data-tool]").dataset.tool;
+      const svg = btn.querySelector("svg");
+      return {
+        tool,
+        inline: !!svg && svg.querySelectorAll("path").length > 0,
+        len: svg ? (svg.querySelector("path")?.getAttribute("d") || "").length : 0,
+        img: btn.querySelectorAll("img").length,
+        fill: svg ? getComputedStyle(svg).fill : null,
+      };
+    })
+  );
+  if (logos.length !== 3) throw new Error("AI 工具卡不是三張，實際 " + logos.length);
+  for (const l of logos) {
+    if (!l.inline) throw new Error(l.tool + " 的 logo 不是內嵌 SVG");
+    if (l.img) throw new Error(l.tool + " 的 logo 用了 <img>，離線就會破圖");
+    // Anthropic 官方圖形本來就簡潔（實測 168 字），門檻不能設太高
+    if (l.len < 100) throw new Error(l.tool + " 的 logo path 只有 " + l.len + " 字，不像真的品牌圖形");
+    if (!l.fill || l.fill === "none") throw new Error(l.tool + " 的 logo 沒有填色");
+  }
+  await page.close();
+});
+
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");
 await b.close();
 process.exit(errs.length ? 1 : 0);
