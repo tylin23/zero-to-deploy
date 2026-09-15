@@ -16,7 +16,7 @@ const HOSTS = [
     name: "GitHub Pages",
     vendor: "GitHub",
     build: "不會（要自己寫 Actions）",
-    free: "公開 repo 免費",
+    free: "公開 repo 免費，每月 100GB 流量、1GB 站台大小",
     form: "不行",
     when: "純 HTML／CSS／JS 的單頁，你已經做過了",
   },
@@ -26,7 +26,7 @@ const HOSTS = [
     name: "Netlify",
     vendor: "Netlify",
     build: "會，自動",
-    free: "每月 100 GB 流量、300 分鐘建置",
+    free: "新帳號每月 300 點數（約等於 15GB 流量，或 20 次建置）",
     form: "可以（Netlify Forms）",
     when: "要收表單、或想要 PR 預覽網址",
   },
@@ -37,8 +37,27 @@ const HOSTS = [
     vendor: "Cloudflare",
     build: "會，自動",
     free: "流量不計量、每月 500 次建置",
-    form: "要自己寫 Functions",
+    form: "要自己寫 Functions（另計 Workers 額度）",
     when: "流量可能比較大、或想要最大方的免費額度",
+  },
+  {
+    id: "gas",
+    emoji: "🟦",
+    name: "Google Apps Script",
+    vendor: "Google",
+    note: "跟上面三家不太一樣：它不是「放靜態檔案的地方」，而是 Google 提供的免費小型後端執行環境 —— 寫一小段程式碼，用你的 Google 帳號跑。（後面會有一整關帶你實際用它做一次自動推播）",
+    build: "不需要 build（線上寫程式碼，部署即上線）",
+    free: (
+      <>
+        個人 Google 帳號：每天可跑 90 分鐘、呼叫外部網址 2 萬次
+        <br />
+        機關 Workspace 帳號：每天可跑 6 小時、呼叫外部網址 10 萬次
+        <br />
+        （單次執行上限都是 6 分鐘，兩種帳號一樣）
+      </>
+    ),
+    form: "可以，而且直接寫進 Google 試算表，等於免費後端",
+    when: "想做「真的會存資料」的小工具（報名表、投票、查詢），但不想自己架後端",
   },
 ];
 
@@ -218,7 +237,7 @@ function WhyStep({ onNext }) {
       <PipelineDemo />
 
       <button type="button" className="btn btn-primary" disabled={!auto} onClick={onNext}>
-        {auto ? "下一步：三家比一比 →" : "先把上面的勾勾打開看看差別"}
+        {auto ? "下一步：四家比一比 →" : "先把上面的勾勾打開看看差別"}
       </button>
     </div>
   );
@@ -407,8 +426,8 @@ function CompareStep({ onNext }) {
   return (
     <div className="space-y-4">
       <Eyebrow>步驟 2 / 3 · 怎麼選</Eyebrow>
-      <h2 className="text-2xl font-bold text-ink">三家比一比 🔍</h2>
-      <p className="text-muted text-sm">三張都點開看看 —— 重點不是記住規格，是知道「什麼情況該選誰」。</p>
+      <h2 className="text-2xl font-bold text-ink">四家比一比 🔍</h2>
+      <p className="text-muted text-sm">四張都點開看看 —— 重點不是記住規格，是知道「什麼情況該選誰」。</p>
 
       <div className="grid gap-2.5">
         {HOSTS.map((h) => {
@@ -436,6 +455,7 @@ function CompareStep({ onNext }) {
               </button>
               {isOpen && (
                 <div className="px-3.5 pb-3.5 pt-3 border-t-2 border-line grid gap-2">
+                  {h.note && <div className="text-xs text-muted italic -mt-1 mb-1">{h.note}</div>}
                   {COLS.map(([k, label]) => (
                     <div key={k} className="flex gap-2.5 items-baseline flex-wrap text-sm">
                       <span className="text-xs font-extrabold text-muted w-[86px] shrink-0">{label}</span>
@@ -457,10 +477,15 @@ function CompareStep({ onNext }) {
             background: "color-mix(in srgb, var(--mint) 12%, var(--surface))",
           }}
         >
-          <b className="text-ink">三家的共同點比差別更重要：</b>
+          <b className="text-ink">GitHub Pages、Netlify、Cloudflare Pages 這三家的共同點比差別更重要：</b>
           檔案都放在<b className="text-ink">你自己的 GitHub repo</b> 裡。所以換平台的成本很低 ——
           同一個 repo 可以同時接兩家，拿到兩個網址。
           <b className="text-ink">被綁住的不是你的檔案，只是那個網址。</b>
+          <br />
+          <br />
+          <b className="text-ink">Google Apps Script 是不同的一種東西：</b>
+          它不放靜態檔案，而是幫你跑一小段後端程式碼、還能直接讀寫你的 Google 試算表 ——
+          適合已經用「這個我可以自己做嗎」判斷過、確定沒有個資疑慮的小工具。
         </div>
       )}
 
@@ -469,7 +494,7 @@ function CompareStep({ onNext }) {
       </p>
 
       <button type="button" className="btn btn-primary" disabled={!all} onClick={onNext}>
-        {all ? "下一步：真的接一次 →" : `三張都點開看看（${seen.size} / 3）`}
+        {all ? "下一步：真的接一次 →" : `四張都點開看看（${seen.size} / 4）`}
       </button>
     </div>
   );
