@@ -399,11 +399,11 @@ await st("5 Netlify / Cloudflare Pages", async () => {
     null,
     { timeout: 2500 }
   );
-  await B("三家比一比").click();
+  await B("四家比一比").click();
 
-  // 步驟 2：三張都要點開才放行
-  await p.waitForSelector("text=三家比一比");
-  for (const id of ["ghp", "netlify", "cfp"]) {
+  // 步驟 2：四張都要點開才放行
+  await p.waitForSelector("text=四家比一比");
+  for (const id of ["ghp", "netlify", "cfp", "gas"]) {
     await p.click(`[data-host=${id}] button`);
     await p.waitForSelector(`[data-host=${id}] [aria-expanded=true]`, { timeout: 2500 });
   }
