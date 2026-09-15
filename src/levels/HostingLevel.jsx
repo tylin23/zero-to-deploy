@@ -203,10 +203,14 @@ function WhyStep({ onNext }) {
           ，要先「翻譯」成純 HTML／CSS／JS —— 這道手續就叫 build。
         </div>
         <div className="mt-1.5">
-          GitHub Pages <b className="text-ink">不會</b>幫你 build（要自己寫設定檔）；Netlify 和 Cloudflare
-          Pages <b className="text-ink">會自動判斷並幫你做</b>。
+          GitHub Pages <b className="text-ink">不會自動幫你判斷、build</b>
+          （要自己寫一份 GitHub Actions 流程，教它怎麼做）；Netlify 和 Cloudflare
+          Pages <b className="text-ink">會直接幫你自動判斷框架、自動 build</b>，不用自己寫任何設定檔。
+        </div>
+        <div className="mt-1.5">
           <b className="text-ink">
-            　你現在看的這個教學網站，就是這樣 build 出來的 —— 原始碼在 GitHub 上，但你打開的是 build 完的成品。
+            你現在看的這個教學網站，原始碼在 GitHub 上，你打開的是 build 完的成品 ——
+            走的正是「自己寫 Actions」這條路，不是 Netlify／Cloudflare 那種自動判斷。往下按按看，就是它實際在跑的那份流程。
           </b>
         </div>
       </div>
