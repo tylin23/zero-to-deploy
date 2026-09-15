@@ -25,11 +25,13 @@ export default function ZoomFigure({ src, alt, caption }) {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     closeRef.current?.focus();
+    // 先把要還焦點的那顆按鈕存起來：cleanup 跑的時候 ref.current 可能已經變了
+    const opener = openerRef.current;
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prev;
       // 關閉後把焦點還給原本那顆按鈕，鍵盤使用者才不會跳回頁面最上面
-      openerRef.current?.focus();
+      opener?.focus();
     };
   }, [open]);
 

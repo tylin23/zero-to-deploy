@@ -1037,6 +1037,64 @@ await st("名詞小教室：佇列卡帶著模擬器（從 EXE 那一關搬過�
   if (await card.locator("button", { hasText: "去玩" }).count()) throw new Error("佇列卡還連著關卡");
 });
 
+await st("第 5 關：建置流程模擬 —— 檢查沒過，上線那段就不跑", async () => {
+  await go("hosting");
+  await p.waitForSelector("text=同一類，但它會幫你做更多事");
+  const box = p.locator("[data-pipe]");
+  await box.waitFor({ state: "visible", timeout: 3000 });
+
+  const states = () =>
+    p.$$eval("[data-pipe] [data-step]", (els) =>
+      Object.fromEntries(els.map((e) => [e.dataset.step, e.dataset.state]))
+    );
+
+  // 綠燈：七步跑完，deploy 也要跑到
+  await box.locator("button", { hasText: "推上一版正常的" }).click();
+  await p.waitForFunction(
+    () => document.querySelector('[data-pipe] [data-step=deploy]')?.dataset.state === "ok",
+    null,
+    { timeout: 8000 }
+  );
+  let st1 = await states();
+  for (const k of ["checkout", "node", "install", "lint", "build", "upload", "deploy"]) {
+    if (st1[k] !== "ok") throw new Error("綠燈時 " + k + " 應該是 ok，實際 " + st1[k]);
+  }
+  await p.locator("[data-pipe] >> text=全綠 → 新版上線").first().waitFor({ state: "visible", timeout: 3000 });
+
+  // 紅燈：卡在 lint，後面（含 deploy）全部不跑
+  await box.locator("button", { hasText: "推上一版有錯的" }).click();
+  await p.waitForFunction(
+    () => document.querySelector('[data-pipe] [data-step=lint]')?.dataset.state === "fail",
+    null,
+    { timeout: 8000 }
+  );
+  const st2 = await states();
+  if (st2.lint !== "fail") throw new Error("lint 應該要失敗");
+  for (const k of ["build", "upload", "deploy"]) {
+    if (st2[k] !== "skip") throw new Error("紅燈後 " + k + " 不該跑，實際 " + st2[k]);
+  }
+  // 這一段的重點：needs: build 讓上線被擋住
+  const txt = await box.innerText();
+  for (const t of ["needs: build", "網站維持舊版", "誰在把關"]) {
+    if (!txt.includes(t)) throw new Error("建置流程那段少了「" + t + "」");
+  }
+});
+
+await st("名詞小教室：CI/CD 卡把「自動跑／跑去哪／跑壞了」分開", async () => {
+  await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${base}/index.html#/terms/cicd`, { waitUntil: "networkidle" });
+  const card = p.locator("div.card", { has: p.locator("text=CI / CD（自動建置與上線）") }).first();
+  await card.waitFor({ state: "visible", timeout: 3000 });
+  await card.locator("text=CI/CD 是「自動跑」").first().waitFor({ state: "visible", timeout: 3000 });
+  const txt = await card.innerText();
+  for (const t of ["needs: build", "跑去哪", "跑壞了怎麼辦", "不等於沒人把關"]) {
+    if (!txt.includes(t)) throw new Error("CI/CD 卡少了「" + t + "」");
+  }
+  // 掛在第 5 關底下
+  await card.locator("button", { hasText: "Netlify / Cloudflare Pages" }).first().click();
+  await p.waitForFunction(() => location.hash === "#/level/hosting", null, { timeout: 2500 });
+});
+
 await st("名詞小教室：Port 卡把「連不到」的兩個原因分開", async () => {
   await p.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
   await p.goto(`${base}/index.html#/terms/port`, { waitUntil: "networkidle" });

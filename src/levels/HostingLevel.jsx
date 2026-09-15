@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Level, { Eyebrow } from "../components/Level.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
@@ -101,6 +101,19 @@ const STEPS_REAL = [
   },
 ];
 
+/* 這個網站自己的 .github/workflows/deploy.yml，翻成人話。
+   兩個 job 就叫 build 和 deploy，而 deploy 的 needs: build ——
+   CI/CD 的精神就在那一行：CD 只在 CI 綠燈時才發生。 */
+const PIPE = [
+  { id: "checkout", job: "ci", cmd: "actions/checkout", say: "把 repo 裡的檔案抓一份下來" },
+  { id: "node", job: "ci", cmd: "actions/setup-node", say: "把「翻譯機」的環境準備好" },
+  { id: "install", job: "ci", cmd: "npm ci", say: "照清單把要用到的材料裝齊" },
+  { id: "lint", job: "ci", cmd: "npm run lint", say: "先檢查有沒有明顯寫錯的地方", canFail: true },
+  { id: "build", job: "ci", cmd: "npm run build", say: "翻譯成瀏覽器看得懂的成品（產出 dist 資料夾）" },
+  { id: "upload", job: "ci", cmd: "upload-pages-artifact", say: "把成品打包交出去" },
+  { id: "deploy", job: "cd", cmd: "deploy-pages", say: "平台把成品放到網址上，這時才真的換新版" },
+];
+
 export default function HostingLevel({ ctx }) {
   return (
     <Level
@@ -198,9 +211,180 @@ function WhyStep({ onNext }) {
         </div>
       </div>
 
+      <PipelineDemo />
+
       <button type="button" className="btn btn-primary" disabled={!auto} onClick={onNext}>
         {auto ? "下一步：三家比一比 →" : "先把上面的勾勾打開看看差別"}
       </button>
+    </div>
+  );
+}
+
+/* ---------- 「要自己寫 Actions」到底是什麼 ----------
+   第 5 關前面說 GitHub Pages「不會幫你 build（要自己寫 Actions）」，
+   但沒解釋那是什麼 —— 這一段用「這個網站自己的部署流程」把那句話補完，
+   順便把 CI/CD 講清楚：檢查沒過，上線那一段根本不會跑。 */
+function PipelineDemo() {
+  const [run, setRun] = useState(null); // null | "ok" | "fail"
+  const [at, setAt] = useState(-1); // 跑到第幾步
+
+  const start = (mode) => {
+    setRun(mode);
+    setAt(-1);
+    const stop = mode === "fail" ? PIPE.findIndex((x) => x.id === "lint") : PIPE.length - 1;
+    let i = 0;
+    const tick = () => {
+      setAt(i);
+      if (i < stop) {
+        i += 1;
+        timer.current = setTimeout(tick, 420);
+      }
+    };
+    timer.current = setTimeout(tick, 120);
+  };
+
+  const timer = useRef(null);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const failAt = run === "fail" ? PIPE.findIndex((x) => x.id === "lint") : -1;
+  const done = run && at === (run === "fail" ? failAt : PIPE.length - 1);
+
+  // 失敗之後的步驟要顯示「不跑了」而不是「還沒跑」——
+  // 這一段要教的就是「後面全部不跑」，兩者看起來不能一樣。
+  const stateOf = (i) => {
+    if (run === "fail") {
+      if (i > failAt) return at >= failAt ? "skip" : "wait";
+      if (i === failAt) return at >= i ? "fail" : "wait";
+    }
+    return at >= i ? "ok" : "wait";
+  };
+
+  return (
+    <div className="border-2 border-line rounded-[18px] bg-surface2 p-4 space-y-3" data-pipe>
+      <div className="text-sm font-extrabold text-ink">
+        那「要自己寫 Actions」是什麼意思？—— 就是這個網站自己在做的事
+      </div>
+      <p className="text-sm text-muted m-0">
+        上面比較表裡，GitHub Pages 那欄寫「不會幫你 build（要自己寫 Actions）」。
+        意思是你要在 repo 裡放一張<b className="text-ink">流程表</b>，告訴它每次有人推上新版時要做哪些事。
+        <b className="text-ink">你現在看的這個網站就是這樣上線的</b>，按下面的按鈕看它跑一次。
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        <button type="button" className="btn btn-primary btn-sm" onClick={() => start("ok")}>
+          ▶ 推上一版正常的
+        </button>
+        <button type="button" className="btn btn-ghost btn-sm" onClick={() => start("fail")}>
+          ▶ 推上一版有錯的
+        </button>
+      </div>
+
+      {run && (
+        <div className="grid gap-2.5 animate-pop">
+          {["ci", "cd"].map((job) => (
+            <div
+              key={job}
+              data-job={job}
+              className="border-2 rounded-[14px] bg-surface p-3"
+              style={{
+                borderColor:
+                  job === "cd" && run === "fail" ? "var(--border)" : "var(--border)",
+                opacity: job === "cd" && run === "fail" && done ? 0.55 : 1,
+              }}
+            >
+              <div className="text-xs font-extrabold mb-2 flex items-center gap-2 flex-wrap">
+                <span className="font-mono text-ink">{job === "ci" ? "build" : "deploy"}</span>
+                <span className="text-muted">
+                  {job === "ci" ? "＝ CI：抓下來、裝好、檢查、建置" : "＝ CD：把成品放上網址"}
+                </span>
+                {job === "cd" && (
+                  <span className="text-muted font-mono">needs: build</span>
+                )}
+              </div>
+              <div className="grid gap-1.5">
+                {PIPE.filter((x) => x.job === job).map((x) => {
+                  const st = stateOf(PIPE.indexOf(x));
+                  const mark =
+                    st === "ok" ? "✓" : st === "fail" ? "✕" : st === "skip" ? "—" : "·";
+                  const color =
+                    st === "ok"
+                      ? "var(--diy-green-text)"
+                      : st === "fail"
+                        ? "var(--diy-red-text)"
+                        : "var(--muted)";
+                  return (
+                    <div
+                      key={x.id}
+                      data-step={x.id}
+                      data-state={st}
+                      className="flex items-start gap-2.5 text-sm"
+                      style={{ opacity: st === "wait" || st === "skip" ? 0.5 : 1 }}
+                    >
+                      <span className="font-mono font-bold w-4 shrink-0" style={{ color }}>
+                        {mark}
+                      </span>
+                      <span className="min-w-0">
+                        <code className="font-mono text-xs text-ink">{x.cmd}</code>
+                        <span className="block text-muted text-xs">{x.say}</span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {done && run === "ok" && (
+        <div
+          className="callout m-0"
+          style={{
+            borderLeftColor: "var(--mint)",
+            background: "color-mix(in srgb, var(--mint) 12%, var(--surface))",
+          }}
+        >
+          <b className="text-ink">全綠 → 新版上線。</b>
+          你從頭到尾只做了「改檔案、推上去」，中間那七步都是那張流程表自己跑的。
+          這整套就叫 <b className="text-ink">CI/CD</b>：CI 是自動檢查和建置，CD 是自動送上線。
+        </div>
+      )}
+
+      {done && run === "fail" && (
+        <div
+          className="callout m-0"
+          style={{
+            borderLeftColor: "var(--danger)",
+            background: "color-mix(in srgb, var(--danger) 8%, var(--surface))",
+          }}
+        >
+          <b className="text-ink">檢查沒過 —— 後面全部不跑，網站維持舊版。</b>
+          <div className="mt-1.5 text-sm">
+            關鍵在 deploy 那段寫的 <code className="font-mono text-xs text-ink">needs: build</code>：
+            <b className="text-ink">上線這一段，只在檢查和建置都過了才會發生</b>。
+            所以你推上一版有問題的東西，市民看到的還是昨天那個正常的版本 ——
+            這就是自動化最值錢的地方，不是「快」，是<b className="text-ink">擋得住</b>。
+          </div>
+        </div>
+      )}
+
+      <details className="text-sm">
+        <summary className="cursor-pointer text-muted font-bold">
+          「全自動」的話，是誰在把關？
+        </summary>
+        <div className="mt-2 text-sm text-ink space-y-1.5">
+          <p className="m-0">
+            把關的是<b>你自己寫在 repo 裡的那些檢查</b>。上面那步{" "}
+            <code className="font-mono text-xs">npm run lint</code>{" "}
+            是這個專案自己決定要跑的；你也可以加「跑測試」「檢查有沒有不該外流的金鑰」。
+            <b>流程自動跑，但要跑哪些關卡是人決定的。</b>
+          </p>
+          <p className="m-0 text-muted">
+            拿公文來比：會辦流程是固定的、系統自動送，但<b className="text-ink">要會哪些單位</b>是人訂的；
+            沒會齊就不能發文。CI/CD 是同一件事。
+          </p>
+        </div>
+      </details>
     </div>
   );
 }
