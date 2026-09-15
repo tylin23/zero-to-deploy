@@ -55,11 +55,9 @@ export default function Level({ ctx, badge, steps, done, total }) {
     <div>
       <StepBar current={step} total={total ?? steps.length} doneUntil={step - 1} />
       {step > 0 && (
-        <button
-          type="button"
-          onClick={back}
-          className="text-muted hover:text-ink text-sm font-bold mb-2 inline-flex items-center gap-1"
-        >
+        // 原本是一行小字的連結，很容易被上面的步驟標題蓋過去，看起來像「只有下一步」。
+        // 改成跟「下一步」同一套按鈕樣式（只是用 ghost 當次要動作），讓它讀起來就是一顆按鈕。
+        <button type="button" onClick={back} className="btn btn-ghost btn-sm mb-3">
           ← 回上一步
         </button>
       )}
