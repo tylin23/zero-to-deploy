@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Level, { Eyebrow } from "../components/Level.jsx";
+import BrandLogo from "../components/BrandLogo.jsx";
 import Quiz from "../components/Quiz.jsx";
 import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
@@ -12,7 +13,7 @@ import { DONE } from "../content/levelCopy.js";
 const HOSTS = [
   {
     id: "ghp",
-    emoji: "📄",
+    brand: "github",
     name: "GitHub Pages",
     vendor: "GitHub",
     build: "不會（要自己寫 Actions）",
@@ -23,7 +24,7 @@ const HOSTS = [
   },
   {
     id: "netlify",
-    emoji: "🟩",
+    brand: "netlify",
     name: "Netlify",
     vendor: "Netlify",
     build: "會，自動",
@@ -34,7 +35,7 @@ const HOSTS = [
   },
   {
     id: "cfp",
-    emoji: "🟧",
+    brand: "cloudflare",
     name: "Cloudflare Pages",
     vendor: "Cloudflare",
     build: "會，自動",
@@ -45,7 +46,7 @@ const HOSTS = [
   },
   {
     id: "gas",
-    emoji: "🟦",
+    brand: "gas",
     name: "Google Apps Script",
     vendor: "Google",
     note: "跟另外三家不太一樣：它不是「放靜態檔案的地方」，而是 Google 提供的免費小型後端執行環境 —— 寫一小段程式碼，用你的 Google 帳號跑。（後面會有一整關帶你實際用它做一次自動推播）",
@@ -448,8 +449,8 @@ function CompareStep({ onNext }) {
                   data-host={h.id}
                   className="p-3 text-left align-bottom border-l-2 border-line"
                 >
-                  <span className="text-2xl block leading-none mb-1" aria-hidden="true">
-                    {h.emoji}
+                  <span className="block mb-1.5">
+                    <BrandLogo brand={h.brand} />
                   </span>
                   <span className="block font-extrabold text-ink">{h.name}</span>
                   <span className="block text-xs text-muted font-normal">{h.vendor}</span>
@@ -486,9 +487,7 @@ function CompareStep({ onNext }) {
             className="border-2 border-line rounded-[16px] bg-surface overflow-hidden"
           >
             <div className="p-3.5 flex items-center gap-3 bg-surface2 border-b-2 border-line">
-              <span className="text-2xl leading-none" aria-hidden="true">
-                {h.emoji}
-              </span>
+              <BrandLogo brand={h.brand} size={28} />
               <div>
                 <div className="font-extrabold text-ink">{h.name}</div>
                 <div className="text-xs text-muted">{h.vendor}</div>
