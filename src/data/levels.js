@@ -57,7 +57,7 @@ export const mapOrder = [
     emoji: "📬",
     title: "GAS + API 推送",
     short: "GAS 自動推送",
-    tagline: "用 Google Apps Script 自動推播",
+    tagline: "自動化、寫試算表、做網頁 —— 不只推播",
     status: "ready",
     phase: "pre",
   },
