@@ -661,7 +661,7 @@ await st("12 Docker", async () => {
   await p.waitForSelector("text=打包貨櫃達成", { timeout: 3000 });
 });
 
-await st("13 EXE 執行檔（全線通關）", async () => {
+await st("13 EXE 執行檔（打包與發版）", async () => {
   await go("exe-queue");
   // 步驟 1：四題「做網頁還是做 EXE」
   for (const [id, pick, expect] of [
@@ -696,7 +696,64 @@ await st("13 EXE 執行檔（全線通關）", async () => {
 
   // 這句話在頁面上出現三次（測驗選項、改寫對照、changelog 範本）——只點測驗那顆按鈕
   await p.locator("button", { hasText: "修正：承辦人欄位空白時" }).first().click();
-  await B("完成整張地圖").click();
+  await B("完成這一關").click();
+  await p.waitForSelector("text=打包發版達成", { timeout: 3000 });
+});
+
+await st("14 新聞稿彙整（實戰整合，全線通關）", async () => {
+  await go("news-pipeline");
+
+  // 步驟 1：四段各自標出「這是第幾關學的」
+  await p.waitForSelector("[data-stages]");
+  const stages = await p.$$eval("[data-stage]", (els) => els.map((e) => e.dataset.stage));
+  for (const id of ["rss", "cron", "ai", "discord"]) {
+    if (!stages.includes(id)) throw new Error("流程少了 " + id + " 這一段");
+  }
+  await B("先看它跑完長什麼樣").click();
+
+  // 步驟 2：預設不送聯絡人；勾起來才會出現在 AI 與 Discord，並跳出提醒
+  await p.waitForSelector("[data-run]");
+  await p.click("[data-run]");
+  await p.waitForSelector("[data-output]", { timeout: 3000 });
+  if (await p.locator("[data-ai-contact]").count()) throw new Error("沒勾就把聯絡人送進 AI 了");
+  if (await p.locator("[data-contact-warn]").count()) throw new Error("沒勾就跳出聯絡人警告");
+
+  await p.click("[data-contact-toggle]");
+  await p.click("[data-run]");
+  await p.locator("[data-ai-contact]").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("[data-discord-contact]").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("[data-contact-warn]").first().waitFor({ state: "visible", timeout: 2500 });
+  await B("那什麼東西可以送進 AI").click();
+
+  // 步驟 3：三題界線判斷，全部答完才會出現排程那段
+  await p.waitForSelector("text=送進 AI 之前，先過一次界線");
+  if (await p.locator("[data-cron]").count()) throw new Error("界線還沒判斷完就出現排程了");
+  for (const [id, label] of [
+    ["public", "✅ 可以送"],
+    ["contact", "⚠️ 先想一下"],
+    ["draft", "⛔ 不該送"],
+  ]) {
+    await p.locator(`[data-case=${id}] button`, { hasText: label }).click();
+    await p.locator(`[data-case=${id}] >> text=判斷正確`).first().waitFor({ state: "visible", timeout: 2500 });
+  }
+
+  // cron 換算器：台灣 12:00 要寫成 UTC 的 4
+  await p.locator("[data-cron]").waitFor({ state: "visible", timeout: 2500 });
+  await p.$eval("[data-cron-hour]", (el) => {
+    const set = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+    set.call(el, "12");
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  const cron = (await p.$eval("[data-cron-out]", (e) => e.textContent)).trim();
+  if (cron !== "0 4 * * *") throw new Error("台灣 12:00 應該換成 0 4 * * *，實際 " + cron);
+  await B("真的把它接起來").click();
+
+  // 步驟 4：金鑰要進 secrets、不能進程式碼
+  await p.waitForSelector("text=把這條線接起來");
+  await p.locator("text=金鑰不能進 repo").first().waitFor({ state: "visible", timeout: 2500 });
+  for (const c of await p.$$("input[type=checkbox]")) await c.check();
+  await p.locator("button", { hasText: "免費方案會把送進去的內容拿去訓練" }).first().click();
+  await B("完成這一關").click();
   await p.waitForSelector("text=全線通關", { timeout: 3000 });
 });
 
@@ -708,11 +765,11 @@ await st("「回上一步」可用（新增功能）", async () => {
   await p.waitForSelector("text=API 是什麼", { timeout: 2500 });
 });
 
-await st("地圖：13 關全完成", async () => {
+await st("地圖：14 關全完成", async () => {
   await p.goto(base + "/index.html#/map", { waitUntil: "networkidle" });
   await p.waitForSelector("text=我的徽章");
   const prog = (await p.$eval("[data-testid=progress]", (e) => e.textContent)).trim();
-  if (prog !== "13/13") throw new Error("進度 " + prog);
+  if (prog !== "14/14") throw new Error("進度 " + prog);
   console.log("   進度：", prog);
 });
 
@@ -752,9 +809,10 @@ await st("關卡順序：全景 → 觀念 → 動手 → 界線", async () => {
     ["selfhost", 11],
     ["docker", 12],
     ["exe-queue", 13],
+    ["news-pipeline", 14],
   ]) {
     await go(id);
-    await p.waitForSelector(`text=第 ${no} / 13 關`);
+    await p.waitForSelector(`text=第 ${no} / 14 關`);
   }
 });
 

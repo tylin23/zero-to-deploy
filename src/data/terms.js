@@ -261,6 +261,7 @@ export const LEVEL_TERMS = {
   selfhost: ["port"],
   docker: ["port", "cicd"],
   "exe-queue": ["logmon", "rollback"],
+  "news-pipeline": ["cicd", "env", "idem", "logmon"],
 };
 
 export const termById = (id) => TERMS.find((t) => t.id === id);

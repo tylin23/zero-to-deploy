@@ -117,6 +117,18 @@ export const mapOrder = [
     status: "ready",
     phase: "post",
   },
+  {
+    // 總複習關：不教新的部署方式，把前面學過的接成一條真的會自己跑的線。
+    // 放在最後、自成一個階段，這樣就不必動到前面任何一關的編號
+    //（教材文案裡有很多寫死的「第 N 關」）。
+    id: "news-pipeline",
+    emoji: "📰",
+    title: "新聞稿自動彙整",
+    short: "新聞稿彙整",
+    tagline: "RSS ＋ 排程 ＋ AI ＋ Webhook，把四關串成一條線",
+    status: "ready",
+    phase: "final",
+  },
 ];
 
 // 不是獨立關卡、但一定要放進選型比較表的部署方式。
@@ -135,6 +147,13 @@ export const EXTRA_METHODS = [
 export const PHASES = {
   pre: { label: "納管前：你可以自己做的", short: "納管前", icon: "🙋" },
   post: { label: "納管後：交接與正式環境", short: "納管後", icon: "🏛️" },
+  final: { label: "總複習：把學過的串起來", short: "總複習", icon: "🏁" },
+};
+
+// 地圖上跨階段時要插入的分界關口（依 mapOrder 的順序偵測）
+export const PHASE_DIVIDERS = {
+  post: { title: "交給資訊單位納管", sub: "↓ 以下偏正式系統，多由資訊單位處理，了解即可" },
+  final: { title: "最後一關：實戰整合", sub: "↓ 不是新工具，是把前面學過的接成一條線" },
 };
 
 export const totalReady = mapOrder.filter((l) => l.status === "ready").length;
@@ -416,6 +435,14 @@ export const RISKS = {
       "EXE 在使用者自己的電腦上跑，會碰到本機檔案；處理到市民個資時，一樣受個資規範約束。",
     ],
   },
+  "news-pipeline": {
+    level: "中",
+    points: [
+      "這條線唯一把資料交給外部公司的是「送進 AI」那一段：免費方案的條款多半是「你送進去的內容可能被拿去改善該公司的產品」，所以只送已經公開的新聞稿，未發布的草稿、內部意見一律不要送。",
+      "Gemini 金鑰與 Discord webhook 網址都等同鑰匙，一律放 GitHub Actions secrets，絕不寫進程式碼 —— 推上去之後就算刪掉，版本紀錄裡還在。",
+      "新聞稿裡的「新聞聯絡人」雖然本來就公開，但推進群組等於再散布一次；做列管追蹤推到「局處」通常就夠了。",
+    ],
+  },
 };
 
 export const BADGES = {
@@ -432,4 +459,10 @@ export const BADGES = {
   selfHost: { id: "self-host", icon: "🖥️", name: "自架伺服器", desc: "分得清內網自用與對外服務" },
   docker: { id: "docker", icon: "🐳", name: "打包貨櫃", desc: "用 Docker 把 App 和環境一起帶著走" },
   exeQueue: { id: "exe-queue", icon: "📦", name: "打包發版", desc: "把工具打包成 EXE，並發出有版本號的新版" },
+  newsPipeline: {
+    id: "news-pipeline",
+    icon: "🏁",
+    name: "實戰整合",
+    desc: "把 RSS、排程、AI 與 Webhook 串成一條每天自己跑的線",
+  },
 };
