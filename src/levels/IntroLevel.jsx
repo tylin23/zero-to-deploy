@@ -5,6 +5,7 @@ import { QUIZZES } from "../content/quizzes.js";
 import { BADGES } from "../data/levels.js";
 import { DONE } from "../content/levelCopy.js";
 import SceneMap from "../components/SceneMap.jsx";
+import ZoomFigure from "../components/ZoomFigure.jsx";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -589,6 +590,16 @@ function FrontBackStep({ onNext, navigate }) {
         <p className="text-muted text-sm mb-3">
           假設你要做一個「市民健康講座線上報名」。下面每件事，是前端還是後端負責？（六題都答對才能繼續）
         </p>
+
+        {/* 六題的示意圖。圖上的 ①~⑥ 跟下面六張卡片同順序、文字一字不差。
+            圖檔沒放的話整塊不顯示，下面的題目本來就完整，不會開天窗。 */}
+        <div className="mb-3">
+          <ZoomFigure
+            src={import.meta.env.BASE_URL + "images/frontback-signup.jpg"}
+            alt="市民健康講座線上報名的前後端分工示意圖：左邊是市民看得到的畫面，右邊是伺服器在背後做的事，中間標示資料往返"
+            caption="圖上的編號和下面六題一一對應"
+          />
+        </div>
 
         <div className="grid gap-2.5">
           {PARTS.map((p, i) => {
