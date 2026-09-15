@@ -463,14 +463,43 @@ await st("6 API 基礎", async () => {
   await p.waitForSelector("text=API 入門達成", { timeout: 3000 });
 });
 
-await st("7 GAS 推送", async () => {
+await st("7 GAS 推送（三種玩法：推播／試算表／網頁應用程式）", async () => {
   await go("gas");
-  await p.click("text=讓它跑一次給你看");
+  // 步驟 1：三種玩法的總覽卡都要在
+  for (const v of ["推播通知", "寫入試算表", "網頁應用程式"]) {
+    await p.locator("text=" + v).first().waitFor({ state: "visible", timeout: 2000 });
+  }
+  await p.click("text=三種玩法各跑一次");
+
+  // 步驟 2：只有「推播通知」要成功執行才能放行，另外兩個是選玩、不擋流程
+  await p.waitForSelector("text=選一個分頁，按按看");
+  const next = p.locator("[data-next=variant]");
+  if (!(await next.isDisabled())) throw new Error("推播還沒成功就能繼續了");
+
+  // 先試「寫入試算表」分頁：不影響下一步的解鎖
+  await p.click("[data-tab=sheet]");
+  await p.click("[data-run=sheet]");
+  await p.waitForSelector("[data-variant=sheet] .animate-pop", { timeout: 2000 });
+  if (!(await next.isDisabled())) throw new Error("只跑了試算表，推播還沒成功，卻能繼續了");
+
+  // 「網頁應用程式」分頁：部署後應該出現模擬瀏覽器畫面
+  await p.click("[data-tab=webapp]");
+  await p.click("[data-run=webapp]");
+  await p.waitForSelector("text=陳情案件查詢", { timeout: 2000 });
+
+  // 回到「推播通知」分頁，真的跑成功才放行
+  await p.click("[data-tab=push]");
   await p.click("text=定時觸發");
-  await B("執行 GAS").click();
+  await p.click("[data-run=push]");
   await p.waitForSelector("text=市政信箱通知機器人", { timeout: 3000 });
-  await B("看看真的怎麼設").click();
-  await B("把訊息 POST 出去").click();
+  if (await next.isDisabled()) throw new Error("推播成功了，下一步卻還鎖著");
+
+  // 步驟 3：延伸內容（另外兩種玩法的程式碼）要看得到，且測驗答案已更新
+  await next.click();
+  await p.locator("summary", { hasText: "另外兩種玩法的程式碼" }).click();
+  await p.locator("text=appendRow").first().waitFor({ state: "visible", timeout: 2000 });
+  await p.locator("text=doGet").first().waitFor({ state: "visible", timeout: 2000 });
+  await B("也可以把資料寫進 Google 試算表").click();
   await B("完成這一關").click();
   await p.waitForSelector("text=自動推播達成", { timeout: 3000 });
 });

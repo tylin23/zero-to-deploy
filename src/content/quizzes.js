@@ -66,15 +66,19 @@ export const QUIZZES = {
   },
 
   gas: {
-    question: "這條「GAS 自動推播」最關鍵的一步，是哪一段在做事？",
+    question: "這一關實際做的是「推播」，但同一個 GAS 專案還能做到什麼？",
     options: [
-      { text: "UrlFetchApp.fetch(...) —— 呼叫別人的 API 把訊息 POST 出去", correct: true },
-      { text: "把程式碼存檔", correct: false },
-      { text: "把網頁部署到 GitHub Pages", correct: false },
+      {
+        text: "也可以把資料寫進 Google 試算表當資料庫，或用 .html 做成有畫面、有自己網址的網頁應用程式",
+        correct: true,
+      },
+      { text: "不行，一個 GAS 專案只能寫一支自動化程式，不能有別的檔案", correct: false },
+      { text: "可以，但只能在 Google 自家產品之間用，不能像今天這樣呼叫外部的 Discord API", correct: false },
     ],
     explainOk:
-      "沒錯！核心就是用 GAS 去『呼叫 API（POST）』。觸發只是決定「什麼時候跑」，真正把通知送出去的是那一行 fetch。",
-    explainNo: "再看一次程式碼：真正把訊息送出去的，是呼叫 Webhook API 的那一行。",
+      "沒錯！GAS 專案可以放好幾個 .gs 檔，也能加 .html —— 觸發 → 執行 → 做某件事，這件事可以是推播，也可以是寫資料、或回傳一個網頁。今天做的推播只是其中一種玩法。",
+    explainNo:
+      "再想一下：一個 GAS 專案不是只能長一種樣子 —— 除了 .gs 程式檔，它還能放 .html 檔案做畫面，也能寫進 Google 試算表當免費資料庫。",
   },
 
   huggingface: {
