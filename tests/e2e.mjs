@@ -401,13 +401,18 @@ await st("5 Netlify / Cloudflare Pages", async () => {
   );
   await B("四家比一比").click();
 
-  // 步驟 2：四張都要點開才放行
+  // 步驟 2：這一步要做的就是「比」，所以四家的資料要同時看得到，不用點開
   await p.waitForSelector("text=四家比一比");
+  const free = await p.$$eval("[data-compare=table] tr[data-row=free] td", (td) =>
+    td.map((x) => x.innerText.trim())
+  );
+  if (free.length !== 4) throw new Error("免費額度那一列不是四欄，實際 " + free.length);
+  if (free.some((x) => !x)) throw new Error("免費額度有欄位是空的");
   for (const id of ["ghp", "netlify", "cfp", "gas"]) {
-    await p.click(`[data-host=${id}] button`);
-    await p.waitForSelector(`[data-host=${id}] [aria-expanded=true]`, { timeout: 2500 });
+    await p.locator(`[data-compare=table] [data-host=${id}]`).waitFor({ state: "visible", timeout: 2500 });
   }
   await p.locator("text=被綁住的不是你的檔案").first().waitFor({ state: "visible", timeout: 2500 });
+  await p.locator("text=私人 repo ≠ 私人網站").first().waitFor({ state: "visible", timeout: 2500 });
   await B("真的接一次").click();
 
   // 步驟 3：網址驗證只收 netlify.app / pages.dev
@@ -1137,6 +1142,45 @@ await st("名詞小教室：Worker 卡把三個同名的意思切開", async () 
   // 掛在第 5 關底下（那一關的比較表提到 Functions）
   await card.locator("button", { hasText: "Netlify / Cloudflare Pages" }).first().click();
   await p.waitForFunction(() => location.hash === "#/level/hosting", null, { timeout: 2500 });
+});
+
+await st("第 5 關：比較表在桌機是對照表、手機退成卡片，兩邊都不用點就看得到", async () => {
+  const toCompare = async () => {
+    await go("hosting");
+    await p.locator("input[type=checkbox]").first().check();
+    await B("四家比一比").click();
+    await p.waitForSelector("text=四家比一比");
+  };
+
+  // 桌機：一列掃過去要同時看到四家，而且「下一步」不該被鎖住
+  await p.setViewportSize({ width: 1100, height: 900 });
+  await toCompare();
+  const table = p.locator("[data-compare=table]");
+  if (!(await table.isVisible())) throw new Error("桌機沒出現對照表");
+  if (await p.locator("[data-compare=cards]").isVisible()) throw new Error("桌機不該同時出現手機卡片");
+  const next = p.locator("button", { hasText: "真的接一次" }).first();
+  if (await next.isDisabled()) throw new Error("看得到資料了還鎖著「下一步」");
+  // 同一列裡四家的值要互不相同，不然等於沒得比
+  const repo = await p.$$eval("[data-compare=table] tr[data-row=repo] td", (td) =>
+    td.map((x) => x.innerText.trim())
+  );
+  if (new Set(repo).size !== 4) throw new Error("「要公開 repo 嗎」四家的值沒有各自不同：" + repo.join(" / "));
+  // 表格不能撐破卡片（撐破就得橫向捲，投影時會看不到右邊）
+  const spill = await p.evaluate(() => {
+    const box = document.querySelector("[data-compare=table]");
+    return box.scrollWidth - box.clientWidth;
+  });
+  if (spill > 1) throw new Error("桌機寬度下對照表仍溢出 " + spill + "px");
+
+  // 手機：四欄排不下，改成卡片，但一樣是全部攤開、沒有要點的摺疊
+  await p.setViewportSize({ width: 390, height: 780 });
+  await toCompare();
+  const cards = p.locator("[data-compare=cards]");
+  if (!(await cards.isVisible())) throw new Error("手機沒出現卡片版");
+  if (await p.locator("[data-compare=table]").isVisible()) throw new Error("手機不該顯示寬表格");
+  const rows = await cards.locator("[data-host=gas] [data-row]").count();
+  if (rows !== 5) throw new Error("手機卡片沒把五個項目都攤開，實際 " + rows);
+  await p.setViewportSize({ width: 1100, height: 900 });
 });
 
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");
