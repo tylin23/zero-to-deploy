@@ -28,6 +28,7 @@ const LEVELS = {
   selfhost: lazy(() => import("./levels/SelfHostLevel.jsx")),
   docker: lazy(() => import("./levels/DockerLevel.jsx")),
   "exe-queue": lazy(() => import("./levels/ExeQueueLevel.jsx")),
+  "news-pipeline": lazy(() => import("./levels/NewsPipelineLevel.jsx")),
 };
 
 // 關卡載入中的暫時畫面

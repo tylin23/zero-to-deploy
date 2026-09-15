@@ -445,7 +445,7 @@ function ReleaseStep({ onFinish }) {
       <Quiz {...QUIZZES.exeQueue} onCorrect={() => setPassed(true)} />
 
       <button type="button" className="btn btn-primary" disabled={!passed} onClick={onFinish}>
-        完成整張地圖 🏆
+        完成這一關 🎉
       </button>
     </div>
   );

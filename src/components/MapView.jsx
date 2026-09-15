@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useProgress } from "../state/progress.jsx";
-import { mapOrder, PHASES } from "../data/levels.js";
+import { mapOrder, PHASES, PHASE_DIVIDERS } from "../data/levels.js";
 
 // 沿曲線把各節點中心連起來
 function buildPath(list) {
@@ -61,14 +61,15 @@ export default function MapView({ navigate }) {
     const cx = W / 2;
     const DIV_GAP = 104; // 「交給資訊單位納管」分界關口的額外空間
 
-    let extra = 0,
-      dividerY = null;
+    let extra = 0;
+    const dividers = [];
     const pts = [];
     mapOrder.forEach((l, i) => {
-      if (i > 0 && mapOrder[i - 1].phase === "pre" && l.phase === "post") {
+      // 每次跨階段就插一個分界關口（納管前→納管後、納管後→總複習）
+      if (i > 0 && mapOrder[i - 1].phase !== l.phase && PHASE_DIVIDERS[l.phase]) {
         const yPrev = padTop + (i - 1) * gap + extra;
         extra += DIV_GAP;
-        dividerY = (yPrev + padTop + i * gap + extra) / 2;
+        dividers.push({ phase: l.phase, y: (yPrev + padTop + i * gap + extra) / 2 });
       }
       pts.push({ x: cx + amp * Math.sin(i * 0.95 + 0.4), y: padTop + i * gap + extra });
     });
@@ -82,7 +83,7 @@ export default function MapView({ navigate }) {
       W,
       height,
       pts,
-      dividerY,
+      dividers,
       base: buildPath(pts),
       done: lastDone >= 1 ? buildPath(pts.slice(0, lastDone + 1)) : "",
       finish: { x: cx, y: padTop + (n - 1) * gap + extra + 60 },
@@ -162,11 +163,13 @@ export default function MapView({ navigate }) {
           />
         </svg>
 
-        {layout.dividerY != null && (
+        {layout.dividers.map((d) => (
           <div
+            key={d.phase}
             data-testid="phase-divider"
+            data-phase={d.phase}
             className="absolute left-0 right-0 -translate-y-1/2 pointer-events-none px-1"
-            style={{ top: layout.dividerY }}
+            style={{ top: d.y }}
           >
             <div className="flex items-center gap-2">
               <span className="flex-1 border-t-2 border-dashed" style={{ borderColor: "var(--border)" }} />
@@ -179,15 +182,13 @@ export default function MapView({ navigate }) {
                   boxShadow: "var(--shadow-sm)",
                 }}
               >
-                {PHASES.post.icon} 交給資訊單位納管
+                {PHASES[d.phase].icon} {PHASE_DIVIDERS[d.phase].title}
               </span>
               <span className="flex-1 border-t-2 border-dashed" style={{ borderColor: "var(--border)" }} />
             </div>
-            <div className="text-center text-[11px] text-muted mt-1.5">
-              ↓ 以下偏正式系統，多由資訊單位處理，了解即可
-            </div>
+            <div className="text-center text-[11px] text-muted mt-1.5">{PHASE_DIVIDERS[d.phase].sub}</div>
           </div>
-        )}
+        ))}
 
         {mapOrder.map((lv, i) => (
           <TrailNode
