@@ -48,7 +48,7 @@ const HOSTS = [
     emoji: "🟦",
     name: "Google Apps Script",
     vendor: "Google",
-    note: "跟上面三家不太一樣：它不是「放靜態檔案的地方」，而是 Google 提供的免費小型後端執行環境 —— 寫一小段程式碼，用你的 Google 帳號跑。（後面會有一整關帶你實際用它做一次自動推播）",
+    note: "跟另外三家不太一樣：它不是「放靜態檔案的地方」，而是 Google 提供的免費小型後端執行環境 —— 寫一小段程式碼，用你的 Google 帳號跑。（後面會有一整關帶你實際用它做一次自動推播）",
     build: "不需要 build（線上寫程式碼，部署即上線）",
     repo: "不適用 —— 程式碼存在 Google 那邊，跟 GitHub repo 無關",
     free: (
@@ -417,106 +417,135 @@ function PipelineDemo() {
   );
 }
 
-/* ---------- 步驟 2：三家比一比 ---------- */
+/* ---------- 步驟 2：四家比一比 ----------
+   原本是四張要各自點開的摺疊卡，一次只看得到一家 —— 但這一步要做的事就是「比」，
+   看不到隔壁就沒得比。桌機改成真的對照表（橫著一列掃過去），手機排不下四欄，
+   退回一家一張卡，但全部攤開、不用點。 */
 function CompareStep({ onNext }) {
-  const [seen, setSeen] = useState(() => new Set());
-  const [open, setOpen] = useState(null);
-  const all = seen.size === HOSTS.length;
-
-  const pick = (id) => {
-    setOpen((c) => (c === id ? null : id));
-    setSeen((s) => new Set(s).add(id));
-  };
-
   return (
     <div className="space-y-4">
       <Eyebrow>步驟 2 / 3 · 怎麼選</Eyebrow>
       <h2 className="text-2xl font-bold text-ink">四家比一比 🔍</h2>
-      <p className="text-muted text-sm">四張都點開看看 —— 重點不是記住規格，是知道「什麼情況該選誰」。</p>
+      <p className="text-muted text-sm">
+        一列一列橫著看 —— 重點不是記住規格，是知道「什麼情況該選誰」（最後一列）。
+      </p>
 
-      <div className="grid gap-2.5">
-        {HOSTS.map((h) => {
-          const isOpen = open === h.id;
-          return (
-            <div
-              key={h.id}
-              data-host={h.id}
-              className="border-2 rounded-[16px] bg-surface overflow-hidden transition-colors"
-              style={{ borderColor: isOpen ? "var(--accent)" : "var(--border)" }}
-            >
-              <button
-                type="button"
-                onClick={() => pick(h.id)}
-                className="w-full text-left p-3.5 flex items-center gap-3"
-                aria-expanded={isOpen}
-              >
-                <span className="text-2xl leading-none">{h.emoji}</span>
-                <div className="flex-1">
-                  <div className="font-extrabold text-ink">{h.name}</div>
-                  <div className="text-xs text-muted">{h.vendor}</div>
-                </div>
-                {seen.has(h.id) && !isOpen && <span className="text-success font-extrabold">✓</span>}
-                <span className="text-muted text-lg">{isOpen ? "▴" : "▾"}</span>
-              </button>
-              {isOpen && (
-                <div className="px-3.5 pb-3.5 pt-3 border-t-2 border-line grid gap-2">
-                  {h.note && <div className="text-xs text-muted italic -mt-1 mb-1">{h.note}</div>}
-                  {COLS.map(([k, label]) => (
-                    <div key={k} className="flex gap-2.5 items-baseline flex-wrap text-sm">
-                      <span className="text-xs font-extrabold text-muted w-[86px] shrink-0">{label}</span>
-                      <span className="text-ink flex-1">{h[k]}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+      {/* 桌機：真的對照表 */}
+      <div className="hidden md:block overflow-x-auto rounded-[16px] border-2 border-line" data-compare="table">
+        <table className="w-full border-collapse text-sm" style={{ minWidth: 620 }}>
+          <caption className="sr-only">四個部署平台的比較表</caption>
+          <thead>
+            <tr className="bg-surface2">
+              {/* 112px：最長的列標籤「會幫你 build 嗎」量到要 84px，加上左右 padding
+                  和框線剛好卡在這個寬度；再窄就會把「嗎」擠到第二行 */}
+              <th scope="col" className="p-3 w-[112px]">
+                <span className="sr-only">比較項目</span>
+              </th>
+              {HOSTS.map((h) => (
+                <th
+                  key={h.id}
+                  scope="col"
+                  data-host={h.id}
+                  className="p-3 text-left align-bottom border-l-2 border-line"
+                >
+                  <span className="text-2xl block leading-none mb-1" aria-hidden="true">
+                    {h.emoji}
+                  </span>
+                  <span className="block font-extrabold text-ink">{h.name}</span>
+                  <span className="block text-xs text-muted font-normal">{h.vendor}</span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {COLS.map(([k, label], i) => (
+              <tr key={k} data-row={k} className={i % 2 ? "bg-surface2" : "bg-surface"}>
+                <th
+                  scope="row"
+                  className="p-3 text-left align-top text-xs font-extrabold text-muted border-t-2 border-line"
+                >
+                  {label}
+                </th>
+                {HOSTS.map((h) => (
+                  <td key={h.id} className="p-3 align-top text-ink border-t-2 border-l-2 border-line">
+                    {h[k]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {all && (
-        <div
-          className="callout"
-          style={{
-            borderLeftColor: "var(--mint)",
-            background: "color-mix(in srgb, var(--mint) 12%, var(--surface))",
-          }}
-        >
-          <b className="text-ink">GitHub Pages、Netlify、Cloudflare Pages 這三家的共同點比差別更重要：</b>
-          檔案都放在<b className="text-ink">你自己的 GitHub repo</b> 裡。所以換平台的成本很低 ——
-          同一個 repo 可以同時接兩家，拿到兩個網址。
-          <b className="text-ink">被綁住的不是你的檔案，只是那個網址。</b>
-          <br />
-          <br />
-          <b className="text-ink">Google Apps Script 是不同的一種東西：</b>
-          它不放靜態檔案，而是幫你跑一小段後端程式碼、還能直接讀寫你的 Google 試算表 ——
-          適合已經用「這個我可以自己做嗎」判斷過、確定沒有個資疑慮的小工具。
-        </div>
-      )}
+      {/* 手機：四欄排不下，改成一家一張、全部攤開 */}
+      <div className="md:hidden grid gap-2.5" data-compare="cards">
+        {HOSTS.map((h) => (
+          <div
+            key={h.id}
+            data-host={h.id}
+            className="border-2 border-line rounded-[16px] bg-surface overflow-hidden"
+          >
+            <div className="p-3.5 flex items-center gap-3 bg-surface2 border-b-2 border-line">
+              <span className="text-2xl leading-none" aria-hidden="true">
+                {h.emoji}
+              </span>
+              <div>
+                <div className="font-extrabold text-ink">{h.name}</div>
+                <div className="text-xs text-muted">{h.vendor}</div>
+              </div>
+            </div>
+            <div className="p-3.5 grid gap-2.5">
+              {COLS.map(([k, label]) => (
+                <div key={k} data-row={k} className="grid gap-0.5">
+                  <span className="text-xs font-extrabold text-muted">{label}</span>
+                  <span className="text-sm text-ink">{h[k]}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
 
-      {all && (
-        <div
-          className="callout"
-          style={{
-            borderLeftColor: "var(--danger)",
-            background: "color-mix(in srgb, var(--danger) 8%, var(--surface))",
-          }}
-        >
-          <b className="text-ink">常見誤會：私人 repo ≠ 私人網站。</b>
-          Netlify、Cloudflare Pages 免費方案都能接「私人 repo」（GitHub Pages
-          免費方案不行，要升級付費的 GitHub Pro 才能用私人 repo）——
-          但不管原始碼的 repo 公不公開，<b className="text-ink">建出來的網站網址一樣是任何人都打得開</b>，
-          只是別人看不到你的原始碼而已。真的要讓「網站本身」也不公開，這三家免費方案都做不到，
-          記得回頭看看界線那一關的判斷。
-        </div>
-      )}
+      {HOSTS.filter((h) => h.note).map((h) => (
+        <p key={h.id} data-note={h.id} className="text-xs text-muted m-0">
+          ※ <b className="text-ink">{h.name}</b>：{h.note}
+        </p>
+      ))}
 
       <p className="text-xs text-muted m-0">
         ⚠️ 免費額度是各平台當下的公告值，會變動。真的要用之前，去官網再確認一次。
       </p>
 
-      <button type="button" className="btn btn-primary" disabled={!all} onClick={onNext}>
-        {all ? "下一步：真的接一次 →" : `四張都點開看看（${seen.size} / 4）`}
+      <div
+        className="callout"
+        style={{
+          borderLeftColor: "var(--mint)",
+          background: "color-mix(in srgb, var(--mint) 12%, var(--surface))",
+        }}
+      >
+        <b className="text-ink">GitHub Pages、Netlify、Cloudflare Pages 這三家的共同點比差別更重要：</b>
+        檔案都放在<b className="text-ink">你自己的 GitHub repo</b> 裡。所以換平台的成本很低 ——
+        同一個 repo 可以同時接兩家，拿到兩個網址。
+        <b className="text-ink">被綁住的不是你的檔案，只是那個網址。</b>
+      </div>
+
+      <div
+        className="callout"
+        style={{
+          borderLeftColor: "var(--danger)",
+          background: "color-mix(in srgb, var(--danger) 8%, var(--surface))",
+        }}
+      >
+        <b className="text-ink">常見誤會：私人 repo ≠ 私人網站。</b>
+        Netlify、Cloudflare Pages 免費方案都能接「私人 repo」（GitHub Pages
+        免費方案不行，要升級付費的 GitHub Pro 才能用私人 repo）——
+        但不管原始碼的 repo 公不公開，<b className="text-ink">建出來的網站網址一樣是任何人都打得開</b>，
+        只是別人看不到你的原始碼而已。真的要讓「網站本身」也不公開，這三家免費方案都做不到，
+        記得回頭看看界線那一關的判斷。
+      </div>
+
+      <button type="button" className="btn btn-primary" onClick={onNext}>
+        下一步：真的接一次 →
       </button>
     </div>
   );
@@ -599,9 +628,12 @@ function RealStep({ onFinish }) {
               {msg.text}
             </div>
           )}
-          <p className="text-muted text-sm mt-2.5">（還沒真的做完也沒關係，下面的測驗答對就能過關。）</p>
         </div>
       )}
+
+      {/* 這句原本藏在「四項都勾完」裡面，等於只講給已經做完的人聽 ——
+          真正需要被安慰的是還沒動手、怕卡關的人，所以一進來就要看得到。 */}
+      <p className="text-muted text-sm m-0">（還沒真的做完也沒關係，下面的測驗答對就能過關。）</p>
 
       <FormsHowTo />
 
