@@ -132,6 +132,37 @@ export const TERMS = [
       "服務掛了、出錯了要能馬上知道，事後也能回頭查原因。交接給資訊局時，他們一定會問「怎麼監控、出事怎麼通知」。",
   },
   {
+    id: "cicd",
+    emoji: "🔁",
+    name: "CI / CD（自動建置與上線）",
+    en: "CI / CD",
+    cat: "ops",
+    related: ["hosting", "docker"],
+    oneLiner: "每次改完自動跑一遍檢查和建置，過了才自動送上線 —— 沒過就擋住。",
+    analogy:
+      "公文的會辦流程：系統自動送，但要會哪些單位是人訂的；沒會齊就不能發文。",
+    relation:
+      "CI（持續整合）是「抓下來、裝好、檢查、建置」；CD（持續部署）是「把成品放上網址」。第 5 關那個流程模擬裡，兩段分別叫 build 和 deploy，而 deploy 那段寫著 needs: build —— 整個 CI/CD 的精神就在這一行：上線只在檢查和建置都過了才會發生。你現在看的這個網站就是這樣上線的。",
+    more: {
+      title: "三個常被搞混的鄰居",
+      items: [
+        [
+          "① CI/CD 是「自動跑」",
+          "決定每次推上新版時要做哪些事：檢查、建置、上線。這張卡講的就是它。",
+        ],
+        [
+          "② 開發／測試／正式環境是「跑去哪」",
+          "同一套流程可以先送到測試環境、確認沒問題再送正式。CI/CD 負責送，環境決定送到哪一邊。",
+        ],
+        [
+          "③ 版本退回是「跑壞了怎麼辦」",
+          "檢查擋不住所有問題，真的上線才發現壞掉時，就退回上一個正常版本先止血。",
+        ],
+      ],
+      warn: "⚠️ 「全自動」不等於沒人把關 —— 把關的是你自己寫進流程裡的那些檢查。流程自動跑，但要跑哪些關卡是人決定的。",
+    },
+  },
+  {
     id: "env",
     emoji: "🚦",
     name: "開發 / 測試 / 正式環境",
@@ -222,13 +253,13 @@ export const TERMS = [
 // 關卡 → 延伸名詞（顯示在關卡下方）
 export const LEVEL_TERMS = {
   "github-pages": ["cdn", "https"],
-  hosting: ["cdn", "worker", "env"],
+  hosting: ["cicd", "cdn", "worker", "env"],
   api: ["cache", "cors"],
   gas: ["idem"],
   firebase: ["authz", "backup"],
   flask: ["port", "env", "logmon"],
   selfhost: ["port"],
-  docker: ["port"],
+  docker: ["port", "cicd"],
   "exe-queue": ["logmon", "rollback"],
 };
 
