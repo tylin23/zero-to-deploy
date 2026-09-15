@@ -15,7 +15,7 @@ const AI_TOOLS = [
     vendor: "Anthropic",
     what: "在對話旁邊直接生出一個可以點、可以互動的網頁。",
     where: ["左側選單", "Artifacts"],
-    shotAlt: "Claude 左側選單，Artifacts 那一項被框起來",
+    shotAlt: "Claude 左側選單，「Artifacts」那一項",
     share:
       "按「發布」就拿到一個公開網址，對方沒有 Claude 帳號也打得開。每按一次發布就是一個新版本，可以選要給人看哪一版。",
     watch:
@@ -315,8 +315,10 @@ function ToolShot({ id, alt }) {
           Gemini/ChatGPT 是它的 2~3 倍），用 max-h 的話小圖就撐不大。
           改成固定 height，三張圖統一撐到同樣高，寬度依各自比例自動算 ——
           外層用 overflow-x-auto 而不是 max-w-full，避免手機上寬度不夠時
-          瀏覽器把圖「壓扁」（max-width 會強制縮寬但不會跟著縮高，圖就變形了）。 */}
-      <div className="overflow-x-auto rounded-[12px] border-2 border-line bg-surface2">
+          瀏覽器把圖「壓扁」（max-width 會強制縮寬但不會跟著縮高，圖就變形了）。
+          外層寬度用 w-fit：框線和底色要貼著圖片邊緣，不是撐滿整張卡片
+          （之前是 block，寬圖窄圖都占滿卡片寬，窄的那張右邊就多一大塊空白背景）。 */}
+      <div className="w-fit max-w-full overflow-x-auto rounded-[12px] border-2 border-line bg-surface2">
         <img
           src={import.meta.env.BASE_URL + "images/ai-" + id + ".png"}
           alt={alt}
