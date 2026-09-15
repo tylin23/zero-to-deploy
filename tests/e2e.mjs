@@ -1183,6 +1183,45 @@ await st("第 5 關：比較表在桌機是對照表、手機退成卡片，兩�
   await p.setViewportSize({ width: 1100, height: 900 });
 });
 
+await st("第 5 關：四家的品牌 logo 是內嵌 SVG，沒有去外面抓圖", async () => {
+  // 這門課第 3 關就在教「網頁掛著別人家的網址，離線或網路被擋就破版」，
+  // 所以教材自己的 logo 不能是 CDN 圖檔。這裡模擬「機關內網擋外連」：
+  // 所有往外的連線全部擋掉，logo 仍然要完整顯示。
+  //（站台的中文字型走 Google Fonts，但那是軟性依賴 —— 擋掉會退回
+  //  PingFang TC／微軟正黑體，版面不會壞，所以這裡只驗 logo 本身。）
+  const page = await ctx.newPage();
+  await page.route("**://*/**", (route) =>
+    route.request().url().includes("localhost:4173") ? route.continue() : route.abort()
+  );
+  await page.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${base}/index.html#/level/hosting`, { waitUntil: "networkidle" });
+  await page.locator("input[type=checkbox]").first().check();
+  await page.locator("button", { hasText: "四家比一比" }).first().click();
+  await page.waitForSelector("text=四家比一比");
+
+  const logos = await page.$$eval("[data-compare=table] thead th[data-host]", (ths) =>
+    ths.map((th) => {
+      const svg = th.querySelector("svg");
+      return {
+        host: th.dataset.host,
+        inline: !!svg && svg.querySelectorAll("path").length > 0,
+        // path 太短代表不是真的品牌圖形（例如只剩一個方塊）
+        len: svg ? (svg.querySelector("path")?.getAttribute("d") || "").length : 0,
+        img: th.querySelectorAll("img").length,
+        fill: svg ? getComputedStyle(svg).fill : null,
+      };
+    })
+  );
+  if (logos.length !== 4) throw new Error("表頭不是四家，實際 " + logos.length);
+  for (const l of logos) {
+    if (!l.inline) throw new Error(l.host + " 的 logo 不是內嵌 SVG");
+    if (l.img) throw new Error(l.host + " 的 logo 用了 <img>，離線就會破圖");
+    if (l.len < 200) throw new Error(l.host + " 的 logo path 只有 " + l.len + " 字，不像真的品牌圖形");
+    if (!l.fill || l.fill === "none") throw new Error(l.host + " 的 logo 沒有填色");
+  }
+  await page.close();
+});
+
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");
 await b.close();
 process.exit(errs.length ? 1 : 0);
