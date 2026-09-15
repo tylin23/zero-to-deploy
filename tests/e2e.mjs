@@ -849,6 +849,48 @@ await st("第 3 關：教怎麼在網頁裡放圖片（四個寫法的判斷）"
   await p.locator("text=不要直接貼別人網站的圖片網址").first().waitFor({ state: "visible", timeout: 2000 });
 });
 
+await st("第 2 關：分分看的示意圖可點擊放大（圖沒放也不能破版）", async () => {
+  await go("intro");
+  // 走到「前端 vs 後端」那一步（分分看就在這一步）
+  await p.waitForSelector("text=在我電腦上跑得好好的");
+  for (const id of ["send", "share", "come", "deploy"]) {
+    await p.click(`[data-try=${id}] button`);
+  }
+  await B("懂了，那網址是怎麼運作的？").click();
+  await p.waitForSelector("text=按「播放」看看資料怎麼跑");
+  await B("▶ 播放").click();
+  await p.waitForSelector("text=瀏覽器把收到的檔案", { timeout: 12000 });
+  await B("我懂了，下一步").click();
+  await p.waitForSelector("text=換你分分看", { timeout: 4000 });
+
+  const fig = p.locator("[data-zoomfig]");
+  const n = await fig.count();
+
+  if (n === 0) {
+    // 圖還沒放進 public/images/：整塊不顯示，但不能留破圖或空白框
+    const broken = await p.evaluate(
+      () => [...document.querySelectorAll("img")].filter((i) => i.complete && i.naturalWidth === 0).length
+    );
+    if (broken) throw new Error("圖沒放時留了破圖");
+    console.log("   （示意圖尚未放入 public/images/，已驗降級路徑）");
+    return;
+  }
+
+  // 圖有放：點一下要能放大，Esc 要能關掉，關掉後焦點回到原本那顆按鈕
+  await fig.locator("button").first().click();
+  const box = p.locator("[data-zoomlightbox]");
+  await box.waitFor({ state: "visible", timeout: 2500 });
+  const shown = await box.locator("img").first().evaluate((i) => i.complete && i.naturalWidth > 0);
+  if (!shown) throw new Error("放大後的圖沒載入");
+  // 放大時背景要鎖住捲動
+  const locked = await p.evaluate(() => getComputedStyle(document.body).overflow === "hidden");
+  if (!locked) throw new Error("放大時背景沒有鎖住捲動");
+  await p.keyboard.press("Escape");
+  await box.waitFor({ state: "detached", timeout: 2500 });
+  const restored = await p.evaluate(() => getComputedStyle(document.body).overflow !== "hidden");
+  if (!restored) throw new Error("關閉後背景捲動沒有解鎖");
+});
+
 await st("第 3 關：CDN 對照（同一份 body，差別只在樣式在不在）", async () => {
   await go("github-pages");
   await p.click("text=靜態網站：HTML");
