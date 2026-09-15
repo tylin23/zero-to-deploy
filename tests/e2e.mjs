@@ -2,6 +2,7 @@ import pkg from "playwright";
 import fs from "node:fs";
 import { STARTER_HTML } from "../src/content/starterCard.js";
 import { DASHBOARD_HTML } from "../src/content/dashboardPage.js";
+import { decide, allCombos } from "../src/data/decide.js";
 const { chromium } = pkg;
 const base = process.env.BASE_URL || "http://localhost:4173";
 const errs = [];
@@ -1255,6 +1256,83 @@ await st("第 1 關：AI 工具卡的品牌 logo 是內嵌 SVG，沒有去外面
     if (!l.fill || l.fill === "none") throw new Error(l.tool + " 的 logo 沒有填色");
   }
   await page.close();
+});
+
+await st("選型計算機：288 種組合都要有明確結果（不會給空白，也不會繞過紅線）", async () => {
+  // 這是這個功能敢上線的關鍵：維度一多，手動試不可能覆蓋所有組合。
+  // decide() 是純函式，直接算比開瀏覽器點 288 次快得多。
+  const combos = allCombos();
+  if (combos.length !== 288) throw new Error("組合數不是 288（維度改過？）實際 " + combos.length);
+
+  let gated = 0;
+  for (const c of combos) {
+    const r = decide(c);
+    const where = JSON.stringify(c);
+
+    // 1. 每一種組合都要有明確結果，不能什麼都不說
+    const hasAnswer = r.blocked || r.contradiction || r.picks.length || r.formal.length;
+    if (!hasAnswer) throw new Error("這個組合算不出任何結果：" + where);
+
+    // 2. 踩到紅線時絕對不能同時給平台建議 —— 這是整個功能的安全底線
+    if (r.blocked) {
+      gated++;
+      if (!r.gates.length) throw new Error("blocked 但沒說是哪條紅線：" + where);
+      if (r.picks.length || r.formal.length) throw new Error("踩紅線卻還是給了平台建議：" + where);
+      for (const g of r.gates) {
+        if (!g.line || !g.why) throw new Error("紅線缺少說明：" + g.id);
+      }
+    }
+
+    // 3. 五條紅線一定要擋下來（跟第 4 關的界線一致）
+    const mustStop =
+      c.data === "personal" || c.purpose === "official" || c.who === "cross" || c.auth === "yes";
+    if (mustStop && !r.blocked) throw new Error("該擋卻沒擋：" + where);
+
+    // 4. 沒踩紅線也沒矛盾時，建議必須附理由，否則就成了黑盒子
+    if (!r.blocked && !r.contradiction) {
+      for (const p of [...r.picks, ...r.formal]) {
+        if (!p.fit) throw new Error(p.id + " 沒有「為什麼適合」的說明：" + where);
+      }
+    }
+  }
+  // 大部分組合會被擋是這個設計的必然結果，但如果高到接近全部，就是規則寫壞了
+  if (gated === combos.length) throw new Error("所有組合都被擋掉，規則一定有問題");
+  console.log("   紅線擋下", gated, "/", combos.length, "種組合");
+});
+
+await st("選型計算機：紅線會擋下並指名，安全情況才給建議", async () => {
+  await p.goto(`${base}/index.html#/guide`, { waitUntil: "networkidle" });
+  await p.waitForSelector("[data-calc]");
+  const dims = ["data", "purpose", "who", "ops", "auth"];
+  const fill = async (picks) => {
+    for (let i = 0; i < dims.length; i++) {
+      await p.click(`[data-dim=${dims[i]}] [data-opt=${picks[i]}]`);
+    }
+    await p.waitForSelector("[data-result]", { timeout: 3000 });
+  };
+
+  // 沒選完不該有結果
+  await p.click("[data-dim=data] [data-opt=public]");
+  if (await p.locator("[data-result]").count()) throw new Error("還沒選完就給結果了");
+
+  // 可公開的公告頁給市民看 → 這是第 3 關教的事，應該放行
+  await fill(["public", "page", "citizen", "show", "no"]);
+  const picks = await p.$$eval("[data-pick]", (els) => els.map((e) => e.dataset.pick));
+  if (!picks.includes("github-pages")) throw new Error("公開公告頁沒推薦 GitHub Pages，實際：" + picks);
+  if (await p.locator("[data-stopped]").count()) throw new Error("可公開的公告頁被誤擋");
+
+  // 含個資 → 必須擋下來，而且不能出現任何平台建議
+  await fill(["personal", "tool", "team", "collect", "no"]);
+  await p.locator("[data-gate=personal]").waitFor({ state: "visible", timeout: 2500 });
+  if (await p.locator("[data-pick]").count()) throw new Error("個資情境還是給了平台建議");
+
+  // 內部資料放在公開網址的方式上 → 要有警告
+  await fill(["internal", "page", "team", "show", "no"]);
+  if (!(await p.locator("[data-caveat]").count())) throw new Error("內部資料用公開網址卻沒警告");
+
+  // 重算會清空
+  await p.locator("button", { hasText: "重新算一次" }).click();
+  if (await p.locator("[data-result]").count()) throw new Error("重算之後結果沒清掉");
 });
 
 console.log("\n錯誤：", errs.length ? errs.join(" | ") : "（無）");

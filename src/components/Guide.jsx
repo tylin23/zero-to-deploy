@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { mapOrder, EXTRA_METHODS, EVAL, PICKER, diffText, diyTextColor, diyText } from "../data/levels.js";
+import DecideCalculator from "./DecideCalculator.jsx";
 
 // 比較清單同時涵蓋「關卡」與「沒有獨立關卡的部署方式」（例如 AI 工具的分享連結）
 const ALL = [...EXTRA_METHODS, ...mapOrder];
@@ -65,6 +66,13 @@ export default function Guide({ navigate }) {
           </div>
         )}
       </div>
+
+      {/* 選型決策計算機：picker 是「我大概知道要做什麼」的快速通道，
+          這台是「我不確定，帶我想一遍」的完整通道 */}
+      <DecideCalculator
+        methodName={(id) => `${meta(id).emoji || ""} ${meta(id).title || id}`.trim()}
+        onGoLevel={(id) => navigate("#/level/" + levelOf(meta(id)))}
+      />
 
       {/* 納管前 */}
       <h3 className="text-ink font-bold mb-2">🙋 納管前：你可以自己做的</h3>
