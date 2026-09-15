@@ -56,8 +56,7 @@ export default function Home({ navigate }) {
         </h1>
 
         <p className="text-muted mx-auto mb-6 max-w-[640px] text-[clamp(15px,2.4vw,18px)]">
-          不用寫程式、不用打指令。用闖關的方式搞懂「部署」到底在做什麼， 並且
-          <b className="text-ink">真的把一頁市府公告上線</b>——
+          不用寫程式、不用打指令。用闖關的方式搞懂「部署」到底在做什麼，
           同時清楚知道哪些事可以自己做、哪裡該找資訊單位。
         </p>
 
