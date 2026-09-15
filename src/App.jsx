@@ -121,6 +121,20 @@ function SiteFooter({ navigate }) {
         </div>
         <div>Zero to Deploy · 一個用來教「網頁部署」的互動教材</div>
         <div className="text-accentText font-bold">這個網站本身，就是用 GitHub Pages 部署的 ✨</div>
+        {/* 版權／授權放最後一行，字級比上面小一號 —— 常見的頁尾排法：
+            上面是站台資訊，最下面才是這種法律用的小字。 */}
+        <div className="text-[11.5px]">
+          © 2026 TY LIN · 本站內容以{" "}
+          <a
+            href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-Hant"
+            target="_blank"
+            rel="license noopener noreferrer"
+            className="underline underline-offset-2 hover:text-ink"
+          >
+            CC BY-NC-SA 4.0
+          </a>{" "}
+          授權釋出
+        </div>
       </div>
     </footer>
   );
