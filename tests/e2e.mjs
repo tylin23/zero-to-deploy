@@ -388,7 +388,7 @@ await st("3 GitHub Pages", async () => {
   await p.waitForSelector("text=你把網站部署上線了", { timeout: 4000 });
 });
 
-await st("5 Netlify / Cloudflare Pages", async () => {
+await st("5 Cloudflare Pages", async () => {
   await go("hosting");
   // 步驟 1：勾起來才會看到「平台幫你做」的那三格
   await p.waitForSelector("text=同一類，但它會幫你做更多事");
@@ -400,31 +400,35 @@ await st("5 Netlify / Cloudflare Pages", async () => {
     null,
     { timeout: 2500 }
   );
-  await B("四家比一比").click();
+  await B("三家比一比").click();
 
-  // 步驟 2：這一步要做的就是「比」，所以四家的資料要同時看得到，不用點開
-  await p.waitForSelector("text=四家比一比");
+  // 步驟 2：這一步要做的就是「比」，所以三家的資料要同時看得到，不用點開
+  await p.waitForSelector("text=三家比一比");
   const free = await p.$$eval("[data-compare=table] tr[data-row=free] td", (td) =>
     td.map((x) => x.innerText.trim())
   );
-  if (free.length !== 4) throw new Error("免費額度那一列不是四欄，實際 " + free.length);
+  if (free.length !== 3) throw new Error("免費額度那一列不是三欄，實際 " + free.length);
   if (free.some((x) => !x)) throw new Error("免費額度有欄位是空的");
-  for (const id of ["ghp", "netlify", "cfp", "gas"]) {
+  for (const id of ["ghp", "cfp", "gas"]) {
     await p.locator(`[data-compare=table] [data-host=${id}]`).waitFor({ state: "visible", timeout: 2500 });
   }
   await p.locator("text=被綁住的不是你的檔案").first().waitFor({ state: "visible", timeout: 2500 });
   await p.locator("text=私人 repo ≠ 私人網站").first().waitFor({ state: "visible", timeout: 2500 });
   await B("真的接一次").click();
 
-  // 步驟 3：網址驗證只收 netlify.app / pages.dev
+  // 步驟 3：網址驗證只收 pages.dev
   await p.waitForSelector("text=把同一個 repo 再接上一家");
   for (const c of await p.$$("input[type=checkbox]")) await c.check();
   await p.fill("input[type=url]", "https://me.github.io/site/");
   await B("驗證 ✅").click();
   await p.waitForSelector("text=格式不太對", { timeout: 2500 });
-  await p.fill("input[type=url]", "https://bravo-card.netlify.app");
+  await p.fill("input[type=url]", "https://bravo-card.pages.dev");
   await B("驗證 ✅").click();
   await p.waitForSelector("text=同一份檔案，你現在有兩個網址了", { timeout: 2500 });
+  // 課程已經不教 Netlify 了，netlify.app 不該再被當成正確答案
+  await p.fill("input[type=url]", "https://bravo-card.netlify.app");
+  await B("驗證 ✅").click();
+  await p.waitForSelector("text=格式不太對", { timeout: 2500 });
 
   // 表單那段：能收 ≠ 該收
   await p.locator("summary", { hasText: "不用後端也能收表單" }).click();
@@ -1196,7 +1200,7 @@ await st("名詞小教室：CI/CD 卡把「自動跑／跑去哪／跑壞了」�
     if (!txt.includes(t)) throw new Error("CI/CD 卡少了「" + t + "」");
   }
   // 掛在第 5 關底下
-  await card.locator("button", { hasText: "Netlify / Cloudflare Pages" }).first().click();
+  await card.locator("button", { hasText: "Cloudflare Pages" }).first().click();
   await p.waitForFunction(() => location.hash === "#/level/hosting", null, { timeout: 2500 });
 });
 
@@ -1228,7 +1232,7 @@ await st("名詞小教室：Worker 卡把三個同名的意思切開", async () 
     if (!txt.includes(t)) throw new Error("Worker 卡少了「" + t + "」");
   }
   // 掛在第 5 關底下（那一關的比較表提到 Functions）
-  await card.locator("button", { hasText: "Netlify / Cloudflare Pages" }).first().click();
+  await card.locator("button", { hasText: "Cloudflare Pages" }).first().click();
   await p.waitForFunction(() => location.hash === "#/level/hosting", null, { timeout: 2500 });
 });
 
@@ -1236,11 +1240,11 @@ await st("第 5 關：比較表在桌機是對照表、手機退成卡片，兩�
   const toCompare = async () => {
     await go("hosting");
     await p.locator("input[type=checkbox]").first().check();
-    await B("四家比一比").click();
-    await p.waitForSelector("text=四家比一比");
+    await B("三家比一比").click();
+    await p.waitForSelector("text=三家比一比");
   };
 
-  // 桌機：一列掃過去要同時看到四家，而且「下一步」不該被鎖住
+  // 桌機：一列掃過去要同時看到三家，而且「下一步」不該被鎖住
   await p.setViewportSize({ width: 1100, height: 900 });
   await toCompare();
   const table = p.locator("[data-compare=table]");
@@ -1248,11 +1252,11 @@ await st("第 5 關：比較表在桌機是對照表、手機退成卡片，兩�
   if (await p.locator("[data-compare=cards]").isVisible()) throw new Error("桌機不該同時出現手機卡片");
   const next = p.locator("button", { hasText: "真的接一次" }).first();
   if (await next.isDisabled()) throw new Error("看得到資料了還鎖著「下一步」");
-  // 同一列裡四家的值要互不相同，不然等於沒得比
+  // 同一列裡三家的值要互不相同，不然等於沒得比
   const repo = await p.$$eval("[data-compare=table] tr[data-row=repo] td", (td) =>
     td.map((x) => x.innerText.trim())
   );
-  if (new Set(repo).size !== 4) throw new Error("「要公開 repo 嗎」四家的值沒有各自不同：" + repo.join(" / "));
+  if (new Set(repo).size !== 3) throw new Error("「要公開 repo 嗎」三家的值沒有各自不同：" + repo.join(" / "));
   // 表格不能撐破卡片（撐破就得橫向捲，投影時會看不到右邊）
   const spill = await p.evaluate(() => {
     const box = document.querySelector("[data-compare=table]");
@@ -1260,7 +1264,7 @@ await st("第 5 關：比較表在桌機是對照表、手機退成卡片，兩�
   });
   if (spill > 1) throw new Error("桌機寬度下對照表仍溢出 " + spill + "px");
 
-  // 手機：四欄排不下，改成卡片，但一樣是全部攤開、沒有要點的摺疊
+  // 手機：三欄排不下，改成卡片，但一樣是全部攤開、沒有要點的摺疊
   await p.setViewportSize({ width: 390, height: 780 });
   await toCompare();
   const cards = p.locator("[data-compare=cards]");
@@ -1271,7 +1275,7 @@ await st("第 5 關：比較表在桌機是對照表、手機退成卡片，兩�
   await p.setViewportSize({ width: 1100, height: 900 });
 });
 
-await st("第 5 關：四家的品牌 logo 是內嵌 SVG，沒有去外面抓圖", async () => {
+await st("第 5 關：三家的品牌 logo 是內嵌 SVG，沒有去外面抓圖", async () => {
   // 這門課第 3 關就在教「網頁掛著別人家的網址，離線或網路被擋就破版」，
   // 所以教材自己的 logo 不能是 CDN 圖檔。這裡模擬「機關內網擋外連」：
   // 所有往外的連線全部擋掉，logo 仍然要完整顯示。
@@ -1284,8 +1288,8 @@ await st("第 5 關：四家的品牌 logo 是內嵌 SVG，沒有去外面抓圖
   await page.goto(`${base}/index.html#/map`, { waitUntil: "domcontentloaded" });
   await page.goto(`${base}/index.html#/level/hosting`, { waitUntil: "networkidle" });
   await page.locator("input[type=checkbox]").first().check();
-  await page.locator("button", { hasText: "四家比一比" }).first().click();
-  await page.waitForSelector("text=四家比一比");
+  await page.locator("button", { hasText: "三家比一比" }).first().click();
+  await page.waitForSelector("text=三家比一比");
 
   const logos = await page.$$eval("[data-compare=table] thead th[data-host]", (ths) =>
     ths.map((th) => {
@@ -1300,7 +1304,7 @@ await st("第 5 關：四家的品牌 logo 是內嵌 SVG，沒有去外面抓圖
       };
     })
   );
-  if (logos.length !== 4) throw new Error("表頭不是四家，實際 " + logos.length);
+  if (logos.length !== 3) throw new Error("表頭不是三家，實際 " + logos.length);
   for (const l of logos) {
     if (!l.inline) throw new Error(l.host + " 的 logo 不是內嵌 SVG");
     if (l.img) throw new Error(l.host + " 的 logo 用了 <img>，離線就會破圖");

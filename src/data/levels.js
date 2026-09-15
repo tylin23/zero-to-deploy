@@ -45,7 +45,7 @@ export const mapOrder = [
     // 排在界線之後：這一關會教「不用後端也能收表單」，正好要用剛學的界線去判斷。
     id: "hosting",
     emoji: "🚀",
-    title: "Netlify / Cloudflare Pages",
+    title: "Cloudflare Pages",
     short: "自動建置上線",
     tagline: "推上去就自動建置，還能收表單",
     status: "ready",
@@ -309,7 +309,7 @@ export const PICKER = [
   {
     q: "網站想改完就自動上線，或它是用 React 這類框架做的",
     to: "hosting",
-    why: "Netlify / Cloudflare Pages 會自動建置，推上去就更新",
+    why: "Cloudflare Pages 會自動建置，推上去就更新",
   },
   { q: "想把市府開放資料變成一張看板給同仁看", to: "api", why: "讀開放資料、不碰個資，最安全" },
   { q: "要收市民報名／陳情，並自動通知承辦科室", to: "gas", why: "表單＋GAS 自動化，貼近日常" },
@@ -377,7 +377,7 @@ export const RISKS = {
     level: "高（完全公開）",
     points: [
       "跟 GitHub Pages 一樣，放上去的內容會完全公開到網際網路，還會被搜尋引擎索引。",
-      "平台內建的表單很方便，但送出的資料會存在平台（多為境外）的伺服器上 —— 收市民個資請走機關既有、經過核可的管道。",
+      "把一份 Google 表單嵌進靜態頁就能收資料，很方便，但送出的內容會存在平台（多為境外）的伺服器上 —— 收市民個資請走機關既有、經過核可的管道。",
       "自由填寫的欄位擋不住別人把姓名電話寫進去；設計表單時能少開一個就少一個。",
     ],
   },

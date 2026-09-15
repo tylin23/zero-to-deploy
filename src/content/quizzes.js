@@ -41,7 +41,7 @@ export const QUIZZES = {
 
   hosting: {
     question:
-      "你把同一個 repo 同時接上 GitHub Pages 和 Netlify，拿到兩個網址。這說明了什麼？",
+      "你把同一個 repo 同時接上 GitHub Pages 和 Cloudflare Pages，拿到兩個網址。這說明了什麼？",
     options: [
       { text: "檔案是你自己的，被綁住的只是那個網址 —— 換平台的成本很低", correct: true },
       { text: "你的網站現在有兩份，改了要記得改兩次", correct: false },

@@ -23,17 +23,6 @@ const HOSTS = [
     when: "純 HTML／CSS／JS 的單頁，你已經做過了",
   },
   {
-    id: "netlify",
-    brand: "netlify",
-    name: "Netlify",
-    vendor: "Netlify",
-    build: "會，自動",
-    repo: "不用，私人 repo 也可以（限個人帳號，機關組織帳號下的私人 repo 要升級 Pro）",
-    free: "新帳號每月 300 點數（約等於 15GB 流量，或 20 次建置）",
-    form: "可以（Netlify Forms）",
-    when: "要收表單、或想要 PR 預覽網址",
-  },
-  {
     id: "cfp",
     brand: "cloudflare",
     name: "Cloudflare Pages",
@@ -41,15 +30,15 @@ const HOSTS = [
     build: "會，自動",
     repo: "不用，公開或私人 repo 都可以",
     free: "流量不計量、每月 500 次建置",
-    form: "要自己寫 Functions（另計 Workers 額度）",
-    when: "流量可能比較大、或想要最大方的免費額度",
+    form: "沒有內建的表單功能（要自己寫 Functions，另計 Workers 額度）",
+    when: "想改完就自動上線、網站是用框架做的，或流量可能比較大",
   },
   {
     id: "gas",
     brand: "gas",
     name: "Google Apps Script",
     vendor: "Google",
-    note: "跟另外三家不太一樣：它不是「放靜態檔案的地方」，而是 Google 提供的免費小型後端執行環境 —— 寫一小段程式碼，用你的 Google 帳號跑。（後面會有一整關帶你實際用它做一次自動推播）",
+    note: "跟另外兩家不太一樣：它不是「放靜態檔案的地方」，而是 Google 提供的免費小型後端執行環境 —— 寫一小段程式碼，用你的 Google 帳號跑。（後面會有一整關帶你實際用它做一次自動推播）",
     build: "不需要 build（線上寫程式碼，部署即上線）",
     repo: "不適用 —— 程式碼存在 Google 那邊，跟 GitHub repo 無關",
     free: (
@@ -108,13 +97,13 @@ const FV = {
 
 const STEPS_REAL = [
   {
-    t: "用 GitHub 帳號登入 Netlify 或 Cloudflare Pages",
-    d: "兩家都可以直接用 GitHub 帳號登入，不用另外註冊。",
-    href: "https://www.netlify.com/",
+    t: "註冊（或登入）一個 Cloudflare 帳號",
+    d: "跟 GitHub 是兩個不同的帳號，要用 email 另外註冊一個。登入後在左邊選「Workers & Pages」。",
+    href: "https://dash.cloudflare.com/sign-up",
   },
   {
-    t: "選「從 Git 匯入」，挑你在 GitHub Pages 那一關開的那個 repo",
-    d: "就是放電子名片的那一個。不用改任何檔案。",
+    t: "建立 Pages 專案，選「連接到 Git」",
+    d: "第一次會跳到 GitHub 問你要授權哪些 repo —— 只勾你在 GitHub Pages 那一關開的那個（放電子名片的）就好。",
   },
   {
     t: "建置設定留空白，直接按 Deploy",
@@ -122,7 +111,7 @@ const STEPS_REAL = [
   },
   {
     t: "等 30 秒左右，拿到第二個網址",
-    d: "長得像 https://xxxx.netlify.app 或 https://xxxx.pages.dev —— 跟你的 github.io 網址內容一模一樣。",
+    d: "長得像 https://xxxx.pages.dev —— 跟你的 github.io 網址內容一模一樣。",
   },
 ];
 
@@ -168,7 +157,7 @@ function WhyStep({ onNext }) {
       <h2 className="text-2xl font-bold text-ink">同一類，但它會幫你做更多事 🚀</h2>
 
       <div className="callout callout-info">
-        Netlify 和 Cloudflare Pages 跟你做過的 GitHub Pages
+        Cloudflare Pages 跟你做過的 GitHub Pages
         <b className="text-ink">是同一類</b>：把靜態檔案放上去，給你一個網址。 差別在
         <b className="text-ink">中間那段誰做</b>。
       </div>
@@ -181,7 +170,7 @@ function WhyStep({ onNext }) {
             onChange={(e) => setAuto(e.target.checked)}
             style={{ width: 20, height: 20, accentColor: "var(--mint)" }}
           />
-          改用 Netlify / Cloudflare Pages
+          改用 Cloudflare Pages
         </label>
 
         <div className="flex items-center gap-1.5 flex-wrap" data-flow>
@@ -229,13 +218,13 @@ function WhyStep({ onNext }) {
         </div>
         <div className="mt-1.5">
           GitHub Pages <b className="text-ink">不會自動幫你判斷、build</b>
-          （要自己寫一份 GitHub Actions 流程，教它怎麼做）；Netlify 和 Cloudflare
+          （要自己寫一份 GitHub Actions 流程，教它怎麼做）；Cloudflare
           Pages <b className="text-ink">會直接幫你自動判斷框架、自動 build</b>，不用自己寫任何設定檔。
         </div>
         <div className="mt-1.5">
           <b className="text-ink">
             你現在看的這個教學網站，原始碼在 GitHub 上，你打開的是 build 完的成品 ——
-            走的正是「自己寫 Actions」這條路，不是 Netlify／Cloudflare 那種自動判斷。往下按按看，就是它實際在跑的那份流程。
+            走的正是「自己寫 Actions」這條路，不是 Cloudflare Pages 那種自動判斷。往下按按看，就是它實際在跑的那份流程。
           </b>
         </div>
       </div>
@@ -243,7 +232,7 @@ function WhyStep({ onNext }) {
       <PipelineDemo />
 
       <button type="button" className="btn btn-primary" disabled={!auto} onClick={onNext}>
-        {auto ? "下一步：四家比一比 →" : "先把上面的勾勾打開看看差別"}
+        {auto ? "下一步：三家比一比 →" : "先把上面的勾勾打開看看差別"}
       </button>
     </div>
   );
@@ -418,23 +407,23 @@ function PipelineDemo() {
   );
 }
 
-/* ---------- 步驟 2：四家比一比 ----------
-   原本是四張要各自點開的摺疊卡，一次只看得到一家 —— 但這一步要做的事就是「比」，
-   看不到隔壁就沒得比。桌機改成真的對照表（橫著一列掃過去），手機排不下四欄，
+/* ---------- 步驟 2：三家比一比 ----------
+   原本是要各自點開的摺疊卡，一次只看得到一家 —— 但這一步要做的事就是「比」，
+   看不到隔壁就沒得比。桌機改成真的對照表（橫著一列掃過去），手機排不下三欄，
    退回一家一張卡，但全部攤開、不用點。 */
 function CompareStep({ onNext }) {
   return (
     <div className="space-y-4">
       <Eyebrow>步驟 2 / 3 · 怎麼選</Eyebrow>
-      <h2 className="text-2xl font-bold text-ink">四家比一比 🔍</h2>
+      <h2 className="text-2xl font-bold text-ink">三家比一比 🔍</h2>
       <p className="text-muted text-sm">
         一列一列橫著看 —— 重點不是記住規格，是知道「什麼情況該選誰」（最後一列）。
       </p>
 
       {/* 桌機：真的對照表 */}
       <div className="hidden md:block overflow-x-auto rounded-[16px] border-2 border-line" data-compare="table">
-        <table className="w-full border-collapse text-sm" style={{ minWidth: 620 }}>
-          <caption className="sr-only">四個部署平台的比較表</caption>
+        <table className="w-full border-collapse text-sm" style={{ minWidth: 520 }}>
+          <caption className="sr-only">三個部署平台的比較表</caption>
           <thead>
             <tr className="bg-surface2">
               {/* 112px：最長的列標籤「會幫你 build 嗎」量到要 84px，加上左右 padding
@@ -478,7 +467,7 @@ function CompareStep({ onNext }) {
         </table>
       </div>
 
-      {/* 手機：四欄排不下，改成一家一張、全部攤開 */}
+      {/* 手機：三欄排不下，改成一家一張、全部攤開 */}
       <div className="md:hidden grid gap-2.5" data-compare="cards">
         {HOSTS.map((h) => (
           <div
@@ -522,7 +511,7 @@ function CompareStep({ onNext }) {
           background: "color-mix(in srgb, var(--mint) 12%, var(--surface))",
         }}
       >
-        <b className="text-ink">GitHub Pages、Netlify、Cloudflare Pages 這三家的共同點比差別更重要：</b>
+        <b className="text-ink">GitHub Pages 和 Cloudflare Pages 這兩家的共同點比差別更重要：</b>
         檔案都放在<b className="text-ink">你自己的 GitHub repo</b> 裡。所以換平台的成本很低 ——
         同一個 repo 可以同時接兩家，拿到兩個網址。
         <b className="text-ink">被綁住的不是你的檔案，只是那個網址。</b>
@@ -536,10 +525,10 @@ function CompareStep({ onNext }) {
         }}
       >
         <b className="text-ink">常見誤會：私人 repo ≠ 私人網站。</b>
-        Netlify、Cloudflare Pages 免費方案都能接「私人 repo」（GitHub Pages
+        Cloudflare Pages 免費方案可以接「私人 repo」（GitHub Pages
         免費方案不行，要升級付費的 GitHub Pro 才能用私人 repo）——
         但不管原始碼的 repo 公不公開，<b className="text-ink">建出來的網站網址一樣是任何人都打得開</b>，
-        只是別人看不到你的原始碼而已。真的要讓「網站本身」也不公開，這三家免費方案都做不到，
+        只是別人看不到你的原始碼而已。真的要讓「網站本身」也不公開，這兩家免費方案都做不到，
         記得回頭看看界線那一關的判斷。
       </div>
 
@@ -560,10 +549,10 @@ function RealStep({ onFinish }) {
 
   const validate = () => {
     const val = url.trim();
-    const ok = /^https:\/\/[a-z0-9][a-z0-9-]*\.(netlify\.app|pages\.dev)(\/\S*)?$/i.test(val);
+    const ok = /^https:\/\/[a-z0-9][a-z0-9-]*\.pages\.dev(\/\S*)?$/i.test(val);
     if (ok) setMsg({ ok: true, text: "網址格式正確 —— 同一份檔案，你現在有兩個網址了 🎉" });
     else if (!val) setMsg({ ok: false, text: "先把你的新網址貼上來吧。" });
-    else setMsg({ ok: false, text: "格式不太對喔～應該長得像 https://xxxx.netlify.app 或 https://xxxx.pages.dev" });
+    else setMsg({ ok: false, text: "格式不太對喔～應該長得像 https://xxxx.pages.dev" });
   };
 
   return (
@@ -611,7 +600,7 @@ function RealStep({ onFinish }) {
             <input
               className="gh-input flex-1 min-w-[200px]"
               type="url"
-              placeholder="https://xxxx.netlify.app"
+              placeholder="https://xxxx.pages.dev"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={(e) => {
@@ -670,16 +659,22 @@ function FormsHowTo() {
 
       <div className="px-4 pb-4 space-y-3.5">
         <p className="text-sm text-ink mt-0 mb-0">
-          前面一直說「靜態網站不能收資料，要收就得有後端」。Netlify 給了一個例外：在
+          前面一直說「靜態網站不能收資料，要收就得有後端」。但你其實不用自己架一個 ——
+          <b className="text-ink">借一個現成的就好</b>。最省事的做法是做一份 Google
+          表單，再把它<b className="text-ink">嵌進</b>你那頁靜態網頁：貼一行
           <code className="font-mono text-xs bg-surface2 px-1.5 py-0.5 rounded border border-line mx-1">
-            &lt;form&gt;
+            &lt;iframe&gt;
           </code>
-          上加一個標記，送出的內容就會被平台收走，你在後台看得到、也能設定寄 email 通知 ——
+          進去，送出的內容就直接落進一份 Google 試算表，
           <b className="text-ink">你一行後端程式都沒寫</b>。
         </p>
         <pre className="font-mono text-[12.5px] bg-surface2 border border-line rounded-[10px] p-3 overflow-x-auto whitespace-pre m-0">
-          {'<form name="vote" netlify>\n  <input name="choice">\n  <button>送出</button>\n</form>'}
+          {'<!-- Google 表單 →「傳送」→ 選「< >」，複製出來就是這一段 -->\n<iframe src="https://docs.google.com/forms/d/e/xxxx/viewform?embedded=true"\n        width="100%" height="900" frameborder="0">載入中…</iframe>'}
         </pre>
+        <p className="text-sm text-muted m-0">
+          想再進一步（表單一送出就自動通知承辦科室、自動回信），
+          <b className="text-ink">第 7 關</b>會用 Google Apps Script 實際做一次。
+        </p>
 
         <div
           className="callout m-0"
@@ -689,8 +684,9 @@ function FormsHowTo() {
           }}
         >
           <b className="text-ink">但「能收」不等於「該收」。</b>
-          送出的資料會存在<b className="text-ink">平台（境外）的伺服器</b>上 ——
-          這正是你上一關剛畫過的那條線。
+          送出的資料會存在<b className="text-ink">平台（境外）的伺服器</b>上；而且如果你用的是
+          <b className="text-ink">個人 Google 帳號</b>，那份試算表是掛在你私人的帳號底下，不是機關的 ——
+          你離職、帳號被停用，資料就跟著走。這正是你上一關剛畫過的那條線。
         </div>
 
         <div className="text-sm font-extrabold text-muted">🧪 練習：這三種表單，能不能用？</div>

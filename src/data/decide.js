@@ -133,7 +133,7 @@ const CAP = {
     who: ["me", "team", "citizen"],
     purpose: ["proto", "page", "tool"],
     publicUrl: true,
-    fit: "改完自動上線，還能用平台內建的表單收簡單的資料。",
+    fit: "改完自動上線；要收簡單的資料，可以嵌一份 Google 表單進去。",
   },
   api: {
     ops: "none",

@@ -6,7 +6,7 @@ import { BADGES } from "../data/levels.js";
 import { DONE } from "../content/levelCopy.js";
 
 /* 納管前的最後一關，也是界線最吃緊的一關：
-   前面所有關卡的資料不是唯讀（讀開放資料），就是別人幫你收（Netlify Forms）。
+   前面所有關卡的資料不是唯讀（讀開放資料），就是別人幫你收（借一份 Google 表單）。
    Firebase 第一次讓前端「直接讀寫一個資料庫」—— 而誰能讀、誰能寫，變成你自己要設。 */
 
 /* 安全規則模擬器：同一份資料，三種規則，三種來訪者。
