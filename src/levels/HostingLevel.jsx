@@ -16,6 +16,7 @@ const HOSTS = [
     name: "GitHub Pages",
     vendor: "GitHub",
     build: "不會（要自己寫 Actions）",
+    repo: "要（免費方案只吃公開 repo，私人 repo 要升級付費的 GitHub Pro）",
     free: "公開 repo 免費，每月 100GB 流量、1GB 站台大小",
     form: "不行",
     when: "純 HTML／CSS／JS 的單頁，你已經做過了",
@@ -26,6 +27,7 @@ const HOSTS = [
     name: "Netlify",
     vendor: "Netlify",
     build: "會，自動",
+    repo: "不用，私人 repo 也可以（限個人帳號，機關組織帳號下的私人 repo 要升級 Pro）",
     free: "新帳號每月 300 點數（約等於 15GB 流量，或 20 次建置）",
     form: "可以（Netlify Forms）",
     when: "要收表單、或想要 PR 預覽網址",
@@ -36,6 +38,7 @@ const HOSTS = [
     name: "Cloudflare Pages",
     vendor: "Cloudflare",
     build: "會，自動",
+    repo: "不用，公開或私人 repo 都可以",
     free: "流量不計量、每月 500 次建置",
     form: "要自己寫 Functions（另計 Workers 額度）",
     when: "流量可能比較大、或想要最大方的免費額度",
@@ -47,6 +50,7 @@ const HOSTS = [
     vendor: "Google",
     note: "跟上面三家不太一樣：它不是「放靜態檔案的地方」，而是 Google 提供的免費小型後端執行環境 —— 寫一小段程式碼，用你的 Google 帳號跑。（後面會有一整關帶你實際用它做一次自動推播）",
     build: "不需要 build（線上寫程式碼，部署即上線）",
+    repo: "不適用 —— 程式碼存在 Google 那邊，跟 GitHub repo 無關",
     free: (
       <>
         個人 Google 帳號：每天可跑 90 分鐘、呼叫外部網址 2 萬次
@@ -63,6 +67,7 @@ const HOSTS = [
 
 const COLS = [
   ["build", "會幫你 build 嗎"],
+  ["repo", "要公開 repo 嗎"],
   ["free", "免費額度"],
   ["form", "能收表單嗎"],
   ["when", "什麼時候選它"],
@@ -486,6 +491,23 @@ function CompareStep({ onNext }) {
           <b className="text-ink">Google Apps Script 是不同的一種東西：</b>
           它不放靜態檔案，而是幫你跑一小段後端程式碼、還能直接讀寫你的 Google 試算表 ——
           適合已經用「這個我可以自己做嗎」判斷過、確定沒有個資疑慮的小工具。
+        </div>
+      )}
+
+      {all && (
+        <div
+          className="callout"
+          style={{
+            borderLeftColor: "var(--danger)",
+            background: "color-mix(in srgb, var(--danger) 8%, var(--surface))",
+          }}
+        >
+          <b className="text-ink">常見誤會：私人 repo ≠ 私人網站。</b>
+          Netlify、Cloudflare Pages 免費方案都能接「私人 repo」（GitHub Pages
+          免費方案不行，要升級付費的 GitHub Pro 才能用私人 repo）——
+          但不管原始碼的 repo 公不公開，<b className="text-ink">建出來的網站網址一樣是任何人都打得開</b>，
+          只是別人看不到你的原始碼而已。真的要讓「網站本身」也不公開，這三家免費方案都做不到，
+          記得回頭看看界線那一關的判斷。
         </div>
       )}
 
