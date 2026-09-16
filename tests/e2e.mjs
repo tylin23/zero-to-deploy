@@ -713,6 +713,20 @@ await st("14 新聞稿彙整（實戰整合，全線通關）", async () => {
   for (const id of ["rss", "cron", "ai", "discord"]) {
     if (!stages.includes(id)) throw new Error("流程少了 " + id + " 這一段");
   }
+  // 流程介紹最下方：可以直接拿去給 AI 的 prompt，複製鈕不用展開就按得到
+  const promptBox = p.locator("[data-ai-prompt]");
+  await promptBox.waitFor({ state: "visible", timeout: 2500 });
+  if (await p.locator("[data-prompt-text]").count()) throw new Error("prompt 內容預設就攤開了，會把「下一步」推很遠");
+  await promptBox.locator("[data-copy-prompt]").click();
+  await p.locator("[data-copy-prompt]", { hasText: "已複製" }).waitFor({ state: "visible", timeout: 2500 });
+  await promptBox.locator("button", { hasText: "先看看內容寫了什麼" }).click();
+  const promptText = await p.locator("[data-prompt-text]").innerText();
+  // 這一關的四個坑都要寫進 prompt 裡，AI 才會自己守住界線
+  for (const t of ["GEMINI_API_KEY", "DISCORD_WEBHOOK", "UTC", "workflow_dispatch", "2000", "承辦人姓名"]) {
+    if (!promptText.includes(t)) throw new Error("給 AI 的 prompt 少了「" + t + "」這個條件");
+  }
+  if (!promptText.includes("SN=7DEC7150E6BAD606")) throw new Error("prompt 裡沒有那個 RSS 網址");
+
   await B("先看它跑完長什麼樣").click();
 
   // 步驟 2：預設不送聯絡人；勾起來才會出現在 AI 與 Discord，並跳出提醒

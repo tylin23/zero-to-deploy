@@ -50,6 +50,51 @@ const STAGES = [
   },
 ];
 
+/* 給學員直接拿去用的 prompt。
+
+   這門課從第 1 關就在教「AI 幫你寫」，最後一關不該還要學員自己逐行手刻 ——
+   但重點不是省事，是讓他們看見：真正要學的是「把需求講清楚」。
+   所以這段 prompt 刻意把整關教過的四個坑都寫成明文條件（金鑰進 secrets、
+   cron 是 UTC、聯絡人不進 AI、Discord 2000 字上限），
+   照著貼出去，AI 寫出來的東西就會自己守住這一關的界線。 */
+const AI_PROMPT = `我是臺北市政府的公務員，不是資訊人員。請幫我做一件每天會自動跑的事，並且用我看得懂的方式說明。
+
+【我要做的事】
+每天中午 12 點（台灣時間），自動抓臺北市政府的新聞稿 RSS，
+請 AI 整理成當日彙整（每一則：一句話摘要、相關業務局處、建議列管事項），
+再推到 Discord 頻道通知同仁。
+
+【要用的東西】
+- 新聞稿 RSS：https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606
+- 排程：GitHub Actions（我沒有一台一直開著的機器）
+- AI：Google Gemini API（免費方案）
+- 通知：Discord Webhook
+
+【請務必遵守的條件】
+1. 金鑰絕對不可以寫在程式碼裡。請用 GitHub Actions secrets，
+   名稱用 GEMINI_API_KEY 和 DISCORD_WEBHOOK，並告訴我去哪裡設定。
+2. GitHub Actions 的 cron 跑的是 UTC，不是台灣時間。
+   請幫我換算成正確的 UTC 時間，並在 yml 裡用註解寫清楚原因。
+3. 除了排程，也要能手動觸發（workflow_dispatch），方便我測試。
+4. 只把「新聞稿本身已經公開的內容」送給 AI。
+   承辦人姓名、電話、分機、email 一律不要放進送給 AI 的文字，也不要推到 Discord。
+5. Discord 單則訊息有 2000 字上限，超過請自動分段送出，不要讓它整個失敗。
+6. 抓不到資料、AI 沒回應、Discord 推不出去的時候，
+   要在 Actions 的紀錄裡留下看得懂的錯誤訊息，不要安靜地失敗。
+7. 這個排程如果 60 天沒有新的 commit 會被 GitHub 自動停用，
+   請提醒我這件事，並告訴我怎麼確認它還活著。
+
+【請給我】
+1. 放在 .github/workflows/ 底下的 workflow 檔
+2. 實際執行的腳本檔
+3. 一份我照著做就好的步驟清單：每個檔案要放在 repo 的哪個路徑、
+   secrets 在哪裡設定、怎麼手動跑第一次確認它會動
+4. 程式碼請加上中文註解說明「這段在做什麼」，我之後要自己維護
+
+【最後提醒我一件事】
+先幫我確認那個 RSS 網址實際回傳哪些欄位。
+如果跟你預設的欄位名稱不一樣，直接告訴我要改哪一行。`;
+
 /* 示範用的假新聞稿。人名、電話、分機都是編的 —— 這門課一路上都用假資料。 */
 const SAMPLES = [
   {
@@ -282,9 +327,88 @@ function StageStep({ onNext }) {
         真正需要重新判斷的只有中間那段「把資料交給 AI」 —— 第 3 步會專門處理它。
       </div>
 
+      <PromptToAI />
+
       <button type="button" className="btn btn-primary" onClick={onNext}>
         下一步：先看它跑完長什麼樣 →
       </button>
+    </div>
+  );
+}
+
+/* 把整條線的需求寫成一段可以直接貼給 AI 的規格書。
+   複製鈕放在外面、不用展開就按得到 —— 大部分人只想複製，不想先讀四十行。 */
+function PromptToAI() {
+  const [copied, setCopied] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(AI_PROMPT);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  return (
+    <div
+      data-ai-prompt
+      className="rounded-[16px] border-2 overflow-hidden"
+      style={{
+        borderColor: "color-mix(in srgb, var(--accent) 45%, var(--border))",
+        background: "color-mix(in srgb, var(--accent) 8%, var(--surface))",
+      }}
+    >
+      <div className="p-3.5 flex items-start gap-3">
+        <span className="text-2xl leading-none" aria-hidden="true">
+          ✍️
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="font-extrabold text-ink">不用自己寫 —— 把這段話交給 AI 就好</div>
+          <p className="text-[13px] text-muted mt-1 mb-0">
+            複製下面這段，貼進 Claude、Gemini 或 ChatGPT，它就會把這條線需要的程式碼寫給你。
+            <b className="text-ink">
+              這段文字本身就是一份規格書 —— 這一關真正要學的是「把需求講清楚」，不是把程式碼背起來。
+            </b>
+          </p>
+        </div>
+      </div>
+
+      <div className="px-3.5 pb-3 flex gap-2 flex-wrap">
+        <button type="button" className="btn btn-accent btn-sm" data-copy-prompt onClick={copy}>
+          {copied ? "已複製 ✓" : "複製這段 prompt 📋"}
+        </button>
+        <button
+          type="button"
+          className="gh-btn gh-btn-sm"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? "收合內容 ▴" : "先看看內容寫了什麼 ▾"}
+        </button>
+      </div>
+
+      {open && (
+        <div className="px-3.5 pb-3">
+          <pre
+            data-prompt-text
+            className="font-mono text-[12px] leading-relaxed bg-surface2 border border-line rounded-[10px] p-3.5 overflow-x-auto whitespace-pre-wrap m-0"
+          >
+            {AI_PROMPT}
+          </pre>
+        </div>
+      )}
+
+      <div className="px-3.5 pb-3.5">
+        <p className="text-[12.5px] text-muted m-0">
+          ⚠️ <b className="text-ink">AI 寫出來的東西要自己看過再用。</b>
+          尤其確認三件事：金鑰有沒有真的寫成 secrets（而不是直接寫在程式碼裡）、
+          cron 時間有沒有換算成 UTC、送進 AI 的內容裡有沒有混進承辦人的聯絡資訊。
+          後面三步就是在教你怎麼檢查這三件事。
+        </p>
+      </div>
     </div>
   );
 }
